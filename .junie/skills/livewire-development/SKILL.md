@@ -21,16 +21,13 @@ Use the `php artisan make:livewire [Posts\CreatePost]` Artisan command to create
 ### Fundamental Concepts
 
 - State should live on the server, with the UI reflecting it.
-- All Livewire requests hit the Laravel backend; they're like regular HTTP requests. Always validate form data and run
-  authorization checks in Livewire actions.
+- All Livewire requests hit the Laravel backend; they're like regular HTTP requests. Always validate form data and run authorization checks in Livewire actions.
 
 ## Livewire 3 Specifics
 
 ### Key Changes From Livewire 2
 
-These things changed in Livewire 3, but may not have been updated in this application. Verify this application's setup
-to ensure you follow existing conventions.
-
+These things changed in Livewire 3, but may not have been updated in this application. Verify this application's setup to ensure you follow existing conventions.
 - Use `wire:model.live` for real-time updates, `wire:model` is now deferred by default.
 - Components now use the `App\Livewire` namespace (not `App\Http\Livewire`).
 - Use `$this->dispatch()` to dispatch events (not `emit` or `dispatchBrowserEvent`).
@@ -55,7 +52,6 @@ to ensure you follow existing conventions.
 ### Using Keys in Loops
 
 <!-- Wire Key in Loops -->
-
 ```blade
 @foreach ($items as $item)
     <div wire:key="item-{{ $item->id }}">
@@ -69,7 +65,6 @@ to ensure you follow existing conventions.
 Prefer lifecycle hooks like `mount()`, `updatedFoo()` for initialization and reactive side effects:
 
 <!-- Lifecycle Hook Examples -->
-
 ```php
 public function mount(User $user) { $this->user = $user; }
 public function updatedSearch() { $this->resetPage(); }
@@ -80,7 +75,6 @@ public function updatedSearch() { $this->resetPage(); }
 You can listen for `livewire:init` to hook into Livewire initialization:
 
 <!-- Livewire Init Hook Example -->
-
 ```js
 document.addEventListener('livewire:init', function () {
     Livewire.hook('request', ({ fail }) => {
@@ -98,7 +92,6 @@ document.addEventListener('livewire:init', function () {
 ## Testing
 
 <!-- Example Livewire Component Test -->
-
 ```php
 Livewire::test(Counter::class)
     ->assertSet('count', 0)
@@ -109,7 +102,6 @@ Livewire::test(Counter::class)
 ```
 
 <!-- Testing Livewire Component Exists on Page -->
-
 ```php
 $this->get('/posts/create')
     ->assertSeeLivewire(CreatePost::class);

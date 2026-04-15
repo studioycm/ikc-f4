@@ -24,8 +24,7 @@ Correct: `User::with('roles')->lazy()` for relationship access; `User::cursor()`
 
 ## Use `lazyById()` When Updating Records While Iterating
 
-`lazy()` uses offset pagination — updating records during iteration can skip or double-process. `lazyById()` uses
-`id > last_id`, safe against mutation.
+`lazy()` uses offset pagination — updating records during iteration can skip or double-process. `lazyById()` uses `id > last_id`, safe against mutation.
 
 ## Use `toQuery()` for Bulk Operations on Collections
 

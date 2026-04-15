@@ -46,8 +46,7 @@ Schema::table('posts', function (Blueprint $table) {
 
 ## Add Indexes in the Migration
 
-Add indexes when creating the table, not as an afterthought. Columns used in `WHERE`, `ORDER BY`, and `JOIN` clauses
-need indexes.
+Add indexes when creating the table, not as an afterthought. Columns used in `WHERE`, `ORDER BY`, and `JOIN` clauses need indexes.
 
 Incorrect:
 ```php
@@ -86,8 +85,7 @@ protected $attributes = [
 
 ## Write Reversible `down()` Methods by Default
 
-Implement `down()` for schema changes that can be safely reversed so `migrate:rollback` works in CI and failed
-deployments.
+Implement `down()` for schema changes that can be safely reversed so `migrate:rollback` works in CI and failed deployments.
 
 ```php
 public function down(): void
@@ -98,8 +96,7 @@ public function down(): void
 }
 ```
 
-For intentionally irreversible migrations (e.g., destructive data backfills), leave a clear comment and require a
-forward fix migration instead of pretending rollback is supported.
+For intentionally irreversible migrations (e.g., destructive data backfills), leave a clear comment and require a forward fix migration instead of pretending rollback is supported.
 
 ## Keep Migrations Focused
 

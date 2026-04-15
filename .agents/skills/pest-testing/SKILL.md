@@ -50,11 +50,11 @@ it('returns all', function () {
 });
 ```
 
-| Use                  | Instead of          |
-|----------------------|---------------------|
+| Use | Instead of |
+|-----|------------|
 | `assertSuccessful()` | `assertStatus(200)` |
-| `assertNotFound()`   | `assertStatus(404)` |
-| `assertForbidden()`  | `assertStatus(403)` |
+| `assertNotFound()` | `assertStatus(404)` |
+| `assertForbidden()` | `assertStatus(403)` |
 
 ## Mocking
 

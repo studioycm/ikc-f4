@@ -10,4 +10,4 @@ SITE_PATH = "D:\\0-Dev\\Herd\\ikc-dev"
 [mcp_servers.laravel-boost]
 command = "php"
 args = ["artisan", "boost:mcp"]
-cwd = "D:\\0-Dev\\Herd\\ikc-dev"
+cwd = "D:\\0-Dev\\Herd\\ikc-f4"

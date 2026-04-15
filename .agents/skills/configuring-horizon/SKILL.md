@@ -10,8 +10,7 @@ metadata:
 
 ## Documentation
 
-Use `search-docs` for detailed Horizon patterns and documentation covering configuration, supervisors, balancing,
-dashboard authorization, tags, notifications, metrics, and deployment.
+Use `search-docs` for detailed Horizon patterns and documentation covering configuration, supervisors, balancing, dashboard authorization, tags, notifications, metrics, and deployment.
 
 For deeper guidance on specific topics, read the relevant reference file before implementing:
 
@@ -30,8 +29,7 @@ php artisan horizon:install
 
 ### Supervisor Configuration
 
-Define supervisors in `config/horizon.php`. The `environments` array merges into `defaults` and does not replace the
-whole supervisor block:
+Define supervisors in `config/horizon.php`. The `environments` array merges into `defaults` and does not replace the whole supervisor block:
 
 <!-- Supervisor Config -->
 ```php
@@ -80,11 +78,8 @@ protected function gate(): void
 
 - Horizon only works with the Redis queue driver. Other drivers such as database and SQS are not supported.
 - Redis Cluster is not supported. Horizon requires a standalone Redis connection.
-- Always check `config/horizon.php` before making changes to understand the current supervisor and environment
-  configuration.
+- Always check `config/horizon.php` before making changes to understand the current supervisor and environment configuration.
 - The `environments` array overrides only the keys you specify. It merges into `defaults` and does not replace it.
-- The timeout chain must be ordered: job `timeout` less than supervisor `timeout` less than `retry_after`. The wrong
-  order can cause jobs to be retried before Horizon finishes timing them out.
-- The metrics dashboard stays blank until `horizon:snapshot` is scheduled. Running `php artisan horizon` alone does not
-  populate metrics.
+- The timeout chain must be ordered: job `timeout` less than supervisor `timeout` less than `retry_after`. The wrong order can cause jobs to be retried before Horizon finishes timing them out.
+- The metrics dashboard stays blank until `horizon:snapshot` is scheduled. Running `php artisan horizon` alone does not populate metrics.
 - Always use `search-docs` for the latest Horizon documentation rather than relying on this skill alone.

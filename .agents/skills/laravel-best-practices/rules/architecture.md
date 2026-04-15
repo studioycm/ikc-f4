@@ -51,8 +51,7 @@ class OrderController extends Controller
 
 ## Code to Interfaces
 
-Depend on contracts at system boundaries (payment gateways, notification channels, external APIs) for testability and
-swappability.
+Depend on contracts at system boundaries (payment gateways, notification channels, external APIs) for testability and swappability.
 
 Incorrect (concrete dependency):
 ```php
@@ -83,8 +82,7 @@ $this->app->bind(PaymentGateway::class, StripeGateway::class);
 
 ## Default Sort by Descending
 
-When no explicit order is specified, sort by `id` or `created_at` descending. Explicit ordering prevents cross-database
-inconsistencies between MySQL and Postgres.
+When no explicit order is specified, sort by `id` or `created_at` descending. Explicit ordering prevents cross-database inconsistencies between MySQL and Postgres.
 
 Incorrect:
 ```php
@@ -111,8 +109,7 @@ $product = Product::where('id', $id)->lockForUpdate()->first();
 
 ## Use `mb_*` String Functions
 
-When no Laravel helper exists, prefer `mb_strlen`, `mb_strtolower`, etc. for UTF-8 safety. Standard PHP string functions
-count bytes, not characters.
+When no Laravel helper exists, prefer `mb_strlen`, `mb_strtolower`, etc. for UTF-8 safety. Standard PHP string functions count bytes, not characters.
 
 Incorrect:
 ```php
@@ -132,8 +129,7 @@ Str::lower('MÜNCHEN');        // 'münchen'
 
 ## Use `defer()` for Post-Response Work
 
-For lightweight tasks that don't need to survive a crash (logging, analytics, cleanup), use `defer()` instead of
-dispatching a job. The callback runs after the HTTP response is sent — no queue overhead.
+For lightweight tasks that don't need to survive a crash (logging, analytics, cleanup), use `defer()` instead of dispatching a job. The callback runs after the HTTP response is sent — no queue overhead.
 
 Incorrect (job overhead for trivial work):
 ```php
@@ -149,8 +145,7 @@ Use jobs when the work must survive process crashes or needs retry logic. Use `d
 
 ## Use `Context` for Request-Scoped Data
 
-The `Context` facade passes data through the entire request lifecycle — middleware, controllers, jobs, logs — without
-passing arguments manually.
+The `Context` facade passes data through the entire request lifecycle — middleware, controllers, jobs, logs — without passing arguments manually.
 
 ```php
 // In middleware
@@ -160,9 +155,7 @@ Context::add('tenant_id', $request->header('X-Tenant-ID'));
 $tenantId = Context::get('tenant_id');
 ```
 
-Context data automatically propagates to queued jobs and is included in log entries. Use `Context::addHidden()` for
-sensitive data that should be available in queued jobs but excluded from log context. If data must not leave the current
-process, do not store it in `Context`.
+Context data automatically propagates to queued jobs and is included in log entries. Use `Context::addHidden()` for sensitive data that should be available in queued jobs but excluded from log context. If data must not leave the current process, do not store it in `Context`.
 
 ## Use `Concurrency::run()` for Parallel Execution
 
@@ -177,8 +170,7 @@ use Illuminate\Support\Facades\Concurrency;
 ]);
 ```
 
-Each closure runs in a separate process with full Laravel access. Use for independent database queries, API calls, or
-computations that would otherwise run sequentially.
+Each closure runs in a separate process with full Laravel access. Use for independent database queries, API calls, or computations that would otherwise run sequentially.
 
 ## Convention Over Configuration
 

@@ -2,8 +2,7 @@
 
 ## Use `LazilyRefreshDatabase` Over `RefreshDatabase`
 
-`RefreshDatabase` runs all migrations every test run even when the schema hasn't changed. `LazilyRefreshDatabase` only
-migrates when needed, significantly speeding up large suites.
+`RefreshDatabase` runs all migrations every test run even when the schema hasn't changed. `LazilyRefreshDatabase` only migrates when needed, significantly speeding up large suites.
 
 ## Use Model Assertions Over Raw Database Assertions
 
@@ -23,13 +22,11 @@ Correct: `User::factory()->unverified()->create();`
 
 ## Use `Exceptions::fake()` to Assert Exception Reporting
 
-Instead of `withoutExceptionHandling()`, use `Exceptions::fake()` to assert the correct exception was reported while the
-request completes normally.
+Instead of `withoutExceptionHandling()`, use `Exceptions::fake()` to assert the correct exception was reported while the request completes normally.
 
 ## Call `Event::fake()` After Factory Setup
 
-Model factories rely on model events (e.g., `creating` to generate UUIDs). Calling `Event::fake()` before factory calls
-silences those events, producing broken models.
+Model factories rely on model events (e.g., `creating` to generate UUIDs). Calling `Event::fake()` before factory calls silences those events, producing broken models.
 
 Incorrect: `Event::fake(); $user = User::factory()->create();`
 

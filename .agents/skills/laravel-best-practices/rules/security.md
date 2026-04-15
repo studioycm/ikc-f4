@@ -158,8 +158,7 @@ $key = config('services.api_key');
 
 ## Audit Dependencies
 
-Run `composer audit` periodically to check for known vulnerabilities in dependencies. Automate this in CI to catch
-issues before deployment.
+Run `composer audit` periodically to check for known vulnerabilities in dependencies. Automate this in CI to catch issues before deployment.
 
 ```bash
 composer audit
