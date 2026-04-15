@@ -188,7 +188,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->globalSearchKeyBindings(['ctrl+k', 'command+k'])
             ->globalSearchDebounce('2000')
-            ->theme(asset('css/filament/admin/theme.css'))
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->LazyLoadedDatabaseNotifications();
     }
 }
