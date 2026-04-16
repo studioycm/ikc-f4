@@ -42,11 +42,11 @@ class AppServiceProvider extends ServiceProvider
         PrevBreed::observe(PrevBreedObserver::class);
 
         // Register a custom render hook to add a script for scrolling to the topof table (e.g. after pagination change)
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::SCRIPTS_AFTER,
-            fn (): string => new HtmlString('
-                <script>document.addEventListener("scroll-to-top", () => window.scrollTo(0, 0))</script>
-            '),
-        );
+//        FilamentView::registerRenderHook(
+//            PanelsRenderHook::SCRIPTS_AFTER,
+//            fn (): string => new HtmlString('
+//                <script>document.addEventListener("scroll-to-top", () => window.scrollTo(0, 0))</script>
+//            '),
+//        );
     }
 }

@@ -1816,10 +1816,10 @@ class PrevDogResource extends Resource
         ];
     }
 
-//    public static function getWidgets(): array
-//    {
-//        return [
+    public static function getWidgets(): array
+    {
+        return [
 //            DogStats::class,
-//        ];
-//    }
+        ];
+    }
 }
