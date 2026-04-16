@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevShowPayment;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevShowPaymentPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::show::payment');
+        return $authUser->can('ViewAny:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevShowPayment $prevShowPayment): bool
+    public function view(AuthUser $authUser, PrevShowPayment $prevShowPayment): bool
     {
-        return $user->can('view_prev::show::payment');
+        return $authUser->can('View:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::show::payment');
+        return $authUser->can('Create:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevShowPayment $prevShowPayment): bool
+    public function update(AuthUser $authUser, PrevShowPayment $prevShowPayment): bool
     {
-        return $user->can('update_prev::show::payment');
+        return $authUser->can('Update:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevShowPayment $prevShowPayment): bool
+    public function delete(AuthUser $authUser, PrevShowPayment $prevShowPayment): bool
     {
-        return $user->can('delete_prev::show::payment');
+        return $authUser->can('Delete:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::show::payment');
+        return $authUser->can('DeleteAny:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevShowPayment $prevShowPayment): bool
+    public function restore(AuthUser $authUser, PrevShowPayment $prevShowPayment): bool
     {
-        return $user->can('force_delete_prev::show::payment');
+        return $authUser->can('Restore:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevShowPayment $prevShowPayment): bool
     {
-        return $user->can('force_delete_any_prev::show::payment');
+        return $authUser->can('ForceDelete:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevShowPayment $prevShowPayment): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::show::payment');
+        return $authUser->can('ForceDeleteAny:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::show::payment');
+        return $authUser->can('RestoreAny:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevShowPayment $prevShowPayment): bool
+    public function replicate(AuthUser $authUser, PrevShowPayment $prevShowPayment): bool
     {
-        return $user->can('replicate_prev::show::payment');
+        return $authUser->can('Replicate:PrevShowPayment');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::show::payment');
+        return $authUser->can('Reorder:PrevShowPayment');
     }
+
 }

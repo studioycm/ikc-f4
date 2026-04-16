@@ -2,6 +2,26 @@
 
 namespace App\Filament\User\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Livewire;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\User\Resources\BreedingInquiryResource\Pages\ListBreedingInquiries;
+use App\Filament\User\Resources\BreedingInquiryResource\Pages\CreateBreedingInquiry;
+use App\Filament\User\Resources\BreedingInquiryResource\Pages\ViewBreedingInquiry;
+use App\Filament\User\Resources\BreedingInquiryResource\Pages\EditBreedingInquiry;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Filament\User\Resources\BreedingInquiryResource\Pages;
 use App\Livewire\Legacy\Breeding\ClubMembershipCompact;
@@ -11,21 +31,13 @@ use App\Models\PrevDog;
 use App\Models\PrevUser;
 use App\Services\Legacy\LegacyMembershipResolverService;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Livewire as LivewireComponent;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\ViewField;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -37,7 +49,7 @@ class BreedingInquiryResource extends Resource
 {
     protected static ?string $model = BreedingInquiry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 40;
 
@@ -67,10 +79,10 @@ class BreedingInquiryResource extends Resource
             ->where('user_id', auth()->id());
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Wizard::make([
                     Step::make('inquiry')
                         ->label(__('Inquiry'))
@@ -120,7 +132,7 @@ class BreedingInquiryResource extends Resource
                                                 fn(Set $set, Get $get, ?string $state, Select $component) => self::hydrateFemale($get, $set, $component)
                                             ),
 
-                                        LivewireComponent::make(DogChecksTable::class, fn(Get $get): array => [
+                                        Livewire::make(DogChecksTable::class, fn(Get $get): array => [
                                             'sagirId' => $get('female_sagir_id'),
                                             'role' => 'female',
                                             'title' => __('Dam validity and breeding checks'),
@@ -169,7 +181,7 @@ class BreedingInquiryResource extends Resource
                                                 fn(Set $set, Get $get, ?string $state, Select $component) => self::hydrateMale($get, $set, $component)
                                             ),
 
-                                        LivewireComponent::make(DogChecksTable::class, fn(Get $get): array => [
+                                        Livewire::make(DogChecksTable::class, fn(Get $get): array => [
                                             'sagirId' => $get('male_sagir_id'),
                                             'role' => 'male',
                                             'title' => __('Sire validity and breeding checks'),
@@ -188,7 +200,7 @@ class BreedingInquiryResource extends Resource
                             |--------------------------------------------------------------------------
                             */
 
-                            LivewireComponent::make(ClubMembershipCompact::class, fn(Get $get): array => [
+                            Livewire::make(ClubMembershipCompact::class, fn(Get $get): array => [
                                 'membershipState' => $get('club_membership_state'),
                             ])
                                 ->hidden(fn(Get $get): bool => blank($get('female_sagir_id')))
@@ -396,58 +408,58 @@ class BreedingInquiryResource extends Resource
                 $query->with(['femaleDog', 'maleDog'])->orderBy('created_at', 'asc');
             })
             ->columns([
-                Tables\Columns\TextColumn::make('litter_report_name')
+                TextColumn::make('litter_report_name')
                     ->label(__('Litter Report Name'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('femaleDog.SagirID')
+                TextColumn::make('femaleDog.SagirID')
                     ->label(__('Dam'))
                     ->description(fn(BreedingInquiry $record) => $record->femaleDog->full_name),
-                Tables\Columns\TextColumn::make('maleDog.SagirID')
+                TextColumn::make('maleDog.SagirID')
                     ->label(__('Sire'))
                     ->description(fn(BreedingInquiry $record) => $record->maleDog->full_name),
-                Tables\Columns\TextColumn::make('breeding_date')
+                TextColumn::make('breeding_date')
                     ->label(__('Breeding Date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('birthing_date')
+                TextColumn::make('birthing_date')
                     ->label(__('Birthing Date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('submitted_at')
+                TextColumn::make('submitted_at')
                     ->label(__('Submitted At'))
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->label(__('Deleted at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()->modal(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make()->modal(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -462,10 +474,10 @@ class BreedingInquiryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBreedingInquiries::route('/'),
-            'create' => Pages\CreateBreedingInquiry::route('/create'),
-            'view' => Pages\ViewBreedingInquiry::route('/{record}'),
-            'edit' => Pages\EditBreedingInquiry::route('/{record}/edit'),
+            'index' => ListBreedingInquiries::route('/'),
+            'create' => CreateBreedingInquiry::route('/create'),
+            'view' => ViewBreedingInquiry::route('/{record}'),
+            'edit' => EditBreedingInquiry::route('/{record}/edit'),
         ];
     }
 

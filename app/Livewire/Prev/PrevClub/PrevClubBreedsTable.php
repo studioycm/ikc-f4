@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Prev\PrevClub;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\PrevBreedResource;
 use App\Models\PrevBreed;
 use Filament\Facades\Filament;
@@ -17,8 +20,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
-class PrevClubBreedsTable extends Component implements HasForms, HasTable
+class PrevClubBreedsTable extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -37,18 +41,18 @@ class PrevClubBreedsTable extends Component implements HasForms, HasTable
         return $table
             ->query($this->getTableQuery())
             ->columns([
-                Tables\Columns\TextColumn::make('BreedName')
+                TextColumn::make('BreedName')
                     ->label(__('Breed'))
                     ->description(fn (PrevBreed $record): string => (string) ($record->BreedNameEN ?? ''))
                     ->url(fn (PrevBreed $record): string => PrevBreedResource::getUrl('view', ['record' => $record->id]))
                     ->openUrlInNewTab()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('BreedCode')
+                TextColumn::make('BreedCode')
                     ->label(__('Breed Code'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('dogs_count')
+                TextColumn::make('dogs_count')
                     ->label(__('Dogs Count'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable(),

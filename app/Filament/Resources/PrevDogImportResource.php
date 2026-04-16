@@ -2,21 +2,35 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ImportAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Resources\PrevDogImportResource\Pages\ListPrevDogImports;
+use App\Filament\Resources\PrevDogImportResource\Pages\CreatePrevDogImport;
+use App\Filament\Resources\PrevDogImportResource\Pages\ViewPrevDogImport;
+use App\Filament\Resources\PrevDogImportResource\Pages\EditPrevDogImport;
 use App\Filament\Exports\PrevDogImportExporter;
 use App\Filament\Imports\PrevDogImportImporter;
 use App\Filament\Resources\PrevDogImportResource\Pages;
 use App\Models\PrevDogImport;
 use App\Models\PrevUser;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,7 +40,7 @@ class PrevDogImportResource extends Resource
 {
     protected static ?string $model = PrevDogImport::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-arrow-down-tray';
 
     protected static ?string $recordTitleAttribute = 'dog_name';
 
@@ -52,59 +66,59 @@ class PrevDogImportResource extends Resource
         return __('Imported Dogs');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('Dog Details'))
+        return $schema
+            ->components([
+                Section::make(__('Dog Details'))
                     ->schema([
-                        Forms\Components\TextInput::make('dog_name')->label(__('Dog name'))->required()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_import_sagir')->label(__('Import Number'))->numeric(),
-                        Forms\Components\DatePicker::make('dog_birth_date')->label(__('Birth Date')),
-                        Forms\Components\TextInput::make('dog_breed')->label(__('Breed'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_hair_type')->label(__('Hair'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_hair_color')->label(__('Color'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_gender')->label(__('Gender'))->maxLength(50),
-                        Forms\Components\TextInput::make('dog_sagir_prefix')->label(__('Sagir Prefix'))->maxLength(50),
-                        Forms\Components\TextInput::make('dog_chip')->label(__('Chip'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_dna')->label(__('DNA'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_type')->label(__('Dog Type'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_sagir_id')->label(__('Sagir'))->numeric(),
-                        Forms\Components\Textarea::make('dog_tests')->label(__('Tests'))->rows(3)->columnSpanFull(),
-                        Forms\Components\Textarea::make('dog_titles')->label(__('Titles'))->rows(3)->columnSpanFull(),
-                        Forms\Components\Textarea::make('dog_notes')->label(__('Notes'))->rows(4)->columnSpanFull(),
+                        TextInput::make('dog_name')->label(__('Dog name'))->required()->maxLength(255),
+                        TextInput::make('dog_import_sagir')->label(__('Import Number'))->numeric(),
+                        DatePicker::make('dog_birth_date')->label(__('Birth Date')),
+                        TextInput::make('dog_breed')->label(__('Breed'))->maxLength(255),
+                        TextInput::make('dog_hair_type')->label(__('Hair'))->maxLength(255),
+                        TextInput::make('dog_hair_color')->label(__('Color'))->maxLength(255),
+                        TextInput::make('dog_gender')->label(__('Gender'))->maxLength(50),
+                        TextInput::make('dog_sagir_prefix')->label(__('Sagir Prefix'))->maxLength(50),
+                        TextInput::make('dog_chip')->label(__('Chip'))->maxLength(255),
+                        TextInput::make('dog_dna')->label(__('DNA'))->maxLength(255),
+                        TextInput::make('dog_type')->label(__('Dog Type'))->maxLength(255),
+                        TextInput::make('dog_sagir_id')->label(__('Sagir'))->numeric(),
+                        Textarea::make('dog_tests')->label(__('Tests'))->rows(3)->columnSpanFull(),
+                        Textarea::make('dog_titles')->label(__('Titles'))->rows(3)->columnSpanFull(),
+                        Textarea::make('dog_notes')->label(__('Notes'))->rows(4)->columnSpanFull(),
                     ])
                     ->columns(4),
-                Forms\Components\Section::make(__('Breeder and owner details'))
+                Section::make(__('Breeder and owner details'))
                     ->schema([
-                        Forms\Components\TextInput::make('dog_breeder_name')->label(__('Breeder Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('Foreign_Breeder_name')->label(__('Foreign Breeder'))->maxLength(255),
-                        Forms\Components\Select::make('user_id')
+                        TextInput::make('dog_breeder_name')->label(__('Breeder Name'))->maxLength(255),
+                        TextInput::make('Foreign_Breeder_name')->label(__('Foreign Breeder'))->maxLength(255),
+                        Select::make('user_id')
                             ->label(__('Done By'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\TextInput::make('dog_owner_fname')->label(__('First Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_lname')->label(__('Last Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_email')->label(__('Owner Email'))->email()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_mobile_phone_code')->label(__('Mobile Prefix'))->maxLength(20),
-                        Forms\Components\TextInput::make('dog_mobile_phone')->label(__('Mobile Phone'))->tel()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_phone')->label(__('Owner Phone'))->tel()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_country_id')->label(__('Country ID'))->numeric(),
-                        Forms\Components\TextInput::make('dog_owner_fname_2')->label(__('Owner 2 First Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_lname_2')->label(__('Owner 2 Last Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_email_2')->label(__('Owner 2 Email'))->email()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_mobile_phone_code_2')->label(__('Owner 2 Mobile Prefix'))->maxLength(20),
-                        Forms\Components\TextInput::make('dog_mobile_phone_2')->label(__('Owner 2 Mobile Phone'))->tel()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_phone_2')->label(__('Owner 2 Phone'))->tel()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_country_id_2')->label(__('Owner 2 Country ID'))->numeric(),
-                        Forms\Components\TextInput::make('dog_owner_fname_3')->label(__('Owner 3 First Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_lname_3')->label(__('Owner 3 Last Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_email_3')->label(__('Owner 3 Email'))->email()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_mobile_phone_code_3')->label(__('Owner 3 Mobile Prefix'))->maxLength(20),
-                        Forms\Components\TextInput::make('dog_mobile_phone_3')->label(__('Owner 3 Mobile Phone'))->tel()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_owner_phone_3')->label(__('Owner 3 Phone'))->tel()->maxLength(255),
-                        Forms\Components\TextInput::make('dog_country_id_3')->label(__('Owner 3 Country ID'))->numeric(),
+                        TextInput::make('dog_owner_fname')->label(__('First Name'))->maxLength(255),
+                        TextInput::make('dog_owner_lname')->label(__('Last Name'))->maxLength(255),
+                        TextInput::make('dog_owner_email')->label(__('Owner Email'))->email()->maxLength(255),
+                        TextInput::make('dog_mobile_phone_code')->label(__('Mobile Prefix'))->maxLength(20),
+                        TextInput::make('dog_mobile_phone')->label(__('Mobile Phone'))->tel()->maxLength(255),
+                        TextInput::make('dog_owner_phone')->label(__('Owner Phone'))->tel()->maxLength(255),
+                        TextInput::make('dog_country_id')->label(__('Country ID'))->numeric(),
+                        TextInput::make('dog_owner_fname_2')->label(__('Owner 2 First Name'))->maxLength(255),
+                        TextInput::make('dog_owner_lname_2')->label(__('Owner 2 Last Name'))->maxLength(255),
+                        TextInput::make('dog_owner_email_2')->label(__('Owner 2 Email'))->email()->maxLength(255),
+                        TextInput::make('dog_mobile_phone_code_2')->label(__('Owner 2 Mobile Prefix'))->maxLength(20),
+                        TextInput::make('dog_mobile_phone_2')->label(__('Owner 2 Mobile Phone'))->tel()->maxLength(255),
+                        TextInput::make('dog_owner_phone_2')->label(__('Owner 2 Phone'))->tel()->maxLength(255),
+                        TextInput::make('dog_country_id_2')->label(__('Owner 2 Country ID'))->numeric(),
+                        TextInput::make('dog_owner_fname_3')->label(__('Owner 3 First Name'))->maxLength(255),
+                        TextInput::make('dog_owner_lname_3')->label(__('Owner 3 Last Name'))->maxLength(255),
+                        TextInput::make('dog_owner_email_3')->label(__('Owner 3 Email'))->email()->maxLength(255),
+                        TextInput::make('dog_mobile_phone_code_3')->label(__('Owner 3 Mobile Prefix'))->maxLength(20),
+                        TextInput::make('dog_mobile_phone_3')->label(__('Owner 3 Mobile Phone'))->tel()->maxLength(255),
+                        TextInput::make('dog_owner_phone_3')->label(__('Owner 3 Phone'))->tel()->maxLength(255),
+                        TextInput::make('dog_country_id_3')->label(__('Owner 3 Country ID'))->numeric(),
                     ])
                     ->columns(4),
             ]);
@@ -166,23 +180,23 @@ class PrevDogImportResource extends Resource
                 TextColumn::make('deleted_at')->label(__('Deleted at'))->since()->dateTimeTooltip()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevDogImportExporter::class),
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->headerActions([
@@ -204,10 +218,10 @@ class PrevDogImportResource extends Resource
             ->striped();
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Dog Details'))
                     ->schema([
                         TextEntry::make('dog_name')->label(__('Dog name')),
@@ -252,10 +266,10 @@ class PrevDogImportResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevDogImports::route('/'),
-            'create' => Pages\CreatePrevDogImport::route('/create'),
-            'view' => Pages\ViewPrevDogImport::route('/{record}'),
-            'edit' => Pages\EditPrevDogImport::route('/{record}/edit'),
+            'index' => ListPrevDogImports::route('/'),
+            'create' => CreatePrevDogImport::route('/create'),
+            'view' => ViewPrevDogImport::route('/{record}'),
+            'edit' => EditPrevDogImport::route('/{record}/edit'),
         ];
     }
 

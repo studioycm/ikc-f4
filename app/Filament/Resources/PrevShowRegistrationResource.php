@@ -2,6 +2,18 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use App\Filament\Resources\PrevShowRegistrationResource\Pages\ListPrevShowRegistrations;
+use App\Filament\Resources\PrevShowRegistrationResource\Pages\CreatePrevShowRegistration;
+use App\Filament\Resources\PrevShowRegistrationResource\Pages\EditPrevShowRegistration;
 use App\Filament\Resources\PrevShowRegistrationResource\Pages;
 use App\Models\PrevShowRegistration;
 use Filament\Forms\Components\DatePicker;
@@ -9,16 +21,7 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -31,7 +34,7 @@ class PrevShowRegistrationResource extends Resource
 
     protected static ?string $slug = 'prev-show-registrations';
 
-    protected static ?string $navigationIcon = 'fas-clipboard-check';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-clipboard-check';
 
     protected static ?int $navigationSort = 30;
 
@@ -55,10 +58,10 @@ class PrevShowRegistrationResource extends Resource
         return __('Show Registrations');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 DatePicker::make('ModificationDateTime'),
 
                 DatePicker::make('CreationDateTime'),
@@ -387,13 +390,13 @@ class PrevShowRegistrationResource extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
@@ -405,9 +408,9 @@ class PrevShowRegistrationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShowRegistrations::route('/'),
-            'create' => Pages\CreatePrevShowRegistration::route('/create'),
-            'edit' => Pages\EditPrevShowRegistration::route('/{record}/edit'),
+            'index' => ListPrevShowRegistrations::route('/'),
+            'create' => CreatePrevShowRegistration::route('/create'),
+            'edit' => EditPrevShowRegistration::route('/{record}/edit'),
         ];
     }
 

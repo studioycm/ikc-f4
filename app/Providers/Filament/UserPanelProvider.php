@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Support\Enums\Width;
 use App\Filament\User\Pages\BreedingActivityDashboard;
 use App\Filament\User\Pages\Dashboard as UserDashboard;
 use App\Filament\User\Pages\DogsDashboard;
@@ -17,7 +18,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -39,7 +39,7 @@ class UserPanelProvider extends PanelProvider
             ->passwordReset()
             ->authGuard('web')
             ->databaseNotifications()
-            ->maxContentWidth(MaxWidth::Full)
+            ->maxContentWidth(Width::Full)
             ->breadcrumbs(true)
             ->favicon(url('favicon.ico'))
             ->font('Assistant', provider: GoogleFontProvider::class)

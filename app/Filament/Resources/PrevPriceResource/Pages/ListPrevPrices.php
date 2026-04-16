@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevPriceResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\PrevPriceResource;
 use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
@@ -16,7 +17,7 @@ class ListPrevPrices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

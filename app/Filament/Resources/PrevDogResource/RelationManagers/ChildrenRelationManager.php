@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\PrevDogResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Schema;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Filament\Resources\PrevDogResource;
 use App\Models\PrevDog;
-use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\Layout\Stack;
@@ -107,16 +108,16 @@ class ChildrenRelationManager extends RelationManager
                 ])->space(3),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->modalWidth('7xl'),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return PrevDogResource::infolist($infolist);
+        return PrevDogResource::infolist($schema);
     }
 
     protected function parentGenderMale(): bool

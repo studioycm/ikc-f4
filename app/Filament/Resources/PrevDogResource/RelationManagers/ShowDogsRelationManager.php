@@ -72,9 +72,9 @@ class ShowDogsRelationManager extends RelationManager
 //                    ->toggleable(),
             ])
             ->headerActions([])
-            ->actions([
+            ->recordActions([
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ])
             ->defaultSort('Shows_Dogs_DB.ShowID', 'desc');
     }

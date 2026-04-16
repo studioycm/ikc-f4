@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Support\Enums\Width;
+use Filament\Widgets\AccountWidget;
 use App\Filament\User\Pages\Dashboard as UserDashboard;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\FontProviders\GoogleFontProvider;
@@ -16,7 +18,6 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -49,7 +50,7 @@ class AdminPanelProvider extends PanelProvider
             // ->spa()
             ->databaseNotifications()
             // ->databaseNotificationsPolling('60s')
-            ->maxContentWidth(MaxWidth::Full)
+            ->maxContentWidth(Width::Full)
             ->colors([
                 // 'primary' => Color::hex('#5566aa'),
                 'pink' => Color::Pink,
@@ -67,7 +68,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+                AccountWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

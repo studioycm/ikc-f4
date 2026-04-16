@@ -2,24 +2,27 @@
 
 namespace App\Filament\User\Widgets\Sections;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Filament\User\Resources\BreedingInquiryResource;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevDog;
 use Carbon\Carbon;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Infolists\Components\Grid as InfolistGrid;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section as InfolistSection;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -70,7 +73,7 @@ class UserDogsTable extends BaseWidget
                     ->orderBy('SagirID', 'desc')
             )
             ->columns([
-                Tables\Columns\TextColumn::make('SagirID')
+                TextColumn::make('SagirID')
                     ->label(__('Sagir'))
                     ->description(fn(PrevDog $record): string => $record->id ? __('ID') . ': ' . $record->id : '')
                     ->size('lg')
@@ -78,37 +81,37 @@ class UserDogsTable extends BaseWidget
                     ->color(fn(PrevDog $record): string => $record->sagir_prefix?->getColor() ?? 'gray')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('full_name')
+                TextColumn::make('full_name')
                     ->label(__('Dog name'))
                     ->description(fn(PrevDog $record): string => $record->breed?->BreedName ?? __('N/A'))
                     ->searchable(['Heb_Name', 'Eng_Name'])
                     ->sortable(['Heb_Name']),
-                Tables\Columns\TextColumn::make('BirthDate')
+                TextColumn::make('BirthDate')
                     ->label(__('Birth Date'))
                     ->date('Y-m-d')
                     ->description(fn(PrevDog $record): string => $record->age_years ?? '')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('GenderID')
+                TextColumn::make('GenderID')
                     ->label(__('Gender'))
                     ->badge()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('titles.name')
+                TextColumn::make('titles.name')
                     ->label(__('Titles'))
                     ->listWithLineBreaks()
                     ->limitList(2)
                     ->expandableLimitedList(),
-                Tables\Columns\TextColumn::make('father.full_name')
+                TextColumn::make('father.full_name')
                     ->label(__('Father'))
                     ->description(fn(PrevDog $record): string => $record->father?->SagirID ?? __('N/A'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('mother.full_name')
+                TextColumn::make('mother.full_name')
                     ->label(__('Mother'))
                     ->description(fn(PrevDog $record): string => $record->mother?->SagirID ?? __('N/A'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('breedinghouse.name')
+                TextColumn::make('breedinghouse.name')
                     ->label(__('Kennel'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('owners.full_name')
+                TextColumn::make('owners.full_name')
                     ->label(__('Other Owners'))
                     ->listWithLineBreaks()
                     ->limitList(1)
@@ -121,14 +124,14 @@ class UserDogsTable extends BaseWidget
                     })
                     ->toggleable(),
             ])
-            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContentCollapsible)
+            ->filtersLayout(FiltersLayout::AboveContentCollapsible)
             ->persistFiltersInSession(true)
             ->filtersFormColumns(4)
             ->deselectAllRecordsWhenFiltered(true)
             ->filters([
                 Filter::make('GenderID')
                     ->label(__('Gender'))
-                    ->form([
+                    ->schema([
                         ToggleButtons::make('GenderID')
                             ->label(__('Gender'))
                             ->options(LegacyDogGender::class)
@@ -139,7 +142,7 @@ class UserDogsTable extends BaseWidget
                         filled($data['GenderID'] ?? null),
                         fn(Builder $dogQuery): Builder => $dogQuery->where('GenderID', $data['GenderID'])
                     )),
-                Tables\Filters\SelectFilter::make('breed')
+                SelectFilter::make('breed')
                     ->label(__('Breed'))
                     ->relationship('breed', 'BreedName', modifyQueryUsing: fn(Builder $query): Builder => $query->whereIn('id', $this->getCurrentUserBreedIds()))
                     ->placeholder(__('All'))
@@ -147,7 +150,7 @@ class UserDogsTable extends BaseWidget
                     ->multiple()
                     ->searchable(['BreedName', 'BreedNameEN']),
                 Filter::make('BirthDate')
-                    ->form([
+                    ->schema([
                         Section::make(__('Birth Date Range'))
                             ->description(__('Leave "End" empty to use today'))
                             ->schema([
@@ -176,7 +179,7 @@ class UserDogsTable extends BaseWidget
                             );
                     }),
                 Filter::make('age_groups')
-                    ->form([
+                    ->schema([
                         ToggleButtons::make('age_ranges')
                             ->label(__('Age Groups'))
                             ->options([
@@ -224,15 +227,15 @@ class UserDogsTable extends BaseWidget
                         });
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->modalHeading(fn(PrevDog $record): string => $record->full_name)
-                    ->infolist(fn(Infolist $infolist): Infolist => $infolist
-                        ->schema([
+                    ->schema(fn(Schema $schema): Schema => $schema
+                        ->components([
                             Tabs::make(__('Dog Details'))->tabs([
                                 Tab::make(__('Basic Info'))
                                     ->schema([
-                                        InfolistGrid::make(2)->schema([
+                                        Grid::make(2)->schema([
                                             TextEntry::make('SagirID')
                                                 ->label(__('Sagir'))
                                                 ->prefix(fn(PrevDog $record): string => $record->sagir_prefix?->code() ?? ''),
@@ -262,7 +265,7 @@ class UserDogsTable extends BaseWidget
                                         TextEntry::make('no_pedigree')
                                             ->label(__('Pedigree Missing'))
                                             ->visible(fn(PrevDog $record): bool => empty($record->father) && empty($record->mother)),
-                                        InfolistSection::make(__('Parents'))->schema([
+                                        Section::make(__('Parents'))->schema([
                                             TextEntry::make('father.full_name')
                                                 ->label(__('Father')),
                                             TextEntry::make('father.SagirID')
@@ -319,21 +322,21 @@ class UserDogsTable extends BaseWidget
                             ])->columnSpanFull(),
                         ])
                     ),
-                Tables\Actions\Action::make('pedigree_tree_modal')
+                Action::make('pedigree_tree_modal')
                     ->label(__('Pedigree'))
                     ->icon('fas-sitemap')
                     ->color('primary')
                     ->hidden(fn(PrevDog $record): bool => empty($record->father) && empty($record->mother))
                     ->modalHeading(__('Pedigree Tree'))
-                    ->modalWidth(MaxWidth::Full)
+                    ->modalWidth(Width::Full)
                     ->modalSubmitAction(false)
-                    ->modalCancelAction(fn(StaticAction $action): StaticAction => $action->label(__('Close')))
+                    ->modalCancelAction(fn(Action $action): Action => $action->label(__('Close')))
                     ->modalContent(fn(PrevDog $record): View => view('legacy.pedigree.pedigree-tree-modal', [
                         'dogId' => $record->id,
                         'settings' => config('pedigree_tree.presets.user_widget_modal', []),
                         'showBuilder' => false,
                     ])),
-                Tables\Actions\Action::make('breeding')
+                Action::make('breeding')
                     ->label(__('Litter'))
                     ->tooltip(__('Open Litter Report'))
                     ->icon('heroicon-o-heart')

@@ -2,6 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use App\Filament\Resources\PrevShowClassResource\Pages\ListPrevShowClasses;
+use App\Filament\Resources\PrevShowClassResource\Pages\CreatePrevShowClass;
+use App\Filament\Resources\PrevShowClassResource\Pages\ViewPrevShowClass;
+use App\Filament\Resources\PrevShowClassResource\Pages\EditPrevShowClass;
 use App\Filament\Resources\PrevShowArenaResource as ArenaRes;
 use App\Filament\Resources\PrevShowClassResource\Pages;
 use App\Filament\Resources\PrevShowResource as ShowRes;
@@ -9,15 +19,8 @@ use App\Models\PrevShowClass;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid as InfolistGrid;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +31,7 @@ class PrevShowClassResource extends Resource
 
     protected static ?string $slug = 'prev-show-classes';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 80;
 
@@ -52,10 +55,10 @@ class PrevShowClassResource extends Resource
         return __('Show Classes');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('DataID')
                     ->required()
                     ->integer(),
@@ -178,21 +181,21 @@ class PrevShowClassResource extends Resource
             ])
             ->filters([
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
+        return $schema->components([
             Tabs::make('ClassTabs')->tabs([
                 Tab::make(__('Overview'))
                     ->schema([
-                        InfolistGrid::make(3)->schema([
+                        Grid::make(3)->schema([
                             TextEntry::make('ClassName')->label(__('Class Name')),
                             TextEntry::make('GenderID')->label(__('Gender')),
                             TextEntry::make('BreedID')->label(__('Breed (code)')),
@@ -202,14 +205,14 @@ class PrevShowClassResource extends Resource
                     ]),
                 Tab::make(__('Age'))
                     ->schema([
-                        InfolistGrid::make(2)->schema([
+                        Grid::make(2)->schema([
                             TextEntry::make('Age_FromMonths')->label(__('From (months)')),
                             TextEntry::make('Age_TillMonths')->label(__('Till (months)')),
                         ]),
                     ]),
                 Tab::make(__('Flags'))
                     ->schema([
-                        InfolistGrid::make(3)->schema([
+                        Grid::make(3)->schema([
                             TextEntry::make('IsChampClass'),
                             TextEntry::make('IsWorkingClass'),
                             TextEntry::make('IsOpenClass'),
@@ -227,10 +230,10 @@ class PrevShowClassResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShowClasses::route('/'),
-            'create' => Pages\CreatePrevShowClass::route('/create'),
-            'view' => Pages\ViewPrevShowClass::route('/{record}'),
-            'edit' => Pages\EditPrevShowClass::route('/{record}/edit'),
+            'index' => ListPrevShowClasses::route('/'),
+            'create' => CreatePrevShowClass::route('/create'),
+            'view' => ViewPrevShowClass::route('/{record}'),
+            'edit' => EditPrevShowClass::route('/{record}/edit'),
         ];
     }
 

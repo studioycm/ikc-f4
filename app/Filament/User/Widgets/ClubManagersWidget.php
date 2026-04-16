@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ClubManagersWidget extends Widget
 {
-    protected static string $view = 'filament.user.widgets.club-managers-widget';
+    protected string $view = 'filament.user.widgets.club-managers-widget';
 
     protected int|string|array $columnSpan = 1;
 

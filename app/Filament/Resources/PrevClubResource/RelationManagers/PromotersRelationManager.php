@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\PrevClubResource\RelationManagers;
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevUserResource;
 use App\Models\PrevBreedUser;
 use App\Models\PrevClub;
@@ -88,7 +91,7 @@ class PromotersRelationManager extends RelationManager
             ])
             ->filters([
                 Filter::make('created_between')
-                    ->form([
+                    ->schema([
                         DatePicker::make('created_from')->label(__('Created From')),
                         DatePicker::make('created_until')->label(__('Created Until')),
                     ])
@@ -102,7 +105,7 @@ class PromotersRelationManager extends RelationManager
                                 ->wherePivot('created_at', '<=', $date . ' 23:59:59')));
                     }),
                 Filter::make('updated_between')
-                    ->form([
+                    ->schema([
                         DatePicker::make('updated_from')->label(__('Updated From')),
                         DatePicker::make('updated_until')->label(__('Updated Until')),
                     ])
@@ -124,17 +127,17 @@ class PromotersRelationManager extends RelationManager
                     )),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('attachPromoter')
+                Action::make('attachPromoter')
                     ->label(__('Attach Promoter'))
                     ->icon('heroicon-o-plus')
-                    ->form([
-                        Forms\Components\Select::make('user_id')
+                    ->schema([
+                        Select::make('user_id')
                             ->label(__('User'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name)
                             ->required(),
-                        Forms\Components\Select::make('breed_id')
+                        Select::make('breed_id')
                             ->label(__('Breed'))
                             ->options($this->getOwnerRecord()->breeds()->orderBy('BreedName')->pluck('BreedName', 'BreedsDB.id')->all())
                             ->searchable()
@@ -151,10 +154,10 @@ class PromotersRelationManager extends RelationManager
                         $assignment->save();
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Promoter'))
-                    ->infolist([
+                    ->schema([
                         TextEntry::make('name')->label(__('Name')),
                         TextEntry::make('club_titles_text')
                             ->label(__('Title'))
@@ -185,17 +188,17 @@ class PromotersRelationManager extends RelationManager
                     ->modalHeading(fn(PrevUser $record): string => $record->name)
                     ->modalSubmitAction(false)
                     ->extraModalFooterActions([
-                        Tables\Actions\Action::make('editPromoter')
+                        Action::make('editPromoter')
                             ->label(__('Edit Promoter'))
                             ->icon('heroicon-o-pencil-square')
                             ->url(fn(PrevUser $record): string => PrevUserResource::getUrl('edit', ['record' => $record]))
                             ->openUrlInNewTab(),
                     ]),
-                Tables\Actions\Action::make('detachPromoter')
+                Action::make('detachPromoter')
                     ->label(__('Detach'))
                     ->requiresConfirmation()
-                    ->form([
-                        Forms\Components\Select::make('breed_ids')
+                    ->schema([
+                        Select::make('breed_ids')
                             ->label(__('Breeds'))
                             ->multiple()
                             ->options(fn(PrevUser $record): array => $record->promotedBreeds
@@ -211,7 +214,7 @@ class PromotersRelationManager extends RelationManager
                             ->delete();
                     }),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
     protected function resolvePromoterCreatedAt(PrevUser $record): ?string

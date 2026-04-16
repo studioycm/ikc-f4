@@ -1,94 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevBreedingRelatedDog;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevBreedingRelatedDogPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any breeding related dogs.
-     *
-     * @param User $user
-     * @return bool
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::breeding::related::dog');
+        return $authUser->can('ViewAny:PrevBreedingRelatedDog');
     }
 
-    /**
-     * Determine whether the user can view the breeding related dog.
-     *
-     * @param User $user
-     * @param PrevBreedingRelatedDog $breedingRelatedDog
-     * @return bool
-     */
-    public function view(User $user, PrevBreedingRelatedDog $breedingRelatedDog): bool
+    public function view(AuthUser $authUser, PrevBreedingRelatedDog $prevBreedingRelatedDog): bool
     {
-        return $user->can('view_prev::breeding::related::dog');
+        return $authUser->can('View:PrevBreedingRelatedDog');
     }
 
-    /**
-     * Determine whether the user can create breeding related dogs.
-     *
-     * @param User $user
-     * @return bool
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::breeding::related::dog');
+        return $authUser->can('Create:PrevBreedingRelatedDog');
     }
 
-    /**
-     * Determine whether the user can update the breeding related dog.
-     *
-     * @param User $user
-     * @param PrevBreedingRelatedDog $breedingRelatedDog
-     * @return bool
-     */
-    public function update(User $user, PrevBreedingRelatedDog $breedingRelatedDog): bool
+    public function update(AuthUser $authUser, PrevBreedingRelatedDog $prevBreedingRelatedDog): bool
     {
-        return $user->can('update_prev::breeding::related::dog');
+        return $authUser->can('Update:PrevBreedingRelatedDog');
     }
 
-    /**
-     * Determine whether the user can delete the breeding related dog.
-     *
-     * @param User $user
-     * @param PrevBreedingRelatedDog $breedingRelatedDog
-     * @return bool
-     */
-    public function delete(User $user, PrevBreedingRelatedDog $breedingRelatedDog): bool
+    public function delete(AuthUser $authUser, PrevBreedingRelatedDog $prevBreedingRelatedDog): bool
     {
-        return $user->can('delete_prev::breeding::related::dog');
+        return $authUser->can('Delete:PrevBreedingRelatedDog');
     }
 
-    /**
-     * Determine whether the user can restore the breeding related dog.
-     *
-     * @param User $user
-     * @param PrevBreedingRelatedDog $breedingRelatedDog
-     * @return bool
-     */
-    public function restore(User $user, PrevBreedingRelatedDog $breedingRelatedDog): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::breeding::related::dog');
+        return $authUser->can('DeleteAny:PrevBreedingRelatedDog');
     }
 
-    /**
-     * Determine whether the user can permanently delete the breeding related dog.
-     *
-     * @param User $user
-     * @param PrevBreedingRelatedDog $breedingRelatedDog
-     * @return bool
-     */
-    public function forceDelete(User $user, PrevBreedingRelatedDog $breedingRelatedDog): bool
+    public function restore(AuthUser $authUser, PrevBreedingRelatedDog $prevBreedingRelatedDog): bool
     {
-        return $user->can('force_delete_prev::breeding::related::dog');
+        return $authUser->can('Restore:PrevBreedingRelatedDog');
     }
+
+    public function forceDelete(AuthUser $authUser, PrevBreedingRelatedDog $prevBreedingRelatedDog): bool
+    {
+        return $authUser->can('ForceDelete:PrevBreedingRelatedDog');
+    }
+
+    public function forceDeleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ForceDeleteAny:PrevBreedingRelatedDog');
+    }
+
+    public function restoreAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('RestoreAny:PrevBreedingRelatedDog');
+    }
+
+    public function replicate(AuthUser $authUser, PrevBreedingRelatedDog $prevBreedingRelatedDog): bool
+    {
+        return $authUser->can('Replicate:PrevBreedingRelatedDog');
+    }
+
+    public function reorder(AuthUser $authUser): bool
+    {
+        return $authUser->can('Reorder:PrevBreedingRelatedDog');
+    }
+
 }

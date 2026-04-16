@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources\PrevDogResource\RelationManagers;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
@@ -16,7 +22,7 @@ class HealthRecordsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'type';
 
-    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('Health Records');
     }
@@ -33,9 +39,9 @@ class HealthRecordsRelationManager extends RelationManager
                 TextColumn::make('updated_at')->label(__('Updated'))->since()->toggleable(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label(__('Add Health Record'))
-                    ->form([
+                    ->schema([
                         TextInput::make('DataID')->label(__('ID'))->numeric()->required(),
                         TextInput::make('type')->label(__('Type'))->maxLength(255),
                         DatePicker::make('TestDate')->label(__('Test Date')),
@@ -44,16 +50,16 @@ class HealthRecordsRelationManager extends RelationManager
                         TextInput::make('ImageResultID')->label(__('Image Result'))->maxLength(255),
                         Checkbox::make('show_in_paper')->label(__('Show in Paper')),
                     ])
-                    ->mutateFormDataUsing(function (array $data): array {
+                    ->mutateDataUsing(function (array $data): array {
                         $data['SagirID'] = $this->getOwnerRecord()->SagirID;
 
                         return $data;
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->label(__('Edit'))
-                    ->form([
+                    ->schema([
                         TextInput::make('type')->label(__('Type'))->maxLength(255),
                         DatePicker::make('TestDate')->label(__('Test Date')),
                         TextInput::make('TestFile')->label(__('Test File'))->maxLength(255),
@@ -61,11 +67,11 @@ class HealthRecordsRelationManager extends RelationManager
                         TextInput::make('ImageResultID')->label(__('Image Result'))->maxLength(255),
                         Checkbox::make('show_in_paper')->label(__('Show in Paper')),
                     ]),
-                Tables\Actions\DeleteAction::make()->label(__('Delete')),
+                DeleteAction::make()->label(__('Delete')),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

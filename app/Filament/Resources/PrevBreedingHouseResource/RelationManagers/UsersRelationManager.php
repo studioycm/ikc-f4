@@ -2,10 +2,16 @@
 
 namespace App\Filament\Resources\PrevBreedingHouseResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\AttachAction;
+use Filament\Forms\Components\Select;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use App\Filament\Resources\PrevUserResource;
 use App\Models\PrevUser;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -23,9 +29,9 @@ class UsersRelationManager extends RelationManager
         return __('Users');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return PrevUserResource::form($form);
+        return PrevUserResource::form($schema);
     }
 
     public function table(Table $table): Table
@@ -40,26 +46,26 @@ class UsersRelationManager extends RelationManager
                 TextColumn::make('pivot.updated_at')->dateTime()->label(__('Updated At')),
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                AttachAction::make()
                     ->label(__('Attach User'))
 //                    ->preloadRecordSelect()
-                    ->recordSelect(function (Forms\Components\Select $select) {
+                    ->recordSelect(function (Select $select) {
                         return $select
                             ->searchable(['first_name', 'last_name', 'first_name_en', 'last_name_en'])
                             ->getSearchResultsUsing(fn(string $search) => PrevUser::selectOptions($search))
                             ->getOptionLabelUsing(fn($value) => PrevUser::query()->find($value)?->name);
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View User'))
                     ->url(fn(PrevUser $record) => PrevUserResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab(),
-                Tables\Actions\DetachAction::make()->label(__('Detach')),
+                DetachAction::make()->label(__('Detach')),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

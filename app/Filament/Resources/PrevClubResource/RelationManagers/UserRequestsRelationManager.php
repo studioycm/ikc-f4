@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevClubResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevUserRequestResource;
 use App\Models\PrevUserRequest;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -100,12 +101,12 @@ class UserRequestsRelationManager extends RelationManager
                     ->toggleable(),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Request'))
                     ->url(fn(PrevUserRequest $record): string => PrevUserRequestResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

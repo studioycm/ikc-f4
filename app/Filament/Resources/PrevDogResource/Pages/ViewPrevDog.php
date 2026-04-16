@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PrevDogResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
 use App\Filament\Resources\PrevDogResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
@@ -18,8 +20,8 @@ class ViewPrevDog extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
-            Actions\Action::make('pedigree')
+            EditAction::make(),
+            Action::make('pedigree')
                 ->label(__('Manage Pedigree'))
                 ->icon('heroicon-m-share')
                 ->url(PrevDogResource::getUrl('pedigree', ['record' => $this->record])),

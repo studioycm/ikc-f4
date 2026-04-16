@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\BreedingInquiry;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class BreedingInquiryPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_breeding::inquiry');
+        return $authUser->can('ViewAny:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, BreedingInquiry $breedingInquiry): bool
+    public function view(AuthUser $authUser, BreedingInquiry $breedingInquiry): bool
     {
-        return $user->can('view_breeding::inquiry');
+        return $authUser->can('View:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_breeding::inquiry');
+        return $authUser->can('Create:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, BreedingInquiry $breedingInquiry): bool
+    public function update(AuthUser $authUser, BreedingInquiry $breedingInquiry): bool
     {
-        return $user->can('update_breeding::inquiry');
+        return $authUser->can('Update:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, BreedingInquiry $breedingInquiry): bool
+    public function delete(AuthUser $authUser, BreedingInquiry $breedingInquiry): bool
     {
-        return $user->can('delete_breeding::inquiry');
+        return $authUser->can('Delete:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_breeding::inquiry');
+        return $authUser->can('DeleteAny:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, BreedingInquiry $breedingInquiry): bool
+    public function restore(AuthUser $authUser, BreedingInquiry $breedingInquiry): bool
     {
-        return $user->can('force_delete_breeding::inquiry');
+        return $authUser->can('Restore:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, BreedingInquiry $breedingInquiry): bool
     {
-        return $user->can('force_delete_any_breeding::inquiry');
+        return $authUser->can('ForceDelete:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, BreedingInquiry $breedingInquiry): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_breeding::inquiry');
+        return $authUser->can('ForceDeleteAny:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_breeding::inquiry');
+        return $authUser->can('RestoreAny:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, BreedingInquiry $breedingInquiry): bool
+    public function replicate(AuthUser $authUser, BreedingInquiry $breedingInquiry): bool
     {
-        return $user->can('replicate_breeding::inquiry');
+        return $authUser->can('Replicate:BreedingInquiry');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_breeding::inquiry');
+        return $authUser->can('Reorder:BreedingInquiry');
     }
+
 }

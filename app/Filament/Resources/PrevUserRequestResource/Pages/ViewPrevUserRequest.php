@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevUserRequestResource\Pages;
 
+use Filament\Actions\EditAction;
 use App\Filament\Resources\PrevUserRequestResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
@@ -19,7 +20,7 @@ class ViewPrevUserRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

@@ -10,7 +10,7 @@ class BreedingActivityDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationIcon = 'heroicon-o-heart';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-heart';
 
     protected static string $routePath = 'breeding-activity';
 
@@ -24,7 +24,7 @@ class BreedingActivityDashboard extends BaseDashboard
         return __('Previous Litters');
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int|array
     {
         return 1;
     }

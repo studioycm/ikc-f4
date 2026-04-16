@@ -2,19 +2,23 @@
 
 namespace App\Livewire\Legacy\Pedigree;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\TextSize;
 use App\Models\PrevDog;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class DogSummary extends Component implements HasForms, HasInfolists
+class DogSummary extends Component implements HasForms, HasInfolists, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithInfolists;
 
@@ -30,23 +34,23 @@ class DogSummary extends Component implements HasForms, HasInfolists
         }
     }
 
-    public function summary(Infolist $infolist): Infolist
+    public function summary(Schema $schema): Schema
     {
         $d = $this->subject;
 
         if (!$d) {
-            return $infolist->schema([
+            return $schema->components([
                 TextEntry::make('placeholder')
                     ->label(false)
                     ->state(__('Select a dog to view its summary')),
             ]);
         }
 
-        return $infolist->record($d)->schema([
+        return $schema->record($d)->components([
             Grid::make(8)->schema([
                 TextEntry::make('full_name')
                     ->label('')
-                    ->size(TextEntry\TextEntrySize::Large)
+                    ->size(TextSize::Large)
                     ->weight('bold')
                     ->columnSpan(3),
                 TextEntry::make('isbr')

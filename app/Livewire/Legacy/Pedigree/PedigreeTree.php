@@ -2,22 +2,25 @@
 
 namespace App\Livewire\Legacy\Pedigree;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use App\Services\Legacy\Pedigree\PedigreeTreeBuilderService;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
-class PedigreeTree extends Component implements HasForms
+class PedigreeTree extends Component implements HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     #[Locked]
@@ -82,10 +85,10 @@ class PedigreeTree extends Component implements HasForms
         $this->syncSettingsFromForm(false);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Pedigree Builder'))
                     ->description(__('Configure pedigree depth, density, typography, card height, and the main-title display mode'))
                     ->collapsible()

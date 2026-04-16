@@ -2,6 +2,15 @@
 
 namespace App\Filament\Resources\PrevDogResource\RelationManagers;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\AttachAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Actions\EditAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use App\Filament\Resources\PrevShowResource;
 use App\Models\PrevTitle;
 use Filament\Forms;
@@ -27,31 +36,31 @@ class TitlesRelationManager extends RelationManager
             ->recordTitleAttribute('TitleName')
             ->defaultSort('Dogs_ScoresDB.EventDate', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('TitleName')
+                TextColumn::make('TitleName')
                     ->label(__('Title'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('awarding.EventPlace')
+                TextColumn::make('awarding.EventPlace')
                     ->label(__('Event Place'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('awarding.EventName')
+                TextColumn::make('awarding.EventName')
                     ->label(__('Event Name'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('awarding.EventDate')
+                TextColumn::make('awarding.EventDate')
                     ->date()
                     ->label(__('Event Date')),
-                Tables\Columns\TextColumn::make('awarding.ShowID')
+                TextColumn::make('awarding.ShowID')
                     ->label(__('Show'))
                     ->url(fn($state) => $state ? PrevShowResource::getUrl('view', ['record' => $state]) : null)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('awarding.created_at')
+                TextColumn::make('awarding.created_at')
                     ->dateTime()
                     ->label(__('Linked At')),
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                AttachAction::make()
                     ->label(__('Attach Title'))
                     ->preloadRecordSelect()
-                    ->recordSelect(function (Forms\Components\Select $select) {
+                    ->recordSelect(function (Select $select) {
                         return $select
                             ->searchable()
                             ->getSearchResultsUsing(function (string $search) {
@@ -66,27 +75,27 @@ class TitlesRelationManager extends RelationManager
                             ->getOptionLabelUsing(fn($value) => PrevTitle::query()->where('TitleCode', $value)->value('TitleName'));
                     })
                     ->form([
-                        Forms\Components\TextInput::make('EventPlace')->label(__('Event Place'))->maxLength(255),
-                        Forms\Components\TextInput::make('EventName')->label(__('Event Name'))->maxLength(255),
-                        Forms\Components\DatePicker::make('EventDate')->label(__('Event Date')),
-                        Forms\Components\TextInput::make('ShowID')->label(__('Show'))->numeric(),
+                        TextInput::make('EventPlace')->label(__('Event Place'))->maxLength(255),
+                        TextInput::make('EventName')->label(__('Event Name'))->maxLength(255),
+                        DatePicker::make('EventDate')->label(__('Event Date')),
+                        TextInput::make('ShowID')->label(__('Show'))->numeric(),
                     ]),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->label(__('Edit Award'))
-                    ->form([
-                        Forms\Components\TextInput::make('EventPlace')->label(__('Event Place'))->maxLength(255),
-                        Forms\Components\TextInput::make('EventName')->label(__('Event Name'))->maxLength(255),
-                        Forms\Components\DatePicker::make('EventDate')->label(__('Event Date')),
-                        Forms\Components\TextInput::make('ShowID')->label(__('Show'))->numeric(),
+                    ->schema([
+                        TextInput::make('EventPlace')->label(__('Event Place'))->maxLength(255),
+                        TextInput::make('EventName')->label(__('Event Name'))->maxLength(255),
+                        DatePicker::make('EventDate')->label(__('Event Date')),
+                        TextInput::make('ShowID')->label(__('Show'))->numeric(),
                     ]),
-                Tables\Actions\DetachAction::make()
+                DetachAction::make()
                     ->label(__('Detach')),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

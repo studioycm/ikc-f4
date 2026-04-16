@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\PrevSkillUserResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use App\Filament\Resources\PrevSkillUserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -24,10 +28,10 @@ class EditPrevSkillUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 }

@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevPrice;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevPricePolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::price');
+        return $authUser->can('ViewAny:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevPrice $prevPrice): bool
+    public function view(AuthUser $authUser, PrevPrice $prevPrice): bool
     {
-        return $user->can('view_prev::price');
+        return $authUser->can('View:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::price');
+        return $authUser->can('Create:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevPrice $prevPrice): bool
+    public function update(AuthUser $authUser, PrevPrice $prevPrice): bool
     {
-        return $user->can('update_prev::price');
+        return $authUser->can('Update:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevPrice $prevPrice): bool
+    public function delete(AuthUser $authUser, PrevPrice $prevPrice): bool
     {
-        return $user->can('delete_prev::price');
+        return $authUser->can('Delete:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::price');
+        return $authUser->can('DeleteAny:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevPrice $prevPrice): bool
+    public function restore(AuthUser $authUser, PrevPrice $prevPrice): bool
     {
-        return $user->can('force_delete_prev::price');
+        return $authUser->can('Restore:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevPrice $prevPrice): bool
     {
-        return $user->can('force_delete_any_prev::price');
+        return $authUser->can('ForceDelete:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevPrice $prevPrice): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::price');
+        return $authUser->can('ForceDeleteAny:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::price');
+        return $authUser->can('RestoreAny:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevPrice $prevPrice): bool
+    public function replicate(AuthUser $authUser, PrevPrice $prevPrice): bool
     {
-        return $user->can('replicate_prev::price');
+        return $authUser->can('Replicate:PrevPrice');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::price');
+        return $authUser->can('Reorder:PrevPrice');
     }
+
 }

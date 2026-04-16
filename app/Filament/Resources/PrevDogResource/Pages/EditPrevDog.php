@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PrevDogResource\Pages;
 
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
 use App\Filament\Resources\PrevDogResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -26,8 +28,8 @@ class EditPrevDog extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            Actions\Action::make('pedigree')
+            DeleteAction::make(),
+            Action::make('pedigree')
                 ->label(__('Manage Pedigree'))
                 ->icon('heroicon-m-share')
                 ->url(PrevDogResource::getUrl('pedigree', ['record' => $this->record])),

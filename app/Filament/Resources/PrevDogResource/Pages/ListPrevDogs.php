@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\PrevDogResource\Pages;
 
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\PrevDogResource\Widgets\DogStats;
+use Filament\Schemas\Components\Tabs\Tab;
 use App\Enums\Legacy\LegacySagirPrefix;
 use App\Filament\Resources\PrevDogResource;
 use App\Models\PrevDog;
 use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPrevDogs extends ListRecords
@@ -29,7 +31,7 @@ class ListPrevDogs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
 //            Actions\Action::make('pedigree')
 //                ->label(__('Manage Pedigree'))
 //                ->icon('heroicon-m-share')
@@ -40,7 +42,7 @@ class ListPrevDogs extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            PrevDogResource\Widgets\DogStats::class,
+            DogStats::class,
         ];
     }
 

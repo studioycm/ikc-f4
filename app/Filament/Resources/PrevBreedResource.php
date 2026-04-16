@@ -2,17 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ImportAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Resources\PrevBreedResource\Pages\ListPrevBreeds;
+use App\Filament\Resources\PrevBreedResource\Pages\CreatePrevBreed;
+use App\Filament\Resources\PrevBreedResource\Pages\EditPrevBreed;
+use App\Filament\Resources\PrevBreedResource\Pages\ViewPrevBreed;
+use App\Filament\Resources\PrevBreedResource\Widgets\BreedStats;
 use App\Filament\Exports\PrevBreedExporter;
 use App\Filament\Imports\PrevBreedImporter;
 use App\Filament\Resources\PrevBreedResource\Pages;
 use App\Models\PrevBreed;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,40 +57,40 @@ class PrevBreedResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationIcon = 'fas-dna';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-dna';
 
     //    public static function getNavigationBadge(): ?string
     //    {
     //        return static::getModel()::count();
     //    }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('DataID')
+        return $schema
+            ->components([
+                TextInput::make('DataID')
                     ->numeric(),
-                Forms\Components\DateTimePicker::make('ModificationDateTime'),
-                Forms\Components\DateTimePicker::make('CreationDateTime'),
-                Forms\Components\TextInput::make('BreedName')
+                DateTimePicker::make('ModificationDateTime'),
+                DateTimePicker::make('CreationDateTime'),
+                TextInput::make('BreedName')
                     ->maxLength(200),
-                Forms\Components\TextInput::make('BreedCode')
+                TextInput::make('BreedCode')
                     ->numeric(),
-                Forms\Components\Textarea::make('Desc')
+                Textarea::make('Desc')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('BreedNameEN')
+                TextInput::make('BreedNameEN')
                     ->maxLength(200),
-                Forms\Components\TextInput::make('GroupID')
+                TextInput::make('GroupID')
                     ->numeric(),
-                Forms\Components\TextInput::make('FCICODE')
+                TextInput::make('FCICODE')
                     ->maxLength(200),
-                Forms\Components\TextInput::make('UserManagerID')
+                TextInput::make('UserManagerID')
                     ->numeric(),
-                Forms\Components\TextInput::make('ClubManagerID')
+                TextInput::make('ClubManagerID')
                     ->numeric(),
-                Forms\Components\TextInput::make('fci_group')
+                TextInput::make('fci_group')
                     ->maxLength(50),
-                Forms\Components\TextInput::make('status')
+                TextInput::make('status')
                     ->maxLength(50),
             ]);
     }
@@ -91,87 +104,87 @@ class PrevBreedResource extends Resource
                     ->withCount(['dogs']);
             })
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label(__('ID'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('BreedName')
+                TextColumn::make('BreedName')
                     ->label(__('Hebrew Name'))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('BreedNameEN')
+                TextColumn::make('BreedNameEN')
                     ->label(__('English Name'))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('BreedCode')
+                TextColumn::make('BreedCode')
                     ->label(__('Breed Code'))
                     ->numeric()
                     ->sortable()
                     ->searchable(isGlobal: false, isIndividual: true),
-                Tables\Columns\TextColumn::make('dogs_count')
+                TextColumn::make('dogs_count')
                     ->label(__('Dogs Count'))
                     ->counts('dogs')
                     ->numeric()
                     ->sortable(['dogs_count'])
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('FCICODE')
+                TextColumn::make('FCICODE')
                     ->label(__('FCI Code'))
                     ->sortable()
                     ->searchable(isGlobal: false, isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('fci_group')
+                TextColumn::make('fci_group')
                     ->label(__('FCI Group'))
                     ->sortable()
                     ->searchable(isGlobal: false, isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('DataID')
+                TextColumn::make('DataID')
                     ->label(__('Previous ID'))
                     ->numeric()
                     ->sortable()
                     ->searchable(isGlobal: false, isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('ModificationDateTime')
+                TextColumn::make('ModificationDateTime')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('CreationDateTime')
+                TextColumn::make('CreationDateTime')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('GroupID')
+                TextColumn::make('GroupID')
                     ->label(__('Previous GroupID'))
                     ->numeric()
                     ->sortable()
                     ->searchable(isGlobal: false, isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('promoters.full_name')
+                TextColumn::make('promoters.full_name')
                     ->label(__('Promoters'))
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList()
                     ->searchable(['first_name', 'last_name', 'first_name_en', 'last_name_en'], isGlobal: false, isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Filter::make('trashed')
-                    ->form([
-                        Forms\Components\ToggleButtons::make('trashed')
+                    ->schema([
+                        ToggleButtons::make('trashed')
                             ->label(__('Trashed'))
                             ->options([
                                 'not_deleted' => 'Not Deleted',
@@ -196,18 +209,18 @@ class PrevBreedResource extends Resource
                         };
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevBreedExporter::class),
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->headerActions([
@@ -244,17 +257,17 @@ class PrevBreedResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevBreeds::route('/'),
-            'create' => Pages\CreatePrevBreed::route('/create'),
-            'edit' => Pages\EditPrevBreed::route('/{record}/edit'),
-            'view' => Pages\ViewPrevBreed::route('/{record}'),
+            'index' => ListPrevBreeds::route('/'),
+            'create' => CreatePrevBreed::route('/create'),
+            'edit' => EditPrevBreed::route('/{record}/edit'),
+            'view' => ViewPrevBreed::route('/{record}'),
         ];
     }
 
     public static function getWidgets(): array
     {
         return [
-            PrevBreedResource\Widgets\BreedStats::class,
+            BreedStats::class,
         ];
     }
 }

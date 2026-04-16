@@ -2,10 +2,26 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\BreedingInquiryResource\Pages\ListBreedingInquiries;
+use App\Filament\Resources\BreedingInquiryResource\Pages\CreateBreedingInquiry;
+use App\Filament\Resources\BreedingInquiryResource\Pages\ViewBreedingInquiry;
+use App\Filament\Resources\BreedingInquiryResource\Pages\EditBreedingInquiry;
 use App\Filament\Resources\BreedingInquiryResource\Pages;
 use App\Models\BreedingInquiry;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,7 +32,7 @@ class BreedingInquiryResource extends Resource
 {
     protected static ?string $model = BreedingInquiry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 3;
 
@@ -40,31 +56,31 @@ class BreedingInquiryResource extends Resource
         return __('Breeding Inquiries');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('user_id')
+        return $schema
+            ->components([
+                Select::make('user_id')
                     ->relationship('user', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('prev_user_id')
+                TextInput::make('prev_user_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('female_sagir_id')
+                TextInput::make('female_sagir_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('male_sagir_id')
+                TextInput::make('male_sagir_id')
                     ->numeric(),
-                Forms\Components\TextInput::make('litter_report_name')
+                TextInput::make('litter_report_name')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('breeding_date'),
-                Forms\Components\DatePicker::make('birthing_date'),
-                Forms\Components\TextInput::make('puppies'),
-                Forms\Components\TextInput::make('status')
+                DatePicker::make('breeding_date'),
+                DatePicker::make('birthing_date'),
+                TextInput::make('puppies'),
+                TextInput::make('status')
                     ->required()
                     ->maxLength(255)
                     ->default('draft'),
-                Forms\Components\DateTimePicker::make('submitted_at'),
+                DateTimePicker::make('submitted_at'),
             ]);
     }
 
@@ -72,56 +88,56 @@ class BreedingInquiryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('prev_user_id')
+                TextColumn::make('prev_user_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('female_sagir_id')
+                TextColumn::make('female_sagir_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('male_sagir_id')
+                TextColumn::make('male_sagir_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('litter_report_name')
+                TextColumn::make('litter_report_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('breeding_date')
+                TextColumn::make('breeding_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('birthing_date')
+                TextColumn::make('birthing_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('submitted_at')
+                TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -136,10 +152,10 @@ class BreedingInquiryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBreedingInquiries::route('/'),
-            'create' => Pages\CreateBreedingInquiry::route('/create'),
-            'view' => Pages\ViewBreedingInquiry::route('/{record}'),
-            'edit' => Pages\EditBreedingInquiry::route('/{record}/edit'),
+            'index' => ListBreedingInquiries::route('/'),
+            'create' => CreateBreedingInquiry::route('/create'),
+            'view' => ViewBreedingInquiry::route('/{record}'),
+            'edit' => EditBreedingInquiry::route('/{record}/edit'),
         ];
     }
 

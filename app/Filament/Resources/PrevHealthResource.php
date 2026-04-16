@@ -2,22 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use App\Filament\Resources\PrevHealthResource\Pages\ListPrevHealths;
+use App\Filament\Resources\PrevHealthResource\Pages\CreatePrevHealth;
+use App\Filament\Resources\PrevHealthResource\Pages\EditPrevHealth;
 use App\Filament\Resources\PrevHealthResource\Pages;
 use App\Models\PrevHealth;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -28,7 +31,7 @@ class PrevHealthResource extends Resource
 {
     protected static ?string $model = PrevHealth::class;
 
-    protected static ?string $navigationIcon = 'fas-stethoscope';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-stethoscope';
 
     protected static ?int $navigationSort = 10;
 
@@ -52,10 +55,10 @@ class PrevHealthResource extends Resource
         return __('Health Records');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('DataID')
                     ->required()
                     ->integer(),
@@ -119,13 +122,13 @@ class PrevHealthResource extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
@@ -137,9 +140,9 @@ class PrevHealthResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevHealths::route('/'),
-            'create' => Pages\CreatePrevHealth::route('/create'),
-            'edit' => Pages\EditPrevHealth::route('/{record}/edit'),
+            'index' => ListPrevHealths::route('/'),
+            'create' => CreatePrevHealth::route('/create'),
+            'edit' => EditPrevHealth::route('/{record}/edit'),
         ];
     }
 

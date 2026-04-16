@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevHealth;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevHealthPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::health');
+        return $authUser->can('ViewAny:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevHealth $prevHealth): bool
+    public function view(AuthUser $authUser, PrevHealth $prevHealth): bool
     {
-        return $user->can('view_prev::health');
+        return $authUser->can('View:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::health');
+        return $authUser->can('Create:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevHealth $prevHealth): bool
+    public function update(AuthUser $authUser, PrevHealth $prevHealth): bool
     {
-        return $user->can('update_prev::health');
+        return $authUser->can('Update:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevHealth $prevHealth): bool
+    public function delete(AuthUser $authUser, PrevHealth $prevHealth): bool
     {
-        return $user->can('delete_prev::health');
+        return $authUser->can('Delete:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::health');
+        return $authUser->can('DeleteAny:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevHealth $prevHealth): bool
+    public function restore(AuthUser $authUser, PrevHealth $prevHealth): bool
     {
-        return $user->can('force_delete_prev::health');
+        return $authUser->can('Restore:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevHealth $prevHealth): bool
     {
-        return $user->can('force_delete_any_prev::health');
+        return $authUser->can('ForceDelete:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevHealth $prevHealth): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::health');
+        return $authUser->can('ForceDeleteAny:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::health');
+        return $authUser->can('RestoreAny:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevHealth $prevHealth): bool
+    public function replicate(AuthUser $authUser, PrevHealth $prevHealth): bool
     {
-        return $user->can('replicate_prev::health');
+        return $authUser->can('Replicate:PrevHealth');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::health');
+        return $authUser->can('Reorder:PrevHealth');
     }
+
 }

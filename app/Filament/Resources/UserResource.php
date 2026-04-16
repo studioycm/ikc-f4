@@ -2,14 +2,28 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Auth\Notifications\VerifyEmail;
+use Filament\Forms\Components\RichEditor;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\PrevUser;
 use App\Models\User;
 use App\Notifications\UserMessageNotification;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
@@ -52,25 +66,25 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 98;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
 
     //    public static function getNavigationBadge(): ?string
     //    {
     //        return static::getModel()::count();
     //    }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label(__('Name'))
                     ->required(),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->label(__('Email'))
                     ->email()
                     ->required(),
-                Forms\Components\Select::make('prev_user_id')
+                Select::make('prev_user_id')
                     ->label(__('Legacy User'))
                     ->nullable()
                     ->placeholder(__('—'))
@@ -88,16 +102,16 @@ class UserResource extends Resource
                             ?->search_label;
                     })
                     ->unique(ignoreRecord: true),
-                Forms\Components\DateTimePicker::make('email_verified_at')
+                DateTimePicker::make('email_verified_at')
                     ->label(__('Verified At'))
                     ->native(false)
                     ->displayFormat('d/m/Y H:i'),
-                Forms\Components\TextInput::make('password')
+                TextInput::make('password')
                     ->label(__('Password'))
                     ->password()
                     ->hidden(fn(string $operation, ?User $record): bool => $operation === 'edit' && auth()->id() === $record?->id)
                     ->revealable(),
-                Forms\Components\Select::make('roles')
+                Select::make('roles')
                     ->label(__('Roles'))
                     ->relationship('roles', 'name')
                     ->multiple()
@@ -120,15 +134,15 @@ class UserResource extends Resource
                     ]);
             })
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label(__('ID'))
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name'))
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->label(__('Email'))
                     ->icon('heroicon-o-envelope')
                     ->iconColor('warning')
@@ -137,7 +151,7 @@ class UserResource extends Resource
                     ->copyable()
                     ->copyMessage('Email address copied')
                     ->copyMessageDuration(1500),
-                Tables\Columns\TextColumn::make('prevUser.name')
+                TextColumn::make('prevUser.name')
                     ->label(__('Legacy User'))
                     ->placeholder('-')
                     ->sortable(false)
@@ -166,18 +180,18 @@ class UserResource extends Resource
                     })
                     ->sortable(false)
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('prevUser.dogs_count')
+                TextColumn::make('prevUser.dogs_count')
                     ->label(__('dog/model/general.labels.plural'))
                     ->badge()
                     ->color(fn($state) => $state > 0 ? 'success' : 'gray')
                     ->default(0)
                     ->toggleable(),
-                Tables\Columns\IconColumn::make('email_verified_at')
+                IconColumn::make('email_verified_at')
                     ->label(__('Verified'))
                     ->boolean()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('roles.name')
+                TextColumn::make('roles.name')
                     ->label(__('Role'))
                     ->badge()
                     ->formatStateUsing(fn ($state): string => Str::headline($state))
@@ -187,12 +201,12 @@ class UserResource extends Resource
                     })
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated'))
                     ->dateTime()
                     ->sortable()
@@ -203,13 +217,13 @@ class UserResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('email_verification')
+            ->recordActions([
+                EditAction::make(),
+                Action::make('email_verification')
                     ->label(__('Verify'))
                     ->button()
                     ->tooltip(__('Send email verification link'))
-                    ->color(Color::hex('#ec8200'))
+                    ->color(Color::generateV3Palette('#ec8200'))
                     ->icon('heroicon-o-shield-check')
                     ->action(function (User $user) {
                         $notification = app(VerifyEmail::class);
@@ -227,27 +241,27 @@ class UserResource extends Resource
                             ->persistent()
                             ->send();
                     }),
-                Tables\Actions\Action::make('email_verified')
+                Action::make('email_verified')
                     ->label(__('Verified'))
                     ->button()
                     ->tooltip(__('Mark as verified'))
-                    ->color(Color::hex('#10b138'))
+                    ->color(Color::generateV3Palette('#10b138'))
                     ->icon('heroicon-o-check')
                     ->action(function (User $user) {
                         $user->markEmailAsVerified();
                     }),
-                Tables\Actions\Action::make('send_db_notice')
+                Action::make('send_db_notice')
                     ->label(__('Notify'))
                     ->button()
                     ->tooltip(__('Send a database notification to this user'))
                     ->color('gray')
                     ->icon('heroicon-o-bell')
-                    ->form([
-                        Forms\Components\TextInput::make('subject')
+                    ->schema([
+                        TextInput::make('subject')
                             ->label(__('Subject'))
                             ->required()
                             ->maxLength(150),
-                        Forms\Components\RichEditor::make('body')
+                        RichEditor::make('body')
                             ->label(__('Message'))
                             ->toolbarButtons([
                                 'attachFiles',
@@ -269,7 +283,6 @@ class UserResource extends Resource
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('editor-attachments')
                             ->fileAttachmentsVisibility('public')
-                            ->disableGrammarly()
                             ->columnSpanFull()
                             ->required(),
                     ])
@@ -286,18 +299,18 @@ class UserResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\Action::make('send_email')
+                Action::make('send_email')
                     ->label(__('Send Email'))
                     ->button()
                     ->tooltip(__('Send an email to this user'))
                     ->color('primary')
                     ->icon('heroicon-o-envelope')
-                    ->form([
-                        Forms\Components\TextInput::make('subject')
+                    ->schema([
+                        TextInput::make('subject')
                             ->label(__('Subject'))
                             ->required()
                             ->maxLength(150),
-                        Forms\Components\RichEditor::make('body')
+                        RichEditor::make('body')
                             ->label(__('Message'))
                             ->toolbarButtons([
                                 'attachFiles',
@@ -319,7 +332,6 @@ class UserResource extends Resource
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('editor-attachments')
                             ->fileAttachmentsVisibility('public')
-                            ->disableGrammarly()
                             ->columnSpanFull()
                             ->required(),
                     ])
@@ -337,19 +349,19 @@ class UserResource extends Resource
                             ->send();
                     }),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('bulk_send_email')
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('bulk_send_email')
                         ->label(__('Send Email'))
                         ->icon('heroicon-o-envelope')
                         ->color('primary')
                         ->requiresConfirmation()
                         ->form([
-                            Forms\Components\TextInput::make('subject')
+                            TextInput::make('subject')
                                 ->label(__('Subject'))
                                 ->required()
                                 ->maxLength(150),
-                            Forms\Components\RichEditor::make('body')
+                            RichEditor::make('body')
                                 ->label(__('Message'))
                                 ->toolbarButtons([
                                     'attachFiles',
@@ -371,7 +383,6 @@ class UserResource extends Resource
                                 ->fileAttachmentsDisk('public')
                                 ->fileAttachmentsDirectory('editor-attachments')
                                 ->fileAttachmentsVisibility('public')
-                                ->disableGrammarly()
                                 ->columnSpanFull()
                                 ->required(),
                         ])
@@ -390,7 +401,7 @@ class UserResource extends Resource
                                 ->success()
                                 ->send();
                         }),
-                    Tables\Actions\DeleteBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -405,9 +416,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

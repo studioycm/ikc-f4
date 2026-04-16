@@ -2,6 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use App\Filament\Resources\PrevShowResource\Pages\ListPrevShows;
+use App\Filament\Resources\PrevShowResource\Pages\CreatePrevShow;
+use App\Filament\Resources\PrevShowResource\Pages\ViewPrevShow;
+use App\Filament\Resources\PrevShowResource\Pages\EditPrevShow;
 use App\Enums\Legacy\LegacyShowTypeEnum;
 use App\Filament\Resources\PrevShowResource\Pages;
 use App\Filament\Resources\PrevShowResource\RelationManagers\PrevShowArenaRelationManager;
@@ -10,25 +29,9 @@ use App\Models\PrevShow;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid as InfolistGrid;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section as InfolistSection;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -45,7 +48,7 @@ class PrevShowResource extends Resource
 
     protected static ?string $slug = 'prev-shows';
 
-    protected static ?string $navigationIcon = 'fas-trophy';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-trophy';
 
     protected static ?int $navigationSort = 20;
 
@@ -69,10 +72,10 @@ class PrevShowResource extends Resource
         return __('Shows');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('DataID')
                     ->required()
                     ->integer(),
@@ -246,7 +249,7 @@ class PrevShowResource extends Resource
                             ->modalWidth('2xl')
                             ->modalSubmitAction(false)
                             ->modalCancelActionLabel(__('Close'))
-                            ->infolist([
+                            ->schema([
                                 TextEntry::make('LongDesc')
                                     ->hiddenLabel()
                                     ->html()
@@ -411,7 +414,7 @@ class PrevShowResource extends Resource
                     ),
                 // Date Filters
                 Filter::make('StartDate')
-                    ->form([
+                    ->schema([
                         DatePicker::make('start_from')->label(__('Starts From')),
                         DatePicker::make('start_until')->label(__('Starts Until')),
                     ])
@@ -421,7 +424,7 @@ class PrevShowResource extends Resource
                     ),
 
                 Filter::make('EndDate')
-                    ->form([
+                    ->schema([
                         DatePicker::make('end_from')->label(__('Ends From')),
                         DatePicker::make('end_until')->label(__('Ends Until')),
                     ])
@@ -431,7 +434,7 @@ class PrevShowResource extends Resource
                     ),
 
                 Filter::make('EndRegistrationDate')
-                    ->form([
+                    ->schema([
                         DatePicker::make('reg_from')->label(__('Reg. Ends From')),
                         DatePicker::make('reg_until')->label(__('Reg. Ends Until')),
                     ])
@@ -441,7 +444,7 @@ class PrevShowResource extends Resource
                     ),
                 TrashedFilter::make('trashed'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
 //                Action::make('view_dogs')
 //                    ->label(false)
@@ -471,7 +474,7 @@ class PrevShowResource extends Resource
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
@@ -485,15 +488,15 @@ class PrevShowResource extends Resource
             });
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('ShowTabs')
                     ->tabs([
                         Tab::make(__('Overview'))
                             ->schema([
-                                InfolistGrid::make(3)->schema([
+                                Grid::make(3)->schema([
                                     TextEntry::make('TitleName')->label(__('Show title'))->columnSpan(2),
                                     TextEntry::make('club.Name')->label(__('Club')),
                                     TextEntry::make('ShowType')
@@ -505,21 +508,21 @@ class PrevShowResource extends Resource
                                     TextEntry::make('location')->label(__('Location')),
                                     IconEntry::make('ShowStatus')->label(__('Show Status'))->boolean(),
                                 ]),
-                                InfolistGrid::make(2)->schema([
-                                    InfolistSection::make(__('Show Description'))
+                                Grid::make(2)->schema([
+                                    Section::make(__('Show Description'))
                                         ->schema([
                                             TextEntry::make('LongDesc')
                                                 ->label(false)
                                                 ->html(),
                                         ])->columnSpan(1),
-                                    InfolistSection::make(__('Judges'))
+                                    Section::make(__('Judges'))
                                         ->schema([
                                             TextEntry::make('judges.JudgeNameHE')
                                                 ->label(false)
                                                 ->separator('; '),
                                         ])->columnSpan(1),
                                 ]),
-                                InfolistSection::make(__('Counts'))
+                                Section::make(__('Counts'))
                                     ->schema([
                                         TextEntry::make('arenas_count')->label(__('Arenas'))->state(fn(PrevShow $record) => $record->arenas()->count()),
                                         TextEntry::make('classes_count')->label(__('Classes'))->state(fn(PrevShow $record) => $record->classes()->count()),
@@ -530,7 +533,7 @@ class PrevShowResource extends Resource
                             ]),
                         Tab::make(__('Dates'))
                             ->schema([
-                                InfolistGrid::make(2)->schema([
+                                Grid::make(2)->schema([
                                     TextEntry::make('StartDate')->dateTime()->label(__('Starting at')),
                                     TextEntry::make('EndDate')->dateTime()->label(__('Ending at')),
                                     TextEntry::make('EndRegistrationDate')->date()->label(__('Registration ends')),
@@ -540,7 +543,7 @@ class PrevShowResource extends Resource
                             ]),
                         Tab::make(__('Pricing'))
                             ->schema([
-                                InfolistGrid::make(3)->schema([
+                                Grid::make(3)->schema([
                                     TextEntry::make('ShowPrice')->money('ILS'),
                                     TextEntry::make('Dog2Price1')->money('ILS'),
                                     TextEntry::make('Dog2Price2')->money('ILS'),
@@ -561,10 +564,10 @@ class PrevShowResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShows::route('/'),
-            'create' => Pages\CreatePrevShow::route('/create'),
-            'view' => Pages\ViewPrevShow::route('/{record}'),
-            'edit' => Pages\EditPrevShow::route('/{record}/edit'),
+            'index' => ListPrevShows::route('/'),
+            'create' => CreatePrevShow::route('/create'),
+            'view' => ViewPrevShow::route('/{record}'),
+            'edit' => EditPrevShow::route('/{record}/edit'),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevDogResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevPaymentResource;
 use App\Models\PrevPayment;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -51,12 +52,12 @@ class PaymentsRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Payment'))
                     ->url(fn(PrevPayment $record): string => PrevPaymentResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

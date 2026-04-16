@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevUserResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevClubResource;
 use App\Models\PrevClub;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -96,12 +97,12 @@ class ClubsRelationManager extends RelationManager
                     ),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Club'))
                     ->url(fn(PrevClub $record): string => PrevClubResource::getUrl('view', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevSkillUser;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevSkillUserPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::skill::user');
+        return $authUser->can('ViewAny:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevSkillUser $prevSkillUser): bool
+    public function view(AuthUser $authUser, PrevSkillUser $prevSkillUser): bool
     {
-        return $user->can('view_prev::skill::user');
+        return $authUser->can('View:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::skill::user');
+        return $authUser->can('Create:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevSkillUser $prevSkillUser): bool
+    public function update(AuthUser $authUser, PrevSkillUser $prevSkillUser): bool
     {
-        return $user->can('update_prev::skill::user');
+        return $authUser->can('Update:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevSkillUser $prevSkillUser): bool
+    public function delete(AuthUser $authUser, PrevSkillUser $prevSkillUser): bool
     {
-        return $user->can('delete_prev::skill::user');
+        return $authUser->can('Delete:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::skill::user');
+        return $authUser->can('DeleteAny:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevSkillUser $prevSkillUser): bool
+    public function restore(AuthUser $authUser, PrevSkillUser $prevSkillUser): bool
     {
-        return $user->can('force_delete_prev::skill::user');
+        return $authUser->can('Restore:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevSkillUser $prevSkillUser): bool
     {
-        return $user->can('force_delete_any_prev::skill::user');
+        return $authUser->can('ForceDelete:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevSkillUser $prevSkillUser): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::skill::user');
+        return $authUser->can('ForceDeleteAny:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::skill::user');
+        return $authUser->can('RestoreAny:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevSkillUser $prevSkillUser): bool
+    public function replicate(AuthUser $authUser, PrevSkillUser $prevSkillUser): bool
     {
-        return $user->can('replicate_prev::skill::user');
+        return $authUser->can('Replicate:PrevSkillUser');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::skill::user');
+        return $authUser->can('Reorder:PrevSkillUser');
     }
+
 }

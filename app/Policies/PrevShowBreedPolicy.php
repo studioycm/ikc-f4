@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevShowBreed;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevShowBreedPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::show::breed');
+        return $authUser->can('ViewAny:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevShowBreed $prevShowBreed): bool
+    public function view(AuthUser $authUser, PrevShowBreed $prevShowBreed): bool
     {
-        return $user->can('view_prev::show::breed');
+        return $authUser->can('View:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::show::breed');
+        return $authUser->can('Create:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevShowBreed $prevShowBreed): bool
+    public function update(AuthUser $authUser, PrevShowBreed $prevShowBreed): bool
     {
-        return $user->can('update_prev::show::breed');
+        return $authUser->can('Update:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevShowBreed $prevShowBreed): bool
+    public function delete(AuthUser $authUser, PrevShowBreed $prevShowBreed): bool
     {
-        return $user->can('delete_prev::show::breed');
+        return $authUser->can('Delete:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::show::breed');
+        return $authUser->can('DeleteAny:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevShowBreed $prevShowBreed): bool
+    public function restore(AuthUser $authUser, PrevShowBreed $prevShowBreed): bool
     {
-        return $user->can('force_delete_prev::show::breed');
+        return $authUser->can('Restore:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevShowBreed $prevShowBreed): bool
     {
-        return $user->can('force_delete_any_prev::show::breed');
+        return $authUser->can('ForceDelete:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevShowBreed $prevShowBreed): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::show::breed');
+        return $authUser->can('ForceDeleteAny:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::show::breed');
+        return $authUser->can('RestoreAny:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevShowBreed $prevShowBreed): bool
+    public function replicate(AuthUser $authUser, PrevShowBreed $prevShowBreed): bool
     {
-        return $user->can('replicate_prev::show::breed');
+        return $authUser->can('Replicate:PrevShowBreed');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::show::breed');
+        return $authUser->can('Reorder:PrevShowBreed');
     }
+
 }

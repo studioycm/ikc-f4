@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevDogResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Filament\Resources\PrevBreedingResource;
 use App\Models\PrevBreeding;
@@ -61,12 +62,12 @@ class FemaleBreedingsRelationManager extends RelationManager
                     ->toggleable(),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Breeding'))
                     ->url(fn(PrevBreeding $record): string => PrevBreedingResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

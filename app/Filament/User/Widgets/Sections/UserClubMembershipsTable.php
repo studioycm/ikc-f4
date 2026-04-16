@@ -2,6 +2,10 @@
 
 namespace App\Filament\User\Widgets\Sections;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Actions\Action;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevClubUser;
 use Carbon\CarbonImmutable;
@@ -52,16 +56,16 @@ class UserClubMembershipsTable extends BaseWidget
                     ->orderBy('expire_date', 'desc')
             )
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('#')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('club.Name')
+                TextColumn::make('club.Name')
                     ->label(__('Club'))
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->label(__('Type'))
                     ->formatStateUsing(fn($state): string => match ($state) {
                         'Main' => __('Main'),
@@ -74,7 +78,7 @@ class UserClubMembershipsTable extends BaseWidget
                         'Sub' => 'warning',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('computed_status')
+                TextColumn::make('computed_status')
                     ->label(__('Status'))
                     ->formatStateUsing(fn($state): string => match ($state) {
                         1 => __('Active'),
@@ -91,17 +95,17 @@ class UserClubMembershipsTable extends BaseWidget
                         3 => 'gray',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Valid From'))
                     ->date('Y-m-d')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('expire_date')
+                TextColumn::make('expire_date')
                     ->label(__('Valid until'))
                     ->date('Y-m-d')
                     ->description(fn(PrevClubUser $record): string => $record->expiration_human)
                     ->color(fn(PrevClubUser $record): string => $record->getExpirationColor())
                     ->sortable(),
-                Tables\Columns\TextColumn::make('payment_status_code')
+                TextColumn::make('payment_status_code')
                     ->label(__('Payment'))
                     ->formatStateUsing(fn(?int $state): string => match ($state) {
                         1 => __('Paid'),
@@ -116,17 +120,17 @@ class UserClubMembershipsTable extends BaseWidget
                         null => 'gray',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->label(__('Deleted'))
                     ->formatStateUsing(fn(?CarbonImmutable $state): string => $state ? $state->format('Y-m-d') : '')
                     ->color(fn(?CarbonImmutable $state): string => $state ? 'danger' : 'gray')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filtersFormColumns(2)
-            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->filters([
-                Tables\Filters\Filter::make('status_filter')
-                    ->form([
+                Filter::make('status_filter')
+                    ->schema([
                         ToggleButtons::make('status')
                             ->label(__('Status'))
                             ->options([
@@ -181,14 +185,14 @@ class UserClubMembershipsTable extends BaseWidget
             ])
             ->defaultGroup('club.Name')
             ->groupingSettingsHidden()
-            ->actions([
-                Tables\Actions\Action::make('renew')
+            ->recordActions([
+                Action::make('renew')
                     ->hiddenLabel()
                     ->tooltip(__('Renew'))
                     ->icon('heroicon-o-arrow-path')
                     ->color('success')
                     ->visible(fn(PrevClubUser $record): bool => (!$record->isActive || $record->isExpiringSoon(60)))
-                    ->form([
+                    ->schema([
                         Select::make('membership_type')
                             ->label(__('Membership Type'))
                             ->options([
@@ -237,7 +241,7 @@ class UserClubMembershipsTable extends BaseWidget
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\Action::make('view_details')
+                Action::make('view_details')
                     ->hiddenLabel()
                     ->tooltip(__('Details'))
                     ->icon('heroicon-o-eye')

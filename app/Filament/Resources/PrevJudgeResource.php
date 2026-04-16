@@ -2,22 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use App\Filament\Resources\PrevJudgeResource\Pages\ListPrevJudges;
+use App\Filament\Resources\PrevJudgeResource\Pages\CreatePrevJudge;
+use App\Filament\Resources\PrevJudgeResource\Pages\ViewPrevJudge;
+use App\Filament\Resources\PrevJudgeResource\Pages\EditPrevJudge;
 use App\Filament\Resources\PrevJudgeResource\Pages;
 use App\Models\PrevJudge;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid as InfolistGrid;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,7 +33,7 @@ class PrevJudgeResource extends Resource
 
     protected static ?string $slug = 'prev-judges';
 
-    protected static ?string $navigationIcon = 'fas-gavel';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-gavel';
 
     protected static ?int $navigationSort = 10;
 
@@ -54,10 +57,10 @@ class PrevJudgeResource extends Resource
         return __('Judges');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([//
+        return $schema
+            ->components([//
                 TextInput::make('DataID')
                     ->disabled()
                     ->integer(),
@@ -154,7 +157,7 @@ class PrevJudgeResource extends Resource
             ->filters([
 
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('view_judge')
                     ->label(__('common.actions.view'))
                     ->icon('heroicon-o-eye')
@@ -181,13 +184,13 @@ class PrevJudgeResource extends Resource
                             ->findOrFail($record->getKey());
                     })
                     // Build the modal’s infolist
-                    ->infolist(function (Infolist $infolist): Infolist {
-                        return PrevJudgeResource::infolist($infolist);
+                    ->schema(function (Schema $schema): Schema {
+                        return PrevJudgeResource::infolist($schema);
                     }),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -195,19 +198,19 @@ class PrevJudgeResource extends Resource
 
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
 
-        return $infolist->schema([
+        return $schema->components([
             Tabs::make('Judge Record')->tabs([
                 Tab::make('general')->schema([
-                    InfolistGrid::make(4)->schema([
+                    Grid::make(4)->schema([
                         TextEntry::make('DataID')->label(__('DataID')),
                         TextEntry::make('JudgeNameHE')->label(__('common.labels.hebrew_name')),
                         TextEntry::make('JudgeNameEN')->label(__('common.labels.english_name')),
                         TextEntry::make('Country')->label(__('Country')),
                     ]),
-                    InfolistGrid::make(4)->schema([
+                    Grid::make(4)->schema([
                         TextEntry::make('Email')->label(__('Email')),
                         TextEntry::make('arenas_count')->label(__('Arenas')),
                         TextEntry::make('breeds_count')->label(__('Breeds')),
@@ -216,7 +219,7 @@ class PrevJudgeResource extends Resource
                     ]),
                 ])->label(__('General')),
                 Tab::make('metadata')->schema([
-                    InfolistGrid::make(4)->schema([
+                    Grid::make(4)->schema([
                         TextEntry::make('CreationDateTime')->label(__('Created at'))->date(),
                         TextEntry::make('ModificationDateTime')->label(__('Modified On'))->date(),
                     ]),
@@ -228,10 +231,10 @@ class PrevJudgeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevJudges::route('/'),
-            'create' => Pages\CreatePrevJudge::route('/create'),
-            'view' => Pages\ViewPrevJudge::route('/{record}'),
-            'edit' => Pages\EditPrevJudge::route('/{record}/edit'),
+            'index' => ListPrevJudges::route('/'),
+            'create' => CreatePrevJudge::route('/create'),
+            'view' => ViewPrevJudge::route('/{record}'),
+            'edit' => EditPrevJudge::route('/{record}/edit'),
         ];
     }
 

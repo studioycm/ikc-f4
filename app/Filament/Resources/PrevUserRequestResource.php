@@ -2,6 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ExportAction;
+use Filament\Tables\Enums\RecordActionsPosition;
+use App\Filament\Resources\PrevUserRequestResource\Pages\ListPrevUserRequests;
+use App\Filament\Resources\PrevUserRequestResource\Pages\CreatePrevUserRequest;
+use App\Filament\Resources\PrevUserRequestResource\Pages\ViewPrevUserRequest;
+use App\Filament\Resources\PrevUserRequestResource\Pages\EditPrevUserRequest;
 use App\Enums\Legacy\LegacySagirPrefix;
 use App\Enums\Legacy\LegacyUserRequestChampionType;
 use App\Enums\Legacy\LegacyUserRequestPaperType;
@@ -11,15 +35,10 @@ use App\Filament\Resources\PrevUserRequestResource\Pages;
 use App\Models\PrevUser;
 use App\Models\PrevUserRequest;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -33,7 +52,7 @@ class PrevUserRequestResource extends Resource
 {
     protected static ?string $model = PrevUserRequest::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $recordTitleAttribute = 'topic';
 
@@ -62,87 +81,87 @@ class PrevUserRequestResource extends Resource
         return __('User Requests');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('Requester details'))
+        return $schema
+            ->components([
+                Section::make(__('Requester details'))
                     ->schema([
-                        Forms\Components\TextInput::make('first_name')->label(__('First Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('last_name')->label(__('Last Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('email')->label(__('Email'))->email()->maxLength(255),
-                        Forms\Components\TextInput::make('mobile_phone')->label(__('Mobile Phone'))->tel()->maxLength(255),
-                        Forms\Components\TextInput::make('mobile_prefix')->label(__('Mobile Prefix'))->maxLength(50),
-                        Forms\Components\Textarea::make('full_address')->label(__('Full Address'))->rows(2)->columnSpanFull(),
-                        Forms\Components\TextInput::make('street')->label(__('Street'))->maxLength(255),
-                        Forms\Components\TextInput::make('number')->label(__('Number'))->maxLength(255),
-                        Forms\Components\TextInput::make('city')->label(__('City'))->maxLength(255),
+                        TextInput::make('first_name')->label(__('First Name'))->maxLength(255),
+                        TextInput::make('last_name')->label(__('Last Name'))->maxLength(255),
+                        TextInput::make('email')->label(__('Email'))->email()->maxLength(255),
+                        TextInput::make('mobile_phone')->label(__('Mobile Phone'))->tel()->maxLength(255),
+                        TextInput::make('mobile_prefix')->label(__('Mobile Prefix'))->maxLength(50),
+                        Textarea::make('full_address')->label(__('Full Address'))->rows(2)->columnSpanFull(),
+                        TextInput::make('street')->label(__('Street'))->maxLength(255),
+                        TextInput::make('number')->label(__('Number'))->maxLength(255),
+                        TextInput::make('city')->label(__('City'))->maxLength(255),
                     ])
                     ->columns(3),
-                Forms\Components\Section::make(__('Request details'))
+                Section::make(__('Request details'))
                     ->schema([
-                        Forms\Components\Select::make('club_id')
+                        Select::make('club_id')
                             ->label(__('Club'))
                             ->relationship('club', 'Name')
                             ->searchable(['Name', 'EngName'])
                             ->preload()
                             ->getOptionLabelFromRecordUsing(fn(Model $record): string => $record->Name ?? $record->EngName ?? (string)$record->id),
-                        Forms\Components\Select::make('owner_id')
+                        Select::make('owner_id')
                             ->label(__('Owner'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\Select::make('DoneByUserID')
+                        Select::make('DoneByUserID')
                             ->label(__('Done By'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\Select::make('topic')
+                        Select::make('topic')
                             ->label(__('Topic'))
                             ->options(LegacyUserRequestTopic::class),
-                        Forms\Components\TextInput::make('status')->label(__('Status'))->maxLength(255),
-                        Forms\Components\TextInput::make('payment_by')->label(__('Payment By'))->maxLength(255),
-                        Forms\Components\TextInput::make('payment_incerments')->label(__('Payment Increments'))->numeric()->minValue(0),
-                        Forms\Components\TextInput::make('total_amount')
+                        TextInput::make('status')->label(__('Status'))->maxLength(255),
+                        TextInput::make('payment_by')->label(__('Payment By'))->maxLength(255),
+                        TextInput::make('payment_incerments')->label(__('Payment Increments'))->numeric()->minValue(0),
+                        TextInput::make('total_amount')
                             ->label(__('Cost'))
                             ->numeric()
                             ->minValue(0),
-                        Forms\Components\TextInput::make('payment_approval_id')->label(__('Payment Approval Number'))->maxLength(255),
-                        Forms\Components\TextInput::make('last_4_digits')->label(__('Last 4 Digits'))->maxLength(10),
-                        Forms\Components\DateTimePicker::make('record_date_time')->label(__('Recorded at'))->seconds(false),
-                        Forms\Components\DateTimePicker::make('payment_date_time')->label(__('Payment Date'))->seconds(false),
-                        Forms\Components\Toggle::make('approve_1')->label(__('Approve 1')),
-                        Forms\Components\Toggle::make('approve_2')->label(__('Approve 2')),
-                        Forms\Components\Toggle::make('approve_3')->label(__('Approve 3')),
-                        Forms\Components\Toggle::make('IsDone')->label(__('Is Done')),
-                        Forms\Components\DateTimePicker::make('DoneDate')->label(__('Done Date'))->seconds(false),
+                        TextInput::make('payment_approval_id')->label(__('Payment Approval Number'))->maxLength(255),
+                        TextInput::make('last_4_digits')->label(__('Last 4 Digits'))->maxLength(10),
+                        DateTimePicker::make('record_date_time')->label(__('Recorded at'))->seconds(false),
+                        DateTimePicker::make('payment_date_time')->label(__('Payment Date'))->seconds(false),
+                        Toggle::make('approve_1')->label(__('Approve 1')),
+                        Toggle::make('approve_2')->label(__('Approve 2')),
+                        Toggle::make('approve_3')->label(__('Approve 3')),
+                        Toggle::make('IsDone')->label(__('Is Done')),
+                        DateTimePicker::make('DoneDate')->label(__('Done Date'))->seconds(false),
                     ])
                     ->columns(4),
-                Forms\Components\Section::make(__('Dog and request metadata'))
+                Section::make(__('Dog and request metadata'))
                     ->schema([
-                        Forms\Components\TextInput::make('owner_name')->label(__('Owner Name'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog_name')->label(__('Dog name'))->maxLength(255),
-                        Forms\Components\Select::make('sagirID')
+                        TextInput::make('owner_name')->label(__('Owner Name'))->maxLength(255),
+                        TextInput::make('dog_name')->label(__('Dog name'))->maxLength(255),
+                        Select::make('sagirID')
                             ->label(__('Dog Record'))
                             ->relationship('dog', 'SagirID')
                             ->searchable(['SagirID', 'Heb_Name', 'Eng_Name'])
                             ->getOptionLabelFromRecordUsing(fn(Model $record): string => $record->full_name . ' #' . $record->SagirID),
-                        Forms\Components\TextInput::make('certificate_type')->label(__('Certificate Type'))->maxLength(255),
-                        Forms\Components\TextInput::make('shipping')->label(__('Shipping'))->maxLength(255),
-                        Forms\Components\TextInput::make('shipping_type_id')->label(__('Shipping Type'))->numeric(),
-                        Forms\Components\ToggleButtons::make('paper_request_type')
+                        TextInput::make('certificate_type')->label(__('Certificate Type'))->maxLength(255),
+                        TextInput::make('shipping')->label(__('Shipping'))->maxLength(255),
+                        TextInput::make('shipping_type_id')->label(__('Shipping Type'))->numeric(),
+                        ToggleButtons::make('paper_request_type')
                             ->label(__('Paper Request Type'))
                             ->options(LegacyUserRequestPaperType::class)
                             ->grouped(),
-                        Forms\Components\TextInput::make('champion_certificate_type')->label(__('Champion Certificate Type'))->maxLength(255),
-                        Forms\Components\TextInput::make('agra_city')->label(__('Agra City'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog1_chip_number')->label(__('Dog 1 Chip Number'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog2_chip_number')->label(__('Dog 2 Chip Number'))->maxLength(255),
-                        Forms\Components\TextInput::make('dog3_chip_number')->label(__('Dog 3 Chip Number'))->maxLength(255),
-                        Forms\Components\DatePicker::make('dog1_vaccine_date')->label(__('Dog 1 Vaccine Date')),
-                        Forms\Components\DatePicker::make('dog2_vaccine_date')->label(__('Dog 2 Vaccine Date')),
-                        Forms\Components\DatePicker::make('dog3_vaccine_date')->label(__('Dog 3 Vaccine Date')),
-                        Forms\Components\Textarea::make('breeding_abroad_file')->label(__('Breeding Abroad File'))->rows(2)->columnSpanFull(),
+                        TextInput::make('champion_certificate_type')->label(__('Champion Certificate Type'))->maxLength(255),
+                        TextInput::make('agra_city')->label(__('Agra City'))->maxLength(255),
+                        TextInput::make('dog1_chip_number')->label(__('Dog 1 Chip Number'))->maxLength(255),
+                        TextInput::make('dog2_chip_number')->label(__('Dog 2 Chip Number'))->maxLength(255),
+                        TextInput::make('dog3_chip_number')->label(__('Dog 3 Chip Number'))->maxLength(255),
+                        DatePicker::make('dog1_vaccine_date')->label(__('Dog 1 Vaccine Date')),
+                        DatePicker::make('dog2_vaccine_date')->label(__('Dog 2 Vaccine Date')),
+                        DatePicker::make('dog3_vaccine_date')->label(__('Dog 3 Vaccine Date')),
+                        Textarea::make('breeding_abroad_file')->label(__('Breeding Abroad File'))->rows(2)->columnSpanFull(),
                     ])
                     ->columns(4),
             ]);
@@ -313,49 +332,49 @@ class PrevUserRequestResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label(__('Status'))
                     ->options([
                         'pending payment' => __('Pending Payment'),
                         'payment done' => __('Payment Done'),
                     ]),
-                Tables\Filters\SelectFilter::make('club')
+                SelectFilter::make('club')
                     ->label(__('Club'))
                     ->relationship('club', 'Name')
                     ->searchable(['Name', 'EngName'])
                     ->multiple()
                     ->preload(),
-                Tables\Filters\SelectFilter::make('topic')
+                SelectFilter::make('topic')
                     ->label(__('Topic'))
                     ->options(LegacyUserRequestTopic::class)
                     ->multiple(),
-                Tables\Filters\SelectFilter::make('paper_request_type')
+                SelectFilter::make('paper_request_type')
                     ->label(__('Pedigree Type'))
                     ->options(LegacyUserRequestPaperType::class),
-                Tables\Filters\SelectFilter::make('champion_certificate_type')
+                SelectFilter::make('champion_certificate_type')
                     ->label(__('Champion Certificate'))
                     ->options(LegacyUserRequestChampionType::class)
                     ->multiple(),
-                Tables\Filters\SelectFilter::make('dog.sagir_prefix')
+                SelectFilter::make('dog.sagir_prefix')
                     ->label(__('Sagir Prefix'))
                     ->options(LegacySagirPrefix::class),
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevUserRequestExporter::class),
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->headerActions([
@@ -369,14 +388,14 @@ class PrevUserRequestResource extends Resource
             ->defaultSort('record_date_time', 'desc')
             ->searchOnBlur()
             ->striped()
-            ->actionsPosition(Tables\Enums\ActionsPosition::BeforeColumns);
+            ->recordActionsPosition(RecordActionsPosition::BeforeColumns);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->columns(4)
-            ->schema([
+            ->components([
                 Section::make(__('Request details'))
                     ->columnSpan(1)
                     ->schema([
@@ -543,10 +562,10 @@ class PrevUserRequestResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevUserRequests::route('/'),
-            'create' => Pages\CreatePrevUserRequest::route('/create'),
-            'view' => Pages\ViewPrevUserRequest::route('/{record}'),
-            'edit' => Pages\EditPrevUserRequest::route('/{record}/edit'),
+            'index' => ListPrevUserRequests::route('/'),
+            'create' => CreatePrevUserRequest::route('/create'),
+            'view' => ViewPrevUserRequest::route('/{record}'),
+            'edit' => EditPrevUserRequest::route('/{record}/edit'),
         ];
     }
 

@@ -6,7 +6,7 @@ use App\Models\PrevBreed;
 use App\Models\PrevDog;
 use App\Observers\PrevBreedObserver;
 use App\Observers\PrevDogObserver;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\HtmlString;

@@ -2,21 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use App\Filament\Resources\PrevShowArenaResource\Pages\ListPrevShowArenas;
+use App\Filament\Resources\PrevShowArenaResource\Pages\CreatePrevShowArena;
+use App\Filament\Resources\PrevShowArenaResource\Pages\ViewPrevShowArena;
+use App\Filament\Resources\PrevShowArenaResource\Pages\EditPrevShowArena;
 use App\Filament\Resources\PrevShowArenaResource\Pages;
 use App\Models\PrevShowArena;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid as InfolistGrid;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +30,7 @@ class PrevShowArenaResource extends Resource
 
     protected static ?string $slug = 'prev-show-arenas';
 
-    protected static ?string $navigationIcon = 'fas-border-all';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-border-all';
 
     protected static ?int $navigationSort = 60;
 
@@ -51,10 +54,10 @@ class PrevShowArenaResource extends Resource
         return __('Arenas');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('DataID')
                     ->required()
                     ->integer(),
@@ -95,20 +98,20 @@ class PrevShowArenaResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
+        return $schema->components([
             Tabs::make('ArenaTabs')->tabs([
                 Tab::make(__('Overview'))
                     ->schema([
-                        InfolistGrid::make(4)->schema([
+                        Grid::make(4)->schema([
                             TextEntry::make('show.id')->label(__('Show')),
                             TextEntry::make('show.TitleName')->label(__('Show title')),
                             TextEntry::make('show.StartDate')->date()->label(__('Show start date')),
                             TextEntry::make('show.EndDate')->date()->label(__('Show end date')),
                             TextEntry::make('show.location')->label(__('Show location')),
                         ]),
-                        InfolistGrid::make(4)->schema([
+                        Grid::make(4)->schema([
                             TextEntry::make('id')->label(__('ID')),
                             TextEntry::make('GroupName')->label(__('Name')),
                             TextEntry::make('ArenaType')->label(__('Type')),
@@ -117,7 +120,7 @@ class PrevShowArenaResource extends Resource
                                 ->label(__('Judges')),
                             TextEntry::make('OrderID')->label(__('Position')),
                         ]),
-                        InfolistGrid::make(4)->schema([
+                        Grid::make(4)->schema([
                             TextEntry::make('arena_date')->date()->label(__('Arena date')),
                             TextEntry::make('OrderTime')->date()->label(__('Order time')),
                             TextEntry::make('created_at')->since()->label(__('Created')),
@@ -134,7 +137,7 @@ class PrevShowArenaResource extends Resource
                                 TextEntry::make('hebDogName')->label(__('Name'))->columnSpan(2),
                                 TextEntry::make('engDogName')->label(__('English Name'))->columnSpan(2),
                             ])
-                            ->label(__('Dogs in Arena') . ': ' . $infolist->getRecord()->GroupName)
+                            ->label(__('Dogs in Arena') . ': ' . $schema->getRecord()->GroupName)
                             ->columns(4)
                             ->grid(4),
                     ])
@@ -172,11 +175,11 @@ class PrevShowArenaResource extends Resource
             ])
             ->filters([
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ])
             ->defaultSort('id', 'desc');
     }
@@ -184,10 +187,10 @@ class PrevShowArenaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShowArenas::route('/'),
-            'create' => Pages\CreatePrevShowArena::route('/create'),
-            'view' => Pages\ViewPrevShowArena::route('/{record}'),
-            'edit' => Pages\EditPrevShowArena::route('/{record}/edit'),
+            'index' => ListPrevShowArenas::route('/'),
+            'create' => CreatePrevShowArena::route('/create'),
+            'view' => ViewPrevShowArena::route('/{record}'),
+            'edit' => EditPrevShowArena::route('/{record}/edit'),
         ];
     }
 

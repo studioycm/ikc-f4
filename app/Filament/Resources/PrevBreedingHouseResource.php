@@ -2,24 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use App\Filament\Resources\PrevBreedingHouseResource\Pages\ListPrevBreedingHouses;
+use App\Filament\Resources\PrevBreedingHouseResource\Pages\CreatePrevBreedingHouse;
+use App\Filament\Resources\PrevBreedingHouseResource\Pages\ViewPrevBreedingHouse;
+use App\Filament\Resources\PrevBreedingHouseResource\Pages\EditPrevBreedingHouse;
 use App\Filament\Resources\PrevBreedingHouseResource\Pages;
 use App\Filament\Resources\PrevBreedingHouseResource\RelationManagers\DogsRelationManager;
 use App\Filament\Resources\PrevBreedingHouseResource\RelationManagers\UsersRelationManager;
 use App\Models\PrevBreedingHouse;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid as InfolistGrid;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -32,7 +33,7 @@ class PrevBreedingHouseResource extends Resource
 
     // Keep Shield consistent: do NOT set $slug here.
 
-    protected static ?string $navigationIcon = 'fas-house-chimney';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-house-chimney';
 
     protected static ?int $navigationSort = 25;
 
@@ -56,9 +57,9 @@ class PrevBreedingHouseResource extends Resource
         return __('dog/kennel/general.labels.plural');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Section::make(__('common.labels.general'))
                 ->schema([
                     Grid::make(5)->schema([
@@ -94,21 +95,21 @@ class PrevBreedingHouseResource extends Resource
         ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
-            InfolistSection::make(__('common.labels.overview'))->schema([
-                InfolistGrid::make(4)->schema([
+        return $schema->components([
+            Section::make(__('common.labels.overview'))->schema([
+                Grid::make(4)->schema([
                     TextEntry::make('GidulCode')->label(__('common.labels.code'))->numeric(decimalPlaces: 0, thousandsSeparator: ''),
                     TextEntry::make('HebName')->label(__('common.labels.hebrew_name')),
                     TextEntry::make('EngName')->label(__('common.labels.english_name')),
                     IconEntry::make('status')->label(__('common.labels.active'))->boolean(),
                 ]),
-                InfolistGrid::make(4)->schema([
+                Grid::make(4)->schema([
                     IconEntry::make('recommended')->label(__('common.labels.recommended'))->boolean(),
                     TextEntry::make('recommended_from_date')->label(__('common.labels.recommended_from'))->date(),
                 ]),
-                InfolistGrid::make(4)->schema([
+                Grid::make(4)->schema([
                     IconEntry::make('perfect')->label(__('common.labels.perfect'))->boolean(),
                     TextEntry::make('perfect_from_date')->label(__('common.labels.perfect_from'))->date(),
                 ]),
@@ -158,14 +159,14 @@ class PrevBreedingHouseResource extends Resource
             ->filters([
 
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()->label(__('common.actions.view')),
                 EditAction::make()->label(__('common.actions.edit')),
                 //                DeleteAction::make()->label(__('common.actions.delete')),
                 //                RestoreAction::make()->label(__('common.actions.restore')),
                 //                ForceDeleteAction::make()->label(__('common.actions.force_delete')),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 //                BulkActionGroup::make([
                 //                    DeleteBulkAction::make(),
                 //                    RestoreBulkAction::make(),
@@ -186,10 +187,10 @@ class PrevBreedingHouseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevBreedingHouses::route('/'),
-            'create' => Pages\CreatePrevBreedingHouse::route('/create'),
-            'view' => Pages\ViewPrevBreedingHouse::route('/{record}'),
-            'edit' => Pages\EditPrevBreedingHouse::route('/{record}/edit'),
+            'index' => ListPrevBreedingHouses::route('/'),
+            'create' => CreatePrevBreedingHouse::route('/create'),
+            'view' => ViewPrevBreedingHouse::route('/{record}'),
+            'edit' => EditPrevBreedingHouse::route('/{record}/edit'),
         ];
     }
 

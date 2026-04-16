@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\PrevShowResource\RelationManagers;
 
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,10 +19,10 @@ class PrevShowClassRelationManager extends RelationManager
         return __('Classes');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 // Minimal; classes are managed in their own resource
             ]);
     }
@@ -30,18 +31,18 @@ class PrevShowClassRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label(__('ID'))->toggleable(),
-                Tables\Columns\TextColumn::make('ClassID')->label(__('Code'))->toggleable(),
-                Tables\Columns\TextColumn::make('ClassName')->label(__('Class Name'))->toggleable(),
-                Tables\Columns\TextColumn::make('show.TitleName')->label(__('Show'))->toggleable(),
-                Tables\Columns\TextColumn::make('arena.GroupName')->label(__('Arena'))->toggleable(),
-                Tables\Columns\TextColumn::make('judge.JudgeNameEN')->label(__('Judge'))->toggleable(),
-                Tables\Columns\TextColumn::make('OrderID')->label(__('Order'))->numeric()->toggleable(),
+                TextColumn::make('id')->label(__('ID'))->toggleable(),
+                TextColumn::make('ClassID')->label(__('Code'))->toggleable(),
+                TextColumn::make('ClassName')->label(__('Class Name'))->toggleable(),
+                TextColumn::make('show.TitleName')->label(__('Show'))->toggleable(),
+                TextColumn::make('arena.GroupName')->label(__('Arena'))->toggleable(),
+                TextColumn::make('judge.JudgeNameEN')->label(__('Judge'))->toggleable(),
+                TextColumn::make('OrderID')->label(__('Order'))->numeric()->toggleable(),
             ])
             ->headerActions([])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

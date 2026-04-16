@@ -2,23 +2,27 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use App\Filament\Resources\PrevDogDocumentResource\Pages\ListPrevDogDocuments;
+use App\Filament\Resources\PrevDogDocumentResource\Pages\CreatePrevDogDocument;
+use App\Filament\Resources\PrevDogDocumentResource\Pages\ViewPrevDogDocument;
+use App\Filament\Resources\PrevDogDocumentResource\Pages\EditPrevDogDocument;
 use App\Filament\Resources\PrevDogDocumentResource\Pages;
 use App\Models\PrevDogDocument;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -30,7 +34,7 @@ class PrevDogDocumentResource extends Resource
 {
     protected static ?string $model = PrevDogDocument::class;
 
-    protected static ?string $navigationIcon = 'fas-file-lines';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-file-lines';
 
     protected static ?int $navigationSort = 15;
 
@@ -54,10 +58,10 @@ class PrevDogDocumentResource extends Resource
         return __('Dog Documents');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('type')->label(__('Type'))->maxLength(255),
                 DatePicker::make('TestDate')->label(__('Test Date')),
                 TextInput::make('TestFile')->label(__('Test File'))->maxLength(255),
@@ -94,14 +98,14 @@ class PrevDogDocumentResource extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
@@ -113,10 +117,10 @@ class PrevDogDocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevDogDocuments::route('/'),
-            'create' => Pages\CreatePrevDogDocument::route('/create'),
-            'view' => Pages\ViewPrevDogDocument::route('/{record}'),
-            'edit' => Pages\EditPrevDogDocument::route('/{record}/edit'),
+            'index' => ListPrevDogDocuments::route('/'),
+            'create' => CreatePrevDogDocument::route('/create'),
+            'view' => ViewPrevDogDocument::route('/{record}'),
+            'edit' => EditPrevDogDocument::route('/{record}/edit'),
         ];
     }
 

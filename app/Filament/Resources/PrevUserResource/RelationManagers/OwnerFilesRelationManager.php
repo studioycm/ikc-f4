@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevUserResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -46,10 +47,10 @@ class OwnerFilesRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View File'))
-                    ->infolist([
+                    ->schema([
                         TextEntry::make('file_name')->label(__('File Name')),
                         TextEntry::make('encrypt_key')->label(__('Encrypt Key')),
                         TextEntry::make('file')->label(__('File')),
@@ -58,6 +59,6 @@ class OwnerFilesRelationManager extends RelationManager
                     ])
                     ->modalSubmitAction(false),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

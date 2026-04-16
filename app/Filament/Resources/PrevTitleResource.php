@@ -2,6 +2,26 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ImportAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Resources\PrevTitleResource\Pages\ListPrevTitles;
+use App\Filament\Resources\PrevTitleResource\Pages\CreatePrevTitle;
+use App\Filament\Resources\PrevTitleResource\Pages\ViewPrevTitle;
+use App\Filament\Resources\PrevTitleResource\Pages\EditPrevTitle;
 use App\Filament\Exports\PrevTitleExporter;
 use App\Filament\Imports\PrevTitleImporter;
 
@@ -9,12 +29,8 @@ use App\Filament\Imports\PrevTitleImporter;
 use App\Filament\Resources\PrevTitleResource\Pages;
 use App\Models\PrevTitle;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -46,30 +62,30 @@ class PrevTitleResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     //    public static function getNavigationBadge(): ?string
     //    {
     //        return (string) static::$model::count();
     //    }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Grid::make(6)->schema([
-                    Forms\Components\TextInput::make('DataID')
+        return $schema
+            ->components([
+                Grid::make(6)->schema([
+                    TextInput::make('DataID')
                         ->required()
                         ->numeric(),
-                    Forms\Components\TextInput::make('TitleCode')
+                    TextInput::make('TitleCode')
                         ->numeric(),
-                    Forms\Components\TextInput::make('TitleName')
+                    TextInput::make('TitleName')
                         ->maxLength(200),
-                    Forms\Components\TextInput::make('TitleDesc')
+                    TextInput::make('TitleDesc')
                         ->maxLength(200),
-                    Forms\Components\DateTimePicker::make('ModificationDateTime'),
-                    Forms\Components\DateTimePicker::make('CreationDateTime'),
-                    Forms\Components\Textarea::make('Remark')
+                    DateTimePicker::make('ModificationDateTime'),
+                    DateTimePicker::make('CreationDateTime'),
+                    Textarea::make('Remark')
                         ->columnSpanFull(),
                 ]),
             ]);
@@ -83,74 +99,74 @@ class PrevTitleResource extends Resource
                     ->withCount('awarding');
             })
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('DataID')
+                TextColumn::make('DataID')
                     ->label(__('DataID'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('TitleCode')
+                TextColumn::make('TitleCode')
                     ->label(__('Title Code'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('TitleName')
+                TextColumn::make('TitleName')
                     ->label(__('Title Name'))
                     ->sortable()
                     ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('TitleDesc')
+                TextColumn::make('TitleDesc')
                     ->label(__('Description'))
                     ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('Remark')
+                TextColumn::make('Remark')
                     ->label(__('Remark'))
                     ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('awarding_count')
+                TextColumn::make('awarding_count')
                     ->label(__('Awarded'))
                     ->counts('awarding')
                     ->numeric()
                     ->sortable(['awarding_count'])
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('CreationDateTime')
+                TextColumn::make('CreationDateTime')
                     ->label(__('Create Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('ModificationDateTime')
+                TextColumn::make('ModificationDateTime')
                     ->label(__('Modify Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->label(__('Deleted at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ],
                 layout: FiltersLayout::AboveContentCollapsible
             )
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
@@ -159,10 +175,10 @@ class PrevTitleResource extends Resource
                     ->exporter(PrevTitleExporter::class)
                     ->chunkSize(50)
                     ->modifyQueryUsing(fn (Builder $query) => $query->withCount('dogs')),
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->headerActions([
@@ -202,10 +218,10 @@ class PrevTitleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevTitles::route('/'),
-            'create' => Pages\CreatePrevTitle::route('/create'),
-            'view' => Pages\ViewPrevTitle::route('/{record}'),
-            'edit' => Pages\EditPrevTitle::route('/{record}/edit'),
+            'index' => ListPrevTitles::route('/'),
+            'create' => CreatePrevTitle::route('/create'),
+            'view' => ViewPrevTitle::route('/{record}'),
+            'edit' => EditPrevTitle::route('/{record}/edit'),
         ];
     }
 

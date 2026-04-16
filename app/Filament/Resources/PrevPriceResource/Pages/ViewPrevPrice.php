@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevPriceResource\Pages;
 
+use Filament\Actions\EditAction;
 use App\Filament\Resources\PrevPriceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
@@ -18,7 +19,7 @@ class ViewPrevPrice extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevDogImport;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevDogImportPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::dog::import');
+        return $authUser->can('ViewAny:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevDogImport $prevDogImport): bool
+    public function view(AuthUser $authUser, PrevDogImport $prevDogImport): bool
     {
-        return $user->can('view_prev::dog::import');
+        return $authUser->can('View:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::dog::import');
+        return $authUser->can('Create:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevDogImport $prevDogImport): bool
+    public function update(AuthUser $authUser, PrevDogImport $prevDogImport): bool
     {
-        return $user->can('update_prev::dog::import');
+        return $authUser->can('Update:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevDogImport $prevDogImport): bool
+    public function delete(AuthUser $authUser, PrevDogImport $prevDogImport): bool
     {
-        return $user->can('delete_prev::dog::import');
+        return $authUser->can('Delete:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::dog::import');
+        return $authUser->can('DeleteAny:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevDogImport $prevDogImport): bool
+    public function restore(AuthUser $authUser, PrevDogImport $prevDogImport): bool
     {
-        return $user->can('force_delete_prev::dog::import');
+        return $authUser->can('Restore:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevDogImport $prevDogImport): bool
     {
-        return $user->can('force_delete_any_prev::dog::import');
+        return $authUser->can('ForceDelete:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevDogImport $prevDogImport): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::dog::import');
+        return $authUser->can('ForceDeleteAny:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::dog::import');
+        return $authUser->can('RestoreAny:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevDogImport $prevDogImport): bool
+    public function replicate(AuthUser $authUser, PrevDogImport $prevDogImport): bool
     {
-        return $user->can('replicate_prev::dog::import');
+        return $authUser->can('Replicate:PrevDogImport');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::dog::import');
+        return $authUser->can('Reorder:PrevDogImport');
     }
+
 }

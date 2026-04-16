@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevUserResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevUserActivityResource;
 use App\Models\PrevUserActivity;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -60,12 +61,12 @@ class UserActivitiesRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Activity'))
                     ->url(fn(PrevUserActivity $record): string => PrevUserActivityResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

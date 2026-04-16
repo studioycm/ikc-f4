@@ -2,6 +2,13 @@
 
 namespace App\Filament\Resources\PrevClubResource\RelationManagers;
 
+use Filament\Actions\AttachAction;
+use Filament\Forms\Components\Select;
+use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use App\Filament\Resources\PrevUserResource;
 use App\Models\PrevClub;
 use App\Models\PrevSkill;
@@ -63,7 +70,7 @@ class ManagersRelationManager extends RelationManager
             ])
             ->filters([
                 Filter::make('created_between')
-                    ->form([
+                    ->schema([
                         DatePicker::make('created_from')->label(__('Created From')),
                         DatePicker::make('created_until')->label(__('Created Until')),
                     ])
@@ -71,7 +78,7 @@ class ManagersRelationManager extends RelationManager
                         ->when($data['created_from'] ?? null, fn(Builder $query, $date): Builder => $query->wherePivot('created_at', '>=', $date))
                         ->when($data['created_until'] ?? null, fn(Builder $query, $date): Builder => $query->wherePivot('created_at', '<=', $date . ' 23:59:59'))),
                 Filter::make('updated_between')
-                    ->form([
+                    ->schema([
                         DatePicker::make('updated_from')->label(__('Updated From')),
                         DatePicker::make('updated_until')->label(__('Updated Until')),
                     ])
@@ -96,20 +103,20 @@ class ManagersRelationManager extends RelationManager
                     )),
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                AttachAction::make()
                     ->label(__('Attach Manager'))
                     ->preloadRecordSelect()
-                    ->recordSelect(function (Forms\Components\Select $select) {
+                    ->recordSelect(function (Select $select) {
                         return $select
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name);
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Manager'))
-                    ->infolist([
+                    ->schema([
                         TextEntry::make('name')->label(__('Name')),
                         TextEntry::make('club_titles_text')
                             ->label(__('Title'))
@@ -131,18 +138,18 @@ class ManagersRelationManager extends RelationManager
                     ->modalHeading(fn(PrevUser $record): string => $record->name)
                     ->modalSubmitAction(false)
                     ->extraModalFooterActions([
-                        Tables\Actions\Action::make('editManager')
+                        Action::make('editManager')
                             ->label(__('Edit Manager'))
                             ->icon('heroicon-o-pencil-square')
                             ->url(fn(PrevUser $record): string => PrevUserResource::getUrl('edit', ['record' => $record]))
                             ->openUrlInNewTab(),
                     ]),
-                Tables\Actions\DetachAction::make()
+                DetachAction::make()
                     ->label(__('Detach')),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

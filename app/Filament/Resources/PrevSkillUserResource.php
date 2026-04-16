@@ -2,15 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\PrevSkillUserResource\Pages\ListPrevSkillUsers;
+use App\Filament\Resources\PrevSkillUserResource\Pages\CreatePrevSkillUser;
+use App\Filament\Resources\PrevSkillUserResource\Pages\ViewPrevSkillUser;
+use App\Filament\Resources\PrevSkillUserResource\Pages\EditPrevSkillUser;
 use App\Filament\Resources\PrevSkillUserResource\Pages;
 use App\Models\PrevSkill;
 use App\Models\PrevSkillUser;
 use App\Models\PrevUser;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -23,7 +38,7 @@ class PrevSkillUserResource extends Resource
 {
     protected static ?string $model = PrevSkillUser::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shield-check';
 
     public static function getModelLabel(): string
     {
@@ -45,32 +60,32 @@ class PrevSkillUserResource extends Resource
         return __('User Skills');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('User skill details'))
+        return $schema
+            ->components([
+                Section::make(__('User skill details'))
                     ->schema([
-                        Forms\Components\Select::make('user_id')
+                        Select::make('user_id')
                             ->label(__('User'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name)
                             ->required(),
-                        Forms\Components\Select::make('skill_id')
+                        Select::make('skill_id')
                             ->label(__('Skill'))
                             ->relationship('skill', 'skill_name')
                             ->searchable(['skill_name', 'skill_name_en'])
                             ->preload()
                             ->required()
                             ->getOptionLabelFromRecordUsing(fn(Model $record): string => $record->skill_name_en ? $record->skill_name . ' | ' . $record->skill_name_en : $record->skill_name),
-                        Forms\Components\Select::make('club_id')
+                        Select::make('club_id')
                             ->label(__('Club'))
                             ->relationship('club', 'Name')
                             ->searchable(['Name', 'EngName'])
                             ->preload()
                             ->getOptionLabelFromRecordUsing(fn(Model $record): string => $record->EngName ? $record->Name . ' | ' . $record->EngName : $record->Name),
-                        Forms\Components\Select::make('breed_id')
+                        Select::make('breed_id')
                             ->label(__('Breed'))
                             ->relationship('breed', 'BreedName')
                             ->searchable(['BreedName', 'BreedNameEN'])
@@ -117,14 +132,14 @@ class PrevSkillUserResource extends Resource
                 TextColumn::make('deleted_at')->label(__('Deleted at'))->since()->dateTimeTooltip()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('skill')
+                SelectFilter::make('skill')
                     ->relationship('skill', 'skill_name')
                     ->searchable(['id', 'skill_name'])
                     ->multiple()
                     ->preload(),
-                Tables\Filters\Filter::make('skill_group_filter')
-                    ->form([
-                        Forms\Components\ToggleButtons::make('skill_group')
+                Filter::make('skill_group_filter')
+                    ->schema([
+                        ToggleButtons::make('skill_group')
                             ->options([
                                 'general' => __('General'),
                                 'club' => __('Club'),
@@ -146,18 +161,18 @@ class PrevSkillUserResource extends Resource
                             $query->whereIn('id', $skillIds);
                         });
                     }),
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
@@ -165,10 +180,10 @@ class PrevSkillUserResource extends Resource
             ->striped();
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('User skill details'))
                     ->schema([
                         TextEntry::make('id')->label(__('ID')),
@@ -192,10 +207,10 @@ class PrevSkillUserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevSkillUsers::route('/'),
-            'create' => Pages\CreatePrevSkillUser::route('/create'),
-            'view' => Pages\ViewPrevSkillUser::route('/{record}'),
-            'edit' => Pages\EditPrevSkillUser::route('/{record}/edit'),
+            'index' => ListPrevSkillUsers::route('/'),
+            'create' => CreatePrevSkillUser::route('/create'),
+            'view' => ViewPrevSkillUser::route('/{record}'),
+            'edit' => EditPrevSkillUser::route('/{record}/edit'),
         ];
     }
 

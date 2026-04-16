@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Legacy\Breeding;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use App\Services\Legacy\Breeding\BreedingDogCheckService;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -10,7 +13,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
 use Illuminate\Support\Facades\App;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
@@ -70,41 +72,41 @@ class DogChecksTable extends Component implements HasActions, HasForms, HasInfol
         );
     }
 
-    public function checkDetailsInfolist(string $checkKey): Infolist
+    public function checkDetailsInfolist(string $checkKey): Schema
     {
         $report = $this->report;
         $check = collect($report['checks'] ?? [])->firstWhere('key', $checkKey);
 
         if (!$check) {
-            return Infolist::make()
+            return Schema::make()
                 ->state([])
-                ->schema([]);
+                ->components([]);
         }
 
-        return Infolist::make()
+        return Schema::make()
             ->state($check)
-            ->schema([
-                \Filament\Infolists\Components\Section::make(__('Check Details'))
+            ->components([
+                Section::make(__('Check Details'))
                     ->schema([
-                        \Filament\Infolists\Components\TextEntry::make('label')
+                        TextEntry::make('label')
                             ->label(__('Check'))
                             ->weight('bold'),
-                        \Filament\Infolists\Components\TextEntry::make('state_label')
+                        TextEntry::make('state_label')
                             ->label(__('Status'))
                             ->badge(),
-                        \Filament\Infolists\Components\TextEntry::make('value')
+                        TextEntry::make('value')
                             ->label(__('Value'))
                             ->visible(fn($state): bool => filled($state))
                             ->default('—'),
                     ])
                     ->columns(2),
-                \Filament\Infolists\Components\Section::make(__('Dog Information'))
+                Section::make(__('Dog Information'))
                     ->schema([
-                        \Filament\Infolists\Components\TextEntry::make('dog.name')
+                        TextEntry::make('dog.name')
                             ->label(__('Dog Name'))
                             ->state(data_get($report, 'dog.name'))
                             ->default('—'),
-                        \Filament\Infolists\Components\TextEntry::make('dog.sagir_id')
+                        TextEntry::make('dog.sagir_id')
                             ->label(__('Sagir ID'))
                             ->state(data_get($report, 'dog.sagir_id'))
                             ->default('—'),
@@ -118,11 +120,11 @@ class DogChecksTable extends Component implements HasActions, HasForms, HasInfol
         return Action::make('viewDetails')
             ->icon('heroicon-m-information-circle')
             ->modalHeading(__('Check Details'))
-            ->modalContent(function (array $arguments): Infolist {
+            ->modalContent(function (array $arguments): Schema {
                 $checkKey = $arguments['checkKey'] ?? null;
 
                 if (!$checkKey) {
-                    return Infolist::make()->state([])->schema([]);
+                    return Schema::make()->state([])->components([]);
                 }
 
                 return $this->checkDetailsInfolist($checkKey);

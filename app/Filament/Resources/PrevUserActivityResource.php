@@ -2,15 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\PrevUserActivityResource\Pages\ListPrevUserActivities;
+use App\Filament\Resources\PrevUserActivityResource\Pages\CreatePrevUserActivity;
+use App\Filament\Resources\PrevUserActivityResource\Pages\ViewPrevUserActivity;
+use App\Filament\Resources\PrevUserActivityResource\Pages\EditPrevUserActivity;
 use App\Filament\Resources\PrevUserActivityResource\Pages;
 use App\Models\PrevUser;
 use App\Models\PrevUserActivity;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -23,7 +38,7 @@ class PrevUserActivityResource extends Resource
 {
     protected static ?string $model = PrevUserActivity::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
 
     protected static ?string $recordTitleAttribute = 'Activity_Type';
 
@@ -47,37 +62,37 @@ class PrevUserActivityResource extends Resource
         return __('User Activities');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('Activity details'))
+        return $schema
+            ->components([
+                Section::make(__('Activity details'))
                     ->schema([
-                        Forms\Components\Select::make('UserID')
+                        Select::make('UserID')
                             ->label(__('User'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\Select::make('CreatedBy')
+                        Select::make('CreatedBy')
                             ->label(__('Created By'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\TextInput::make('Activity_Type')
+                        TextInput::make('Activity_Type')
                             ->label(__('Activity Type'))
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('UserIP')
+                        TextInput::make('UserIP')
                             ->label(__('User IP'))
                             ->maxLength(255),
-                        Forms\Components\DateTimePicker::make('CreationDateTime')
+                        DateTimePicker::make('CreationDateTime')
                             ->label(__('Created At'))
                             ->seconds(false),
-                        Forms\Components\Toggle::make('Is_Payment')->label(__('Is Payment')),
-                        Forms\Components\Toggle::make('Is_Show')->label(__('Is Show')),
-                        Forms\Components\Toggle::make('Is_Study')->label(__('Is Study')),
-                        Forms\Components\Textarea::make('Activity_Desc')->label(__('Activity Description'))->rows(3)->columnSpanFull(),
-                        Forms\Components\Textarea::make('Activity_Log')->label(__('Activity Log'))->rows(6)->columnSpanFull(),
+                        Toggle::make('Is_Payment')->label(__('Is Payment')),
+                        Toggle::make('Is_Show')->label(__('Is Show')),
+                        Toggle::make('Is_Study')->label(__('Is Study')),
+                        Textarea::make('Activity_Desc')->label(__('Activity Description'))->rows(3)->columnSpanFull(),
+                        Textarea::make('Activity_Log')->label(__('Activity Log'))->rows(6)->columnSpanFull(),
                     ])
                     ->columns(4),
             ]);
@@ -107,17 +122,17 @@ class PrevUserActivityResource extends Resource
                 TextColumn::make('deleted_at')->label(__('Deleted at'))->since()->dateTimeTooltip()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->defaultSort('CreationDateTime', 'desc')
@@ -125,10 +140,10 @@ class PrevUserActivityResource extends Resource
             ->striped();
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Activity details'))
                     ->schema([
                         TextEntry::make('user.name')->label(__('User')),
@@ -156,10 +171,10 @@ class PrevUserActivityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevUserActivities::route('/'),
-            'create' => Pages\CreatePrevUserActivity::route('/create'),
-            'view' => Pages\ViewPrevUserActivity::route('/{record}'),
-            'edit' => Pages\EditPrevUserActivity::route('/{record}/edit'),
+            'index' => ListPrevUserActivities::route('/'),
+            'create' => CreatePrevUserActivity::route('/create'),
+            'view' => ViewPrevUserActivity::route('/{record}'),
+            'edit' => EditPrevUserActivity::route('/{record}/edit'),
         ];
     }
 

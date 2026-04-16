@@ -9,7 +9,7 @@ class DogsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationIcon = 'heroicon-o-heart';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-heart';
 
     protected static string $routePath = 'dogs';
 
@@ -23,7 +23,7 @@ class DogsDashboard extends BaseDashboard
         return __('dog/model/general.labels.plural');
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int|array
     {
         return 1;
     }

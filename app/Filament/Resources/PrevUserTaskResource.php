@@ -2,20 +2,36 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Resources\PrevUserTaskResource\Pages\ListPrevUserTasks;
+use App\Filament\Resources\PrevUserTaskResource\Pages\CreatePrevUserTask;
+use App\Filament\Resources\PrevUserTaskResource\Pages\ViewPrevUserTask;
+use App\Filament\Resources\PrevUserTaskResource\Pages\EditPrevUserTask;
 use App\Filament\Exports\PrevUserTaskExporter;
 use App\Filament\Resources\PrevUserTaskResource\Pages;
 use App\Models\PrevUser;
 use App\Models\PrevUserTask;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -27,7 +43,7 @@ class PrevUserTaskResource extends Resource
 {
     protected static ?string $model = PrevUserTask::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?string $recordTitleAttribute = 'task_name';
 
@@ -51,40 +67,40 @@ class PrevUserTaskResource extends Resource
         return __('User Tasks');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('Task details'))
+        return $schema
+            ->components([
+                Section::make(__('Task details'))
                     ->schema([
-                        Forms\Components\TextInput::make('task_name')->label(__('Task Name'))->required()->maxLength(255),
-                        Forms\Components\TextInput::make('task_type')->label(__('Task Type'))->maxLength(255),
-                        Forms\Components\TextInput::make('status')->label(__('Status'))->maxLength(255),
-                        Forms\Components\TextInput::make('pedigree_color')->label(__('Pedigree Color'))->maxLength(255),
-                        Forms\Components\DateTimePicker::make('due_date_time')->label(__('Due Date Time'))->seconds(false),
-                        Forms\Components\DateTimePicker::make('done_date_time')->label(__('Done Date Time'))->seconds(false),
-                        Forms\Components\DatePicker::make('review_date')->label(__('Review Date')),
-                        Forms\Components\TextInput::make('review_place')->label(__('Review Place'))->maxLength(255),
-                        Forms\Components\TextInput::make('Req_final_mark')->label(__('Final Mark'))->numeric(),
-                        Forms\Components\Toggle::make('read_status')->label(__('Read Status')),
-                        Forms\Components\Toggle::make('is_editable')->label(__('Is Editable')),
-                        Forms\Components\Toggle::make('male_owner_agree')->label(__('Male Owner Agree')),
-                        Forms\Components\Textarea::make('full_details')->label(__('Full Details'))->rows(4)->columnSpanFull(),
+                        TextInput::make('task_name')->label(__('Task Name'))->required()->maxLength(255),
+                        TextInput::make('task_type')->label(__('Task Type'))->maxLength(255),
+                        TextInput::make('status')->label(__('Status'))->maxLength(255),
+                        TextInput::make('pedigree_color')->label(__('Pedigree Color'))->maxLength(255),
+                        DateTimePicker::make('due_date_time')->label(__('Due Date Time'))->seconds(false),
+                        DateTimePicker::make('done_date_time')->label(__('Done Date Time'))->seconds(false),
+                        DatePicker::make('review_date')->label(__('Review Date')),
+                        TextInput::make('review_place')->label(__('Review Place'))->maxLength(255),
+                        TextInput::make('Req_final_mark')->label(__('Final Mark'))->numeric(),
+                        Toggle::make('read_status')->label(__('Read Status')),
+                        Toggle::make('is_editable')->label(__('Is Editable')),
+                        Toggle::make('male_owner_agree')->label(__('Male Owner Agree')),
+                        Textarea::make('full_details')->label(__('Full Details'))->rows(4)->columnSpanFull(),
                     ])
                     ->columns(4),
-                Forms\Components\Section::make(__('Relations'))
+                Section::make(__('Relations'))
                     ->schema([
-                        Forms\Components\Select::make('manager_user_id')
+                        Select::make('manager_user_id')
                             ->label(__('Manager User'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\Select::make('related_to_user_id')
+                        Select::make('related_to_user_id')
                             ->label(__('Related User'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\Select::make('related_breeding_process_id')
+                        Select::make('related_breeding_process_id')
                             ->label(__('Breeding Process'))
                             ->relationship('breeding', 'id')
                             ->searchable()
@@ -120,23 +136,23 @@ class PrevUserTaskResource extends Resource
                 TextColumn::make('deleted_at')->label(__('Deleted at'))->since()->dateTimeTooltip()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevUserTaskExporter::class),
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->headerActions([
@@ -152,10 +168,10 @@ class PrevUserTaskResource extends Resource
             ->striped();
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Task details'))
                     ->schema([
                         TextEntry::make('task_name')->label(__('Task Name')),
@@ -193,10 +209,10 @@ class PrevUserTaskResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevUserTasks::route('/'),
-            'create' => Pages\CreatePrevUserTask::route('/create'),
-            'view' => Pages\ViewPrevUserTask::route('/{record}'),
-            'edit' => Pages\EditPrevUserTask::route('/{record}/edit'),
+            'index' => ListPrevUserTasks::route('/'),
+            'create' => CreatePrevUserTask::route('/create'),
+            'view' => ViewPrevUserTask::route('/{record}'),
+            'edit' => EditPrevUserTask::route('/{record}/edit'),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevDogImportResource\Pages;
 
+use Filament\Actions\EditAction;
 use App\Filament\Resources\PrevDogImportResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
@@ -18,7 +19,7 @@ class ViewPrevDogImport extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

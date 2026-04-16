@@ -20,7 +20,7 @@ class ShowsOverviewStats extends BaseWidget
         return 2;
     }
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getStats(): array
     {

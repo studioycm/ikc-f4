@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Pages;
 
+use Filament\Panel;
 use App\Filament\User\Widgets\BillingOverviewStats;
 use App\Filament\User\Widgets\BreedingOverviewStats;
 use App\Filament\User\Widgets\DogsOverviewStats;
@@ -14,9 +15,9 @@ class Dashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationIcon = 'heroicon-o-home';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-home';
 
-    public static function getRoutePath(): string
+    public static function getRoutePath(Panel $panel): string
     {
         return '/';
     }
@@ -31,7 +32,7 @@ class Dashboard extends BaseDashboard
         return __('Dashboard');
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int|array
     {
         return [
             'md' => 4,

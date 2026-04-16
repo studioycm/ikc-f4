@@ -2,19 +2,32 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Resources\PrevPaymentResource\Pages\ListPrevPayments;
+use App\Filament\Resources\PrevPaymentResource\Pages\CreatePrevPayment;
+use App\Filament\Resources\PrevPaymentResource\Pages\ViewPrevPayment;
+use App\Filament\Resources\PrevPaymentResource\Pages\EditPrevPayment;
 use App\Filament\Exports\PrevPaymentExporter;
 use App\Filament\Resources\PrevPaymentResource\Pages;
 use App\Models\PrevPayment;
 use App\Models\PrevUser;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,7 +38,7 @@ class PrevPaymentResource extends Resource
 {
     protected static ?string $model = PrevPayment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
 
     protected static ?string $recordTitleAttribute = 'payment_topic';
 
@@ -49,76 +62,76 @@ class PrevPaymentResource extends Resource
         return __('Payments');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('Payment details'))
+        return $schema
+            ->components([
+                Section::make(__('Payment details'))
                     ->schema([
-                        Forms\Components\TextInput::make('desc')
+                        TextInput::make('desc')
                             ->label(__('Description'))
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('payment_topic')
+                        TextInput::make('payment_topic')
                             ->label(__('Topic'))
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('amount')
+                        TextInput::make('amount')
                             ->label(__('Cost'))
                             ->numeric()
                             ->minValue(0)
                             ->required(),
-                        Forms\Components\TextInput::make('approval_number')
+                        TextInput::make('approval_number')
                             ->label(__('Approval Number'))
                             ->maxLength(255),
-                        Forms\Components\DateTimePicker::make('payment_date_time')
+                        DateTimePicker::make('payment_date_time')
                             ->label(__('Payment Date Time'))
                             ->seconds(false),
-                        Forms\Components\TextInput::make('last4_digits')
+                        TextInput::make('last4_digits')
                             ->label(__('Last 4 Digits'))
                             ->maxLength(10),
-                        Forms\Components\TextInput::make('user_ip')
+                        TextInput::make('user_ip')
                             ->label(__('User IP'))
                             ->maxLength(255),
                     ])
                     ->columns(3),
-                Forms\Components\Section::make(__('Payer details'))
+                Section::make(__('Payer details'))
                     ->schema([
-                        Forms\Components\TextInput::make('first_name')
+                        TextInput::make('first_name')
                             ->label(__('First Name'))
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('last_name')
+                        TextInput::make('last_name')
                             ->label(__('Last Name'))
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
+                        TextInput::make('email')
                             ->label(__('Email'))
                             ->email()
                             ->maxLength(255),
                     ])
                     ->columns(3),
-                Forms\Components\Section::make(__('Relations'))
+                Section::make(__('Relations'))
                     ->schema([
-                        Forms\Components\Select::make('club_id')
+                        Select::make('club_id')
                             ->label(__('Club'))
                             ->relationship('club', 'Name')
                             ->searchable(['Name', 'EngName'])
                             ->preload()
                             ->getOptionLabelFromRecordUsing(fn(Model $record): string => $record->Name ?? $record->EngName ?? (string)$record->id),
-                        Forms\Components\Select::make('breed_id')
+                        Select::make('breed_id')
                             ->label(__('Breed'))
                             ->relationship('breed', 'BreedName')
                             ->searchable(['BreedName', 'BreedNameEN', 'BreedCode'])
                             ->preload()
                             ->getOptionLabelFromRecordUsing(fn(Model $record): string => $record->BreedName ?? $record->BreedNameEN ?? (string)$record->id),
-                        Forms\Components\Select::make('sagir_id')
+                        Select::make('sagir_id')
                             ->label(__('Dog'))
                             ->relationship('dog', 'SagirID')
                             ->searchable(['SagirID', 'Heb_Name', 'Eng_Name'])
                             ->getOptionLabelFromRecordUsing(fn(Model $record): string => $record->full_name . ' #' . $record->SagirID),
-                        Forms\Components\Select::make('created_by')
+                        Select::make('created_by')
                             ->label(__('Created By'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name),
-                        Forms\Components\Select::make('updated_by')
+                        Select::make('updated_by')
                             ->label(__('Updated By'))
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
@@ -191,23 +204,23 @@ class PrevPaymentResource extends Resource
             ])
             ->filters([
 
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevPaymentExporter::class),
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->headerActions([
@@ -223,10 +236,10 @@ class PrevPaymentResource extends Resource
             ->striped();
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Payment details'))
                     ->schema([
                         TextEntry::make('id')->label(__('ID')),
@@ -266,10 +279,10 @@ class PrevPaymentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevPayments::route('/'),
-            'create' => Pages\CreatePrevPayment::route('/create'),
-            'view' => Pages\ViewPrevPayment::route('/{record}'),
-            'edit' => Pages\EditPrevPayment::route('/{record}/edit'),
+            'index' => ListPrevPayments::route('/'),
+            'create' => CreatePrevPayment::route('/create'),
+            'view' => ViewPrevPayment::route('/{record}'),
+            'edit' => EditPrevPayment::route('/{record}/edit'),
         ];
     }
 

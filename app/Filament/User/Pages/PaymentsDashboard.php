@@ -9,7 +9,7 @@ class PaymentsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 80;
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-banknotes';
 
     protected static string $routePath = 'payments';
 
@@ -23,7 +23,7 @@ class PaymentsDashboard extends BaseDashboard
         return __('Payments');
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int|array
     {
         return 1;
     }

@@ -11,7 +11,7 @@ class ViewPrevClub extends ViewRecord
     protected static string $resource = PrevClubResource::class;
 
     // Let Filament handle the layout and page rendering.
-    protected static string $view = 'filament.resources.prev-club.view';
+    protected string $view = 'filament.resources.prev-club.view';
 
     public function hasCombinedRelationManagerTabsWithContent(): bool
     {

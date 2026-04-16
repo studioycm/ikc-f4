@@ -2,37 +2,42 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use App\Filament\Resources\PrevBreedingResource\Pages\ListPrevBreedings;
+use App\Filament\Resources\PrevBreedingResource\Pages\CreatePrevBreeding;
+use App\Filament\Resources\PrevBreedingResource\Pages\EditPrevBreeding;
+use App\Filament\Resources\PrevBreedingResource\RelationManagers\PuppiesRelationManager;
+use App\Filament\Resources\PrevBreedingResource\RelationManagers\TasksRelationManager;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Filament\Exports\PrevBreedingExporter;
 use App\Filament\Resources\PrevBreedingResource\Pages;
 use App\Models\PrevBreeding;
 use App\Models\PrevDog;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -47,7 +52,7 @@ class PrevBreedingResource extends Resource
 
     protected static ?string $slug = 'prev-breedings';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getModelLabel(): string
     {
@@ -69,10 +74,10 @@ class PrevBreedingResource extends Resource
         return __('Breedings');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Hidden::make('created_by')
                     ->default(fn($operation, $record) => auth()->id()),
                 Wizard::make([
@@ -566,7 +571,7 @@ class PrevBreedingResource extends Resource
 
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
@@ -580,7 +585,7 @@ class PrevBreedingResource extends Resource
                     ->iconPosition('after')
                     ->exporter(PrevBreedingExporter::class),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
@@ -600,17 +605,17 @@ class PrevBreedingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevBreedings::route('/'),
-            'create' => Pages\CreatePrevBreeding::route('/create'),
-            'edit' => Pages\EditPrevBreeding::route('/{record}/edit'),
+            'index' => ListPrevBreedings::route('/'),
+            'create' => CreatePrevBreeding::route('/create'),
+            'edit' => EditPrevBreeding::route('/{record}/edit'),
         ];
     }
 
     public static function getRelations(): array
     {
         return [
-            PrevBreedingResource\RelationManagers\PuppiesRelationManager::class,
-            PrevBreedingResource\RelationManagers\TasksRelationManager::class,
+            PuppiesRelationManager::class,
+            TasksRelationManager::class,
         ];
     }
 

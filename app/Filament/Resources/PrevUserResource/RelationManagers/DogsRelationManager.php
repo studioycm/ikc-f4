@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevUserResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevDogResource;
 use App\Models\PrevDog;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -50,12 +51,12 @@ class DogsRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Dog'))
                     ->url(fn(PrevDog $record): string => PrevDogResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

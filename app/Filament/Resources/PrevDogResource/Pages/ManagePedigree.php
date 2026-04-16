@@ -2,22 +2,24 @@
 
 namespace App\Filament\Resources\PrevDogResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\DatePicker;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Filament\Resources\PrevDogResource;
 use App\Models\PrevDog;
 use App\Services\Legacy\PrevDogService;
 use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -31,7 +33,7 @@ class ManagePedigree extends Page implements HasForms
 
     protected static string $resource = PrevDogResource::class;
 
-    protected static string $view = 'filament.resources.prev-dog-resource.pages.manage-pedigree';
+    protected string $view = 'filament.resources.prev-dog-resource.pages.manage-pedigree';
 
     public function getTitle(): string|Htmlable
     {
@@ -48,7 +50,7 @@ class ManagePedigree extends Page implements HasForms
         return __('dog/model/general.labels.navigation_group');
     }
 
-    protected static ?string $navigationIcon = 'fas-dna';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-dna';
 
     protected static ?int $navigationSort = 99;
 
@@ -132,11 +134,11 @@ class ManagePedigree extends Page implements HasForms
         $this->redirect($url, navigate: true);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->model($this->record ?? PrevDog::make())
-            ->schema([
+            ->components([
                 Section::make(__('Select main dog'))
                     ->schema([
                         Grid::make(1)->schema([
@@ -188,14 +190,14 @@ class ManagePedigree extends Page implements HasForms
                                     Grid::make(12)->schema([
                                         // Left: identity
                                         Group::make([
-                                            Forms\Components\TextInput::make('Eng_Name')
+                                            TextInput::make('Eng_Name')
                                                 ->label(__('Name (EN)'))
                                                 ->live(debounce: 1000)
                                                 ->required()
                                                 ->string()
                                                 ->maxLength(200),
 
-                                            Forms\Components\TextInput::make('Heb_Name')
+                                            TextInput::make('Heb_Name')
                                                 ->label(__('Name (HE)'))
                                                 ->live(debounce: 1000)
                                                 ->string()
@@ -214,26 +216,26 @@ class ManagePedigree extends Page implements HasForms
 
                                         // Right: identifiers
                                         Group::make([
-                                            Forms\Components\TextInput::make('ImportNumber')
+                                            TextInput::make('ImportNumber')
                                                 ->label(__('Import #'))
                                                 ->live(debounce: 1000)
                                                 ->required()
                                                 ->maxLength(50)
                                                 ->unique(PrevDog::class, 'ImportNumber', ignoreRecord: true),
 
-                                            Forms\Components\TextInput::make('Chip')
+                                            TextInput::make('Chip')
                                                 ->label(__('Chip'))
                                                 ->live(debounce: 1000)
                                                 ->maxLength(50)
                                                 ->unique(PrevDog::class, 'Chip', ignoreRecord: true),
 
-                                            Forms\Components\TextInput::make('DnaID')
+                                            TextInput::make('DnaID')
                                                 ->label(__('DNA'))
                                                 ->live(debounce: 1000)
                                                 ->maxLength(50)
                                                 ->unique(PrevDog::class, 'DnaID', ignoreRecord: true),
 
-                                            Forms\Components\TextInput::make('BirthDate')
+                                            TextInput::make('BirthDate')
                                                 ->label(__('Birth Date'))
                                                 ->live(debounce: 1000)
                                                 ->required()
@@ -335,14 +337,14 @@ class ManagePedigree extends Page implements HasForms
                                 ->editOptionForm([
                                     Grid::make(12)->schema([
                                         Group::make([
-                                            Forms\Components\TextInput::make('Eng_Name')
+                                            TextInput::make('Eng_Name')
                                                 ->label(__('Name (EN)'))
                                                 ->live(debounce: 1000)
                                                 ->required()
                                                 ->string()
                                                 ->maxLength(200),
 
-                                            Forms\Components\TextInput::make('Heb_Name')
+                                            TextInput::make('Heb_Name')
                                                 ->label(__('Name (HE)'))
                                                 ->live(debounce: 1000)
                                                 ->string()
@@ -357,26 +359,26 @@ class ManagePedigree extends Page implements HasForms
                                         ])->columnSpan(6),
 
                                         Group::make([
-                                            Forms\Components\TextInput::make('ImportNumber')
+                                            TextInput::make('ImportNumber')
                                                 ->label(__('Import #'))
                                                 ->live(debounce: 1000)
                                                 ->required()
                                                 ->maxLength(50)
                                                 ->unique(PrevDog::class, 'ImportNumber', ignorable: $this->subject),
 
-                                            Forms\Components\TextInput::make('Chip')
+                                            TextInput::make('Chip')
                                                 ->label(__('Microchip'))
                                                 ->live(debounce: 1000)
                                                 ->maxLength(50)
                                                 ->unique(PrevDog::class, 'Chip', ignorable: $this->subject),
 
-                                            Forms\Components\TextInput::make('DnaID')
+                                            TextInput::make('DnaID')
                                                 ->label(__('DNA'))
                                                 ->live(debounce: 1000)
                                                 ->maxLength(50)
                                                 ->unique(PrevDog::class, 'DnaID', ignorable: $this->subject),
 
-                                            Forms\Components\DatePicker::make('BirthDate')
+                                            DatePicker::make('BirthDate')
                                                 ->label(__('Birth date (YYYY-MM-DD)'))
                                                 ->required()
                                                 ->rule('date_format:Y-m-d')

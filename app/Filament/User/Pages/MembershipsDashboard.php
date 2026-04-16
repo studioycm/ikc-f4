@@ -10,7 +10,7 @@ class MembershipsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 60;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     protected static string $routePath = 'memberships';
 
@@ -24,7 +24,7 @@ class MembershipsDashboard extends BaseDashboard
         return __('Membership');
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int|array
     {
         return 1;
     }

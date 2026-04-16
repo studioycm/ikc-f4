@@ -21,7 +21,7 @@ class DogsOverviewStats extends BaseWidget
         return 1;
     }
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getStats(): array
     {

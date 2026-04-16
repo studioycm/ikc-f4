@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevDog;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevDogPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::dog');
+        return $authUser->can('ViewAny:PrevDog');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevDog $prevDog): bool
+    public function view(AuthUser $authUser, PrevDog $prevDog): bool
     {
-        return $user->can('view_prev::dog');
+        return $authUser->can('View:PrevDog');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::dog');
+        return $authUser->can('Create:PrevDog');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevDog $prevDog): bool
+    public function update(AuthUser $authUser, PrevDog $prevDog): bool
     {
-        return $user->can('update_prev::dog');
+        return $authUser->can('Update:PrevDog');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevDog $prevDog): bool
+    public function delete(AuthUser $authUser, PrevDog $prevDog): bool
     {
-        return $user->can('delete_prev::dog');
+        return $authUser->can('Delete:PrevDog');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::dog');
+        return $authUser->can('DeleteAny:PrevDog');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevDog $prevDog): bool
+    public function restore(AuthUser $authUser, PrevDog $prevDog): bool
     {
-        return $user->can('force_delete_prev::dog');
+        return $authUser->can('Restore:PrevDog');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevDog $prevDog): bool
     {
-        return $user->can('force_delete_any_prev::dog');
+        return $authUser->can('ForceDelete:PrevDog');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevDog $prevDog): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::dog');
+        return $authUser->can('ForceDeleteAny:PrevDog');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::dog');
+        return $authUser->can('RestoreAny:PrevDog');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevDog $prevDog): bool
+    public function replicate(AuthUser $authUser, PrevDog $prevDog): bool
     {
-        return $user->can('replicate_prev::dog');
+        return $authUser->can('Replicate:PrevDog');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::dog');
+        return $authUser->can('Reorder:PrevDog');
     }
+
 }

@@ -2,13 +2,17 @@
 
 namespace App\Filament\User\Widgets\Sections;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use App\Enums\Legacy\LegacyUserRequestTopic;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevUserRequest;
 use App\Services\Legacy\PrevUserService;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -31,10 +35,10 @@ class UserRequestsTable extends BaseWidget
                     ->with(['club:id,Name', 'dog:id,SagirID,Heb_Name,Eng_Name', 'vetAuth:id,name,vet_email'])
             )
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label(__('ID'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('topic')
+                TextColumn::make('topic')
                     ->label(__('Topic'))
                     ->badge()
                     ->description(function ($state, PrevUserRequest $record): ?string {
@@ -62,28 +66,28 @@ class UserRequestsTable extends BaseWidget
                     })
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('club.Name')
+                TextColumn::make('club.Name')
                     ->label(__('Club'))
                     ->searchable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('dog.SagirID')
+                TextColumn::make('dog.SagirID')
                     ->label(__('dog/model/general.labels.singular'))
                     ->description(fn(PrevUserRequest $record): ?string => $record->dog?->full_name)
                     ->sortable(['DogsDB.SagirID'])
                     ->searchable(['DogsDB.SagirID', 'DogsDB.eng_name', 'DogsDB.heb_name'], isIndividual: true, isGlobal: false)
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('total_amount')
+                TextColumn::make('total_amount')
                     ->label(__('Cost'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: ',')
                     ->money(currency: 'ILS')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('payment_date_time')
+                TextColumn::make('payment_date_time')
                     ->label(__('Payment Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
@@ -98,47 +102,47 @@ class UserRequestsTable extends BaseWidget
                     })
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('record_date_time')
+                TextColumn::make('record_date_time')
                     ->label(__('Recorded at'))
                     ->date()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\IconColumn::make('IsDone')
+                IconColumn::make('IsDone')
                     ->label(__('Done'))
                     ->boolean()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('DoneDate')
+                TextColumn::make('DoneDate')
                     ->label(__('Done Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Requested'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label(__('Status'))
                     ->options([
                         'pending payment' => __('Pending Payment'),
                         'payment done' => __('Payment Done'),
                     ]),
-                Tables\Filters\SelectFilter::make('club')
+                SelectFilter::make('club')
                     ->label(__('Club'))
                     ->relationship('club', 'Name')
                     ->searchable(['Name', 'EngName'])
                     ->multiple()
                     ->preload(),
-                Tables\Filters\SelectFilter::make('topic')
+                SelectFilter::make('topic')
                     ->label(__('Topic'))
                     ->options(LegacyUserRequestTopic::class)
                     ->multiple(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->modalHeading(fn(PrevUserRequest $record): string => __('Request #:id', ['id' => $record->id]))
-                    ->infolist(fn(Infolist $infolist): Infolist => $infolist->schema([
+                    ->schema(fn(Schema $schema): Schema => $schema->components([
                         Section::make(__('Request Details'))
                             ->schema([
                                 TextEntry::make('topic')->label(__('Topic')),

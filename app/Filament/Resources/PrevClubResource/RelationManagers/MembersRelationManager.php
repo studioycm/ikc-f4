@@ -2,6 +2,18 @@
 
 namespace App\Filament\Resources\PrevClubResource\RelationManagers;
 
+use Filament\Actions\ExportAction;
+use Filament\Actions\AttachAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use App\Filament\Exports\PrevClubMemberExporter;
 use App\Filament\Resources\PrevUserResource;
 use App\Models\PrevUser;
@@ -10,8 +22,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -79,7 +89,7 @@ class MembersRelationManager extends RelationManager
             ])
             ->filters([
                 Filter::make('created_between')
-                    ->form([
+                    ->schema([
                         DatePicker::make('created_from')->label(__('Created From')),
                         DatePicker::make('created_until')->label(__('Created Until')),
                     ])
@@ -87,7 +97,7 @@ class MembersRelationManager extends RelationManager
                         ->when($data['created_from'] ?? null, fn(Builder $query, $date): Builder => $query->wherePivot('created_at', '>=', $date))
                         ->when($data['created_until'] ?? null, fn(Builder $query, $date): Builder => $query->wherePivot('created_at', '<=', $date . ' 23:59:59'))),
                 Filter::make('updated_between')
-                    ->form([
+                    ->schema([
                         DatePicker::make('updated_from')->label(__('Updated From')),
                         DatePicker::make('updated_until')->label(__('Updated Until')),
                     ])
@@ -136,27 +146,27 @@ class MembersRelationManager extends RelationManager
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevClubMemberExporter::class),
-                Tables\Actions\AttachAction::make()
+                AttachAction::make()
                     ->label(__('Attach Member'))
                     ->preloadRecordSelect()
-                    ->recordSelect(function (Forms\Components\Select $select) {
+                    ->recordSelect(function (Select $select) {
                         return $select
                             ->searchable()
                             ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search))
                             ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->find($value)?->name);
                     })
                     ->form([
-                        Forms\Components\TextInput::make('type')->label(__('Type'))->maxLength(255),
-                        Forms\Components\TextInput::make('status')->label(__('Status'))->default('active')->required(),
-                        Forms\Components\TextInput::make('payment_status')->label(__('Payment Status'))->numeric()->default(1),
-                        Forms\Components\Toggle::make('forbidden')->label(__('Forbidden'))->default(false),
+                        TextInput::make('type')->label(__('Type'))->maxLength(255),
+                        TextInput::make('status')->label(__('Status'))->default('active')->required(),
+                        TextInput::make('payment_status')->label(__('Payment Status'))->numeric()->default(1),
+                        Toggle::make('forbidden')->label(__('Forbidden'))->default(false),
                         DatePicker::make('expire_date')->label(__('Expires At')),
                     ]),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Member'))
-                    ->infolist([
+                    ->schema([
                         TextEntry::make('name')->label(__('Name')),
                         TextEntry::make('email')
                             ->label(__('Email'))
@@ -177,33 +187,33 @@ class MembersRelationManager extends RelationManager
                     ->modalHeading(fn(PrevUser $record): string => $record->name)
                     ->modalSubmitAction(false)
                     ->extraModalFooterActions([
-                        Tables\Actions\Action::make('editMember')
+                        Action::make('editMember')
                             ->label(__('Edit Member'))
                             ->icon('heroicon-o-pencil-square')
                             ->url(fn(PrevUser $record): string => PrevUserResource::getUrl('edit', ['record' => $record]))
                             ->openUrlInNewTab(),
                     ]),
-                Tables\Actions\EditAction::make('edit-membership')
+                EditAction::make('edit-membership')
                     ->label(__('Edit Membership'))
-                    ->form([
-                        Forms\Components\TextInput::make('type')->label(__('Type'))->maxLength(255),
-                        Forms\Components\TextInput::make('status')->label(__('Status'))->required(),
-                        Forms\Components\TextInput::make('payment_status')->label(__('Payment Status'))->numeric(),
-                        Forms\Components\Toggle::make('forbidden')->label(__('Forbidden')),
+                    ->schema([
+                        TextInput::make('type')->label(__('Type'))->maxLength(255),
+                        TextInput::make('status')->label(__('Status'))->required(),
+                        TextInput::make('payment_status')->label(__('Payment Status'))->numeric(),
+                        Toggle::make('forbidden')->label(__('Forbidden')),
                         DatePicker::make('expire_date')->label(__('Expires At')),
                     ]),
-                Tables\Actions\DetachAction::make()
+                DetachAction::make()
                     ->label(__('Detach')),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevClubMemberExporter::class),
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

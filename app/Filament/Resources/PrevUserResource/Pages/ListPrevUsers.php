@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PrevUserResource\Pages;
 
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\PrevUserResource\Widgets\UserStats;
 use App\Filament\Resources\PrevUserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -16,14 +18,14 @@ class ListPrevUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
     protected function getHeaderWidgets(): array
     {
         return [
-            PrevUserResource\Widgets\UserStats::class,
+            UserStats::class,
         ];
     }
 

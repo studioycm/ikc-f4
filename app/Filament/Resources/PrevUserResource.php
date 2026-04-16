@@ -2,18 +2,49 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Enums\RecordActionsPosition;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\PrevUserResource\RelationManagers\DogsRelationManager;
+use App\Filament\Resources\PrevUserResource\RelationManagers\ClubsRelationManager;
+use App\Filament\Resources\PrevUserResource\RelationManagers\OwnerFilesRelationManager;
+use App\Filament\Resources\PrevUserResource\RelationManagers\UserRequestsRelationManager;
+use App\Filament\Resources\PrevUserResource\RelationManagers\PaymentsRelationManager;
+use App\Filament\Resources\PrevUserResource\RelationManagers\UserActivitiesRelationManager;
+use App\Filament\Resources\PrevUserResource\RelationManagers\ManagedTasksRelationManager;
+use App\Filament\Resources\PrevUserResource\RelationManagers\RelatedTasksRelationManager;
+use App\Filament\Resources\PrevUserResource\Pages\ListPrevUsers;
+use App\Filament\Resources\PrevUserResource\Pages\CreatePrevUser;
+use App\Filament\Resources\PrevUserResource\Pages\EditPrevUser;
+use App\Filament\Resources\PrevUserResource\Widgets\UserStats;
 use App\Filament\Exports\PrevUserExporter;
 use App\Filament\Resources\PrevUserResource\Pages;
 use App\Models\PrevUser;
 use App\Notifications\UserMessageNotification;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters;
 use Filament\Tables\Table;
@@ -52,7 +83,7 @@ class PrevUserResource extends Resource
 
     protected static ?string $slug = 'prev-users';
 
-    protected static ?string $navigationIcon = 'fas-user';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-user';
 
     protected static ?int $navigationSort = 3;
 
@@ -81,271 +112,271 @@ class PrevUserResource extends Resource
     //        return (string) static::$model::count();
     //    }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Tabs::make('prev_user_form_tabs')
+        return $schema
+            ->components([
+                Tabs::make('prev_user_form_tabs')
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make(__('Identity'))
+                        Tab::make(__('Identity'))
                             ->schema([
-                                Forms\Components\Section::make(__('Names'))
+                                Section::make(__('Names'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('first_name')
+                                        TextInput::make('first_name')
                                             ->label(__('First Name'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('last_name')
+                                        TextInput::make('last_name')
                                             ->label(__('Last Name'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('first_name_en')
+                                        TextInput::make('first_name_en')
                                             ->label(__('First Name EN'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('last_name_en')
+                                        TextInput::make('last_name_en')
                                             ->label(__('Last Name EN'))
                                             ->maxLength(255),
-                                        Forms\Components\DatePicker::make('birth_date')
+                                        DatePicker::make('birth_date')
                                             ->label(__('Birth Date')),
-                                        Forms\Components\TextInput::make('role_id')
+                                        TextInput::make('role_id')
                                             ->label(__('Role'))
                                             ->numeric(),
                                     ])
                                     ->columns(3),
-                                Forms\Components\Section::make(__('Account'))
+                                Section::make(__('Account'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('email')
+                                        TextInput::make('email')
                                             ->label(__('Email'))
                                             ->email()
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('owner_email')
+                                        TextInput::make('owner_email')
                                             ->label(__('Owner Email'))
                                             ->email()
                                             ->maxLength(100),
-                                        Forms\Components\DateTimePicker::make('email_verified_at')
+                                        DateTimePicker::make('email_verified_at')
                                             ->label(__('Email Verified At')),
-                                        Forms\Components\TextInput::make('password')
+                                        TextInput::make('password')
                                             ->label(__('Password'))
                                             ->password()
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('otp')
+                                        TextInput::make('otp')
                                             ->label(__('OTP'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('language_id')
+                                        TextInput::make('language_id')
                                             ->label(__('Language'))
                                             ->required()
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('status')
+                                        TextInput::make('status')
                                             ->label(__('Status'))
                                             ->numeric()
                                             ->default(0),
-                                        Forms\Components\TextInput::make('record_type')
+                                        TextInput::make('record_type')
                                             ->label(__('Record Type'))
                                             ->maxLength(50),
-                                        Forms\Components\TextInput::make('is_superadmin')
+                                        TextInput::make('is_superadmin')
                                             ->label(__('Is Superadmin'))
                                             ->required()
                                             ->numeric(),
                                     ])
                                     ->columns(3),
                             ]),
-                        Forms\Components\Tabs\Tab::make(__('Contact'))
+                        Tab::make(__('Contact'))
                             ->schema([
-                                Forms\Components\Section::make(__('Phones'))
+                                Section::make(__('Phones'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('mobile_phone')
+                                        TextInput::make('mobile_phone')
                                             ->label(__('Mobile Phone'))
                                             ->tel()
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('phone')
+                                        TextInput::make('phone')
                                             ->label(__('Phone'))
                                             ->tel()
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('private_phone_1')
+                                        TextInput::make('private_phone_1')
                                             ->label(__('Private Phone 1'))
                                             ->tel()
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('private_phone_2')
+                                        TextInput::make('private_phone_2')
                                             ->label(__('Private Phone 2'))
                                             ->tel()
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('fax')
+                                        TextInput::make('fax')
                                             ->label(__('Fax'))
                                             ->maxLength(255),
                                     ])
                                     ->columns(3),
-                                Forms\Components\Section::make(__('Address'))
+                                Section::make(__('Address'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('address_city')
+                                        TextInput::make('address_city')
                                             ->label(__('Address City'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('address_city_en')
+                                        TextInput::make('address_city_en')
                                             ->label(__('Address City EN'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('address_street')
+                                        TextInput::make('address_street')
                                             ->label(__('Address Street'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('address_street_en')
+                                        TextInput::make('address_street_en')
                                             ->label(__('Address Street EN'))
                                             ->maxLength(250),
-                                        Forms\Components\TextInput::make('address_street_number')
+                                        TextInput::make('address_street_number')
                                             ->label(__('Address Street Number'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('house_number')
+                                        TextInput::make('house_number')
                                             ->label(__('House Number'))
                                             ->maxLength(150),
-                                        Forms\Components\TextInput::make('address_zip')
+                                        TextInput::make('address_zip')
                                             ->label(__('Address Zip'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('country_id')
+                                        TextInput::make('country_id')
                                             ->label(__('Country'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('country_code')
+                                        TextInput::make('country_code')
                                             ->label(__('Country Code'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('city_id')
+                                        TextInput::make('city_id')
                                             ->label(__('City'))
                                             ->numeric(),
                                     ])
                                     ->columns(3),
                             ]),
-                        Forms\Components\Tabs\Tab::make(__('Membership & ownership'))
+                        Tab::make(__('Membership & ownership'))
                             ->schema([
-                                Forms\Components\Section::make(__('Legacy identifiers'))
+                                Section::make(__('Legacy identifiers'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('data_id')
+                                        TextInput::make('data_id')
                                             ->label(__('Data ID'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('owner_code')
+                                        TextInput::make('owner_code')
                                             ->label(__('Owner Code'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('info_id')
+                                        TextInput::make('info_id')
                                             ->label(__('Info ID'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('sagir_owner_id')
+                                        TextInput::make('sagir_owner_id')
                                             ->label(__('Sagir Owner ID'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('order_id')
+                                        TextInput::make('order_id')
                                             ->label(__('Order ID'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('new_sid')
+                                        TextInput::make('new_sid')
                                             ->label(__('New SID'))
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('new_org_data_id')
+                                        TextInput::make('new_org_data_id')
                                             ->label(__('New Org Data ID'))
                                             ->numeric(),
-                                        Forms\Components\DatePicker::make('new_fill_date')
+                                        DatePicker::make('new_fill_date')
                                             ->label(__('New Fill Date')),
-                                        Forms\Components\TextInput::make('new_filler_ip')
+                                        TextInput::make('new_filler_ip')
                                             ->label(__('New Filler IP'))
                                             ->maxLength(200),
                                     ])
                                     ->columns(3),
-                                Forms\Components\Section::make(__('Club & membership'))
+                                Section::make(__('Club & membership'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('club_id')
+                                        TextInput::make('club_id')
                                             ->label(__('Club'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('member_status')
+                                        TextInput::make('member_status')
                                             ->label(__('Member Status'))
                                             ->numeric(),
-                                        Forms\Components\DatePicker::make('start_date')
+                                        DatePicker::make('start_date')
                                             ->label(__('Start Date')),
-                                        Forms\Components\DatePicker::make('expire_date')
+                                        DatePicker::make('expire_date')
                                             ->label(__('Expire Date')),
-                                        Forms\Components\TextInput::make('payment_status')
+                                        TextInput::make('payment_status')
                                             ->label(__('Payment Status'))
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('owner_payment_sum')
+                                        TextInput::make('owner_payment_sum')
                                             ->label(__('Owner Payment Sum'))
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('owner_payment_last4')
+                                        TextInput::make('owner_payment_last4')
                                             ->label(__('Owner Payment Last4'))
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('owner_total_payment')
+                                        TextInput::make('owner_total_payment')
                                             ->label(__('Owner Total Payment'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('invoice_id')
+                                        TextInput::make('invoice_id')
                                             ->label(__('Invoice ID'))
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('record_source')
+                                        TextInput::make('record_source')
                                             ->label(__('Record Source'))
                                             ->numeric(),
                                     ])
                                     ->columns(3),
-                                Forms\Components\Section::make(__('Breeding & approvals'))
+                                Section::make(__('Breeding & approvals'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('breed_id')
+                                        TextInput::make('breed_id')
                                             ->label(__('Breed'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('beit_gidul_id')
+                                        TextInput::make('beit_gidul_id')
                                             ->label(__('Beit Gidul ID'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('ClubManagerID')
+                                        TextInput::make('ClubManagerID')
                                             ->label(__('Club Manager ID'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('is_current_owner')
+                                        TextInput::make('is_current_owner')
                                             ->label(__('Is Current Owner'))
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('is_breed_manager')
+                                        TextInput::make('is_breed_manager')
                                             ->label(__('Is Breed Manager'))
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('is_judge')
+                                        TextInput::make('is_judge')
                                             ->label(__('Is Judge'))
                                             ->maxLength(200),
-                                        Forms\Components\TextInput::make('approved_terms')
+                                        TextInput::make('approved_terms')
                                             ->label(__('Approved Terms'))
                                             ->maxLength(255),
-                                        Forms\Components\DatePicker::make('approved_date')
+                                        DatePicker::make('approved_date')
                                             ->label(__('Approved Date')),
-                                        Forms\Components\TextInput::make('breeding_otp')
+                                        TextInput::make('breeding_otp')
                                             ->label(__('Breeding OTP'))
                                             ->numeric(),
                                     ])
                                     ->columns(3),
                             ]),
-                        Forms\Components\Tabs\Tab::make(__('Media & notes'))
+                        Tab::make(__('Media & notes'))
                             ->schema([
-                                Forms\Components\Section::make(__('Media'))
+                                Section::make(__('Media'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('profile_photo')
+                                        TextInput::make('profile_photo')
                                             ->label(__('Profile Photo'))
                                             ->maxLength(255),
-                                        Forms\Components\FileUpload::make('image')
+                                        FileUpload::make('image')
                                             ->label(__('Image'))
                                             ->image(),
-                                        Forms\Components\DateTimePicker::make('last_active_date_time')
+                                        DateTimePicker::make('last_active_date_time')
                                             ->label(__('Last Active Date Time')),
-                                        Forms\Components\Toggle::make('logout')
+                                        Toggle::make('logout')
                                             ->label(__('Logout'))
                                             ->required(),
                                     ])
                                     ->columns(2),
-                                Forms\Components\Section::make(__('Documents & security'))
+                                Section::make(__('Documents & security'))
                                     ->schema([
-                                        Forms\Components\TextInput::make('social_id_number')
+                                        TextInput::make('social_id_number')
                                             ->label(__('Social ID Number'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('passport_id')
+                                        TextInput::make('passport_id')
                                             ->label(__('Passport ID'))
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('migration_status')
+                                        TextInput::make('migration_status')
                                             ->label(__('Migration Status')),
-                                        Forms\Components\TextInput::make('special_key')
+                                        TextInput::make('special_key')
                                             ->label(__('Special Key'))
                                             ->maxLength(4000),
-                                        Forms\Components\TextInput::make('user_key')
+                                        TextInput::make('user_key')
                                             ->label(__('User Key'))
                                             ->maxLength(4000),
                                     ])
                                     ->columns(2),
-                                Forms\Components\Section::make(__('Notes'))
+                                Section::make(__('Notes'))
                                     ->schema([
-                                        Forms\Components\Textarea::make('note')
+                                        Textarea::make('note')
                                             ->label(__('Note'))
                                             ->columnSpanFull(),
-                                        Forms\Components\Textarea::make('created_from')
+                                        Textarea::make('created_from')
                                             ->label(__('Created From'))
                                             ->columnSpanFull(),
-                                        Forms\Components\Textarea::make('grower_remarks')
+                                        Textarea::make('grower_remarks')
                                             ->label(__('Grower Remarks'))
                                             ->columnSpanFull(),
                                     ])
@@ -367,11 +398,11 @@ class PrevUserResource extends Resource
             })
             ->defaultSort('id', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label(__('ID'))
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false),
-                Tables\Columns\TextColumn::make('record_type')
+                TextColumn::make('record_type')
                     ->label(__('User Type'))
                     ->badge()
 //                    ->color(fn(PrevUser $record): string => match ($record->record_type) {
@@ -382,245 +413,245 @@ class PrevUserResource extends Resource
 //                    })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('owner_code')
+                TextColumn::make('owner_code')
                     ->label(__('Owner Code'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('Name'))
                     ->sortable(['last_name', 'first_name'])
                     ->searchable(['first_name', 'last_name', 'first_name_en', 'last_name_en'], isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('full_name')
+                TextColumn::make('full_name')
                     ->label(__('Full Name'))
                     ->sortable(['last_name', 'first_name'])
                     ->searchable(['first_name', 'last_name', 'first_name_en', 'last_name_en'], isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('first_name')
+                TextColumn::make('first_name')
                     ->label(__('First Name'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('last_name')
+                TextColumn::make('last_name')
                     ->label(__('Last Name'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('first_name_en')
+                TextColumn::make('first_name_en')
                     ->label(__('First Name EN'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('last_name_en')
+                TextColumn::make('last_name_en')
                     ->label(__('Last Name EN'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('normalized_phone')
+                TextColumn::make('normalized_phone')
                     ->label(__('Phone'))
                     ->sortable(['mobile_phone', 'phone'])
                     ->searchable(['mobile_phone', 'phone'], isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->label(__('Email'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('email_verified_at')
+                TextColumn::make('email_verified_at')
                     ->label(__('Email Verified At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('otp')
+                TextColumn::make('otp')
                     ->label(__('OTP'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('role_id')
+                TextColumn::make('role_id')
                     ->label(__('Role'))
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('birth_date')
+                TextColumn::make('birth_date')
                     ->label(__('Birth Date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('full_address')
+                TextColumn::make('full_address')
                     ->label(__('Full Address'))
                     ->sortable(['address_city', 'address_street'])
                     ->searchable(['address_city', 'address_street'], isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('address_city')
+                TextColumn::make('address_city')
                     ->label(__('Address City'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('address_city_en')
+                TextColumn::make('address_city_en')
                     ->label(__('Address City EN'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('address_street')
+                TextColumn::make('address_street')
                     ->label(__('Address Street'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('address_street_en')
+                TextColumn::make('address_street_en')
                     ->label(__('Address Street EN'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('address_street_number')
+                TextColumn::make('address_street_number')
                     ->label(__('Address Street Number'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('house_number')
+                TextColumn::make('house_number')
                     ->label(__('House Number'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('address_zip')
+                TextColumn::make('address_zip')
                     ->label(__('Address Zip'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('country_id')
+                TextColumn::make('country_id')
                     ->label(__('Country'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('country_code')
+                TextColumn::make('country_code')
                     ->label(__('Country Code'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('fax')
+                TextColumn::make('fax')
                     ->label(__('Fax'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('social_id_number')
+                TextColumn::make('social_id_number')
                     ->label(__('Social ID Number'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('passport_id')
+                TextColumn::make('passport_id')
                     ->label(__('Passport ID'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('profile_photo')
+                TextColumn::make('profile_photo')
                     ->label(__('Profile Photo'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('last_active_date_time')
+                TextColumn::make('last_active_date_time')
                     ->label(__('Last Active Date Time'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('language_id')
+                TextColumn::make('language_id')
                     ->label(__('Language'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('is_superadmin')
+                TextColumn::make('is_superadmin')
                     ->label(__('Is Superadmin'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('migration_status')
+                TextColumn::make('migration_status')
                     ->label(__('Migration Status'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('data_id')
+                TextColumn::make('data_id')
                     ->label(__('Data ID'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('info_id')
+                TextColumn::make('info_id')
                     ->label(__('Info ID'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('owner_email')
+                TextColumn::make('owner_email')
                     ->label(__('Owner Email'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('legacyDog.full_name')
+                TextColumn::make('legacyDog.full_name')
                     ->label(__('Legacy Owned Dog'))
                     ->description(fn(PrevUser $record): string|null => $record->sagir_owner_id ?? null)
                     ->url(fn(PrevUser $record): string => PrevDogResource::getUrl('view', ['record', $record->sagir_owner_id]))
                     ->openUrlInNewTab()
                     ->searchable(['SagirID', 'Heb_Name', 'Eng_Name'], isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('sagir_owner_id')
+                TextColumn::make('sagir_owner_id')
                     ->label(__('Sagir Owner ID'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('is_current_owner')
+                TextColumn::make('is_current_owner')
                     ->label(__('Is Current Owner'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('order_id')
+                TextColumn::make('order_id')
                     ->label(__('Order ID'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('new_sid')
+                TextColumn::make('new_sid')
                     ->label(__('New SID'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('private_phone_1')
+                TextColumn::make('private_phone_1')
                     ->label(__('Private Phone 1'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('private_phone_2')
+                TextColumn::make('private_phone_2')
                     ->label(__('Private Phone 2'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('breed_id')
+                TextColumn::make('breed_id')
                     ->label(__('Breed'))
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('user_key')
+                TextColumn::make('user_key')
                     ->label(__('User Key'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('is_breed_manager')
+                TextColumn::make('is_breed_manager')
                     ->label(__('Is Breed Manager'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('beit_gidul_id')
+                TextColumn::make('beit_gidul_id')
                     ->label(__('Beit Gidul ID'))
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('approved_terms')
+                TextColumn::make('approved_terms')
                     ->label(__('Approved Terms'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('approved_date')
+                TextColumn::make('approved_date')
                     ->label(__('Approved Date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('ClubManagerID')
+                TextColumn::make('ClubManagerID')
                     ->label(__('Club Manager ID'))
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label(__('Created At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('Updated At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->label(__('Deleted at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Filters\Filter::make('trashed')
-                    ->form([
-                        Forms\Components\ToggleButtons::make('trashed')
+                Filter::make('trashed')
+                    ->schema([
+                        ToggleButtons::make('trashed')
                             ->label(__('Deleted Status'))
                             ->options([
                                 'not_deleted' => __('Not Deleted'),
@@ -645,9 +676,9 @@ class PrevUserResource extends Resource
                             'not_deleted' => $query->withoutTrashed(),
                         };
                     }),
-                Filters\Filter::make('record_type')
-                    ->form([
-                        Forms\Components\ToggleButtons::make('record_type')
+                Filter::make('record_type')
+                    ->schema([
+                        ToggleButtons::make('record_type')
                             ->label(__('User Type'))
                             ->options([
                                 'all' => __('All'),
@@ -670,12 +701,12 @@ class PrevUserResource extends Resource
                         return $query->whereRecordType($data['record_type'] ?? null);
                     })
                     ->columnSpan(2),
-                Filters\Filter::make('created_at')
-                    ->form([
-                        Forms\Components\Fieldset::make()
+                Filter::make('created_at')
+                    ->schema([
+                        Fieldset::make()
                             ->label(__('Created'))
                             ->schema([
-                                Forms\Components\DatePicker::make('created_at_from')
+                                DatePicker::make('created_at_from')
                                     ->hiddenLabel()
                                     ->prefix(__('From'))
                                     ->native(false)
@@ -684,7 +715,7 @@ class PrevUserResource extends Resource
                                     ->locale('he')
                                     ->weekStartsOnSunday()
                                     ->closeOnDateSelection(),
-                                Forms\Components\DatePicker::make('created_at_to')
+                                DatePicker::make('created_at_to')
                                     ->hiddenLabel()
                                     ->prefix(__('To'))
                                     ->native(false)
@@ -707,12 +738,12 @@ class PrevUserResource extends Resource
                         return $query;
                     })
                     ->columnSpan(2),
-                Filters\Filter::make('updated_at')
-                    ->form([
-                        Forms\Components\Fieldset::make()
+                Filter::make('updated_at')
+                    ->schema([
+                        Fieldset::make()
                             ->label(__('Updated'))
                             ->schema([
-                                Forms\Components\DatePicker::make('updated_at_from')
+                                DatePicker::make('updated_at_from')
                                     ->hiddenLabel()
                                     ->prefix(__('From'))
                                     ->native(false)
@@ -721,7 +752,7 @@ class PrevUserResource extends Resource
                                     ->locale('he')
                                     ->weekStartsOnSunday()
                                     ->closeOnDateSelection(),
-                                Forms\Components\DatePicker::make('updated_at_to')
+                                DatePicker::make('updated_at_to')
                                     ->hiddenLabel()
                                     ->prefix(__('To'))
                                     ->native(false)
@@ -746,11 +777,11 @@ class PrevUserResource extends Resource
                     ->columnSpan(2),
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(7)
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->iconButton()
                     ->tooltip(__('Edit')),
-                Tables\Actions\Action::make('send_email')
+                Action::make('send_email')
                     ->label(false)
                     ->icon('heroicon-o-envelope')
                     ->iconButton()
@@ -759,12 +790,12 @@ class PrevUserResource extends Resource
                     ->modalHeading(__('Send Email'))
                     ->modalSubmitActionLabel(__('Queue Email'))
                     ->modalIcon('heroicon-o-envelope')
-                    ->form([
-                        Forms\Components\TextInput::make('subject')
+                    ->schema([
+                        TextInput::make('subject')
                             ->label(__('Subject'))
                             ->required()
                             ->maxLength(150),
-                        Forms\Components\RichEditor::make('body')
+                        RichEditor::make('body')
                             ->label(__('Message'))
                             ->toolbarButtons([
                                 'attachFiles',
@@ -786,7 +817,6 @@ class PrevUserResource extends Resource
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('editor-attachments')
                             ->fileAttachmentsVisibility('public')
-                            ->disableGrammarly()
                             ->columnSpanFull()
                             ->required(),
                     ])
@@ -804,7 +834,7 @@ class PrevUserResource extends Resource
                             ->success()
                             ->send();
                     }),
-            ], position: ActionsPosition::BeforeColumns)
+            ], position: RecordActionsPosition::BeforeColumns)
             ->headerActions([
                 ExportAction::make()
                     ->label(__('Export All'))
@@ -813,16 +843,16 @@ class PrevUserResource extends Resource
                     ->iconPosition('after')
                     ->exporter(PrevUserExporter::class),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
                     ->color('primary')
                     ->iconPosition('after')
                     ->exporter(PrevUserExporter::class),
-                Tables\Actions\BulkActionGroup::make([
+                BulkActionGroup::make([
                     // Bulk send (queued) to many PrevUsers
-                    Tables\Actions\BulkAction::make('bulk_send_email')
+                    BulkAction::make('bulk_send_email')
                         ->label(__('Send Email'))
                         ->icon('heroicon-o-envelope')
                         ->color('primary')
@@ -830,11 +860,11 @@ class PrevUserResource extends Resource
                         ->modalHeading(__('Send Email'))
                         ->modalSubmitActionLabel(__('Queue Emails'))
                         ->form([
-                            Forms\Components\TextInput::make('subject')
+                            TextInput::make('subject')
                                 ->label(__('Subject'))
                                 ->required()
                                 ->maxLength(150),
-                            Forms\Components\RichEditor::make('body')
+                            RichEditor::make('body')
                                 ->label(__('Message'))
                                 ->toolbarButtons([
                                     'attachFiles',
@@ -875,7 +905,7 @@ class PrevUserResource extends Resource
                                 ->success()
                                 ->send();
                         }),
-                    Tables\Actions\DeleteBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->paginated([10, 25, 50, 100, 200, 250, 300])
@@ -889,14 +919,14 @@ class PrevUserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            PrevUserResource\RelationManagers\DogsRelationManager::class,
-            PrevUserResource\RelationManagers\ClubsRelationManager::class,
-            PrevUserResource\RelationManagers\OwnerFilesRelationManager::class,
-            PrevUserResource\RelationManagers\UserRequestsRelationManager::class,
-            PrevUserResource\RelationManagers\PaymentsRelationManager::class,
-            PrevUserResource\RelationManagers\UserActivitiesRelationManager::class,
-            PrevUserResource\RelationManagers\ManagedTasksRelationManager::class,
-            PrevUserResource\RelationManagers\RelatedTasksRelationManager::class,
+            DogsRelationManager::class,
+            ClubsRelationManager::class,
+            OwnerFilesRelationManager::class,
+            UserRequestsRelationManager::class,
+            PaymentsRelationManager::class,
+            UserActivitiesRelationManager::class,
+            ManagedTasksRelationManager::class,
+            RelatedTasksRelationManager::class,
         ];
     }
 
@@ -911,16 +941,16 @@ class PrevUserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevUsers::route('/'),
-            'create' => Pages\CreatePrevUser::route('/create'),
-            'edit' => Pages\EditPrevUser::route('/{record}/edit'),
+            'index' => ListPrevUsers::route('/'),
+            'create' => CreatePrevUser::route('/create'),
+            'edit' => EditPrevUser::route('/{record}/edit'),
         ];
     }
 
     public static function getWidgets(): array
     {
         return [
-            PrevUserResource\Widgets\UserStats::class,
+            UserStats::class,
         ];
     }
 }

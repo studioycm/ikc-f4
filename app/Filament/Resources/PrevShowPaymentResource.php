@@ -2,24 +2,27 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Resources\PrevShowPaymentResource\Pages\ListPrevShowPayments;
+use App\Filament\Resources\PrevShowPaymentResource\Pages\CreatePrevShowPayment;
+use App\Filament\Resources\PrevShowPaymentResource\Pages\EditPrevShowPayment;
 use App\Filament\Exports\PrevShowPaymentExporter;
 use App\Filament\Resources\PrevShowPaymentResource\Pages;
 use App\Models\PrevShowPayment;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -32,7 +35,7 @@ class PrevShowPaymentResource extends Resource
 
     protected static ?string $slug = 'prev-show-payments';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 40;
 
@@ -56,10 +59,10 @@ class PrevShowPaymentResource extends Resource
         return __('Show Payments');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('DataID')
                     ->label(__('ID'))
                     ->required()
@@ -157,13 +160,13 @@ class PrevShowPaymentResource extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
@@ -189,9 +192,9 @@ class PrevShowPaymentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShowPayments::route('/'),
-            'create' => Pages\CreatePrevShowPayment::route('/create'),
-            'edit' => Pages\EditPrevShowPayment::route('/{record}/edit'),
+            'index' => ListPrevShowPayments::route('/'),
+            'create' => CreatePrevShowPayment::route('/create'),
+            'edit' => EditPrevShowPayment::route('/{record}/edit'),
         ];
     }
 

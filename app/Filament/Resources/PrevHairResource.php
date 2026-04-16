@@ -2,10 +2,19 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\PrevHairResource\Pages\ListPrevHairs;
+use App\Filament\Resources\PrevHairResource\Pages\CreatePrevHair;
+use App\Filament\Resources\PrevHairResource\Pages\EditPrevHair;
 use App\Filament\Resources\PrevHairResource\Pages;
 use App\Models\PrevHair;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -33,28 +42,28 @@ class PrevHairResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationIcon = 'fas-wind';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-wind';
 
 //    public static function getNavigationBadge(): ?string
 //    {
 //        return static::getModel()::count();
 //    }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('DataID')
+        return $schema
+            ->components([
+                TextInput::make('DataID')
                     ->numeric(),
-                Forms\Components\DateTimePicker::make('ModificationDateTime'),
-                Forms\Components\DateTimePicker::make('CreationDateTime'),
-                Forms\Components\TextInput::make('HairNameHE')
+                DateTimePicker::make('ModificationDateTime'),
+                DateTimePicker::make('CreationDateTime'),
+                TextInput::make('HairNameHE')
                     ->maxLength(200),
-                Forms\Components\TextInput::make('HairNameEN')
+                TextInput::make('HairNameEN')
                     ->maxLength(200),
-                Forms\Components\TextInput::make('Remark')
+                TextInput::make('Remark')
                     ->maxLength(4000),
-                Forms\Components\TextInput::make('OldCode')
+                TextInput::make('OldCode')
                     ->numeric(),
             ]);
     }
@@ -63,36 +72,36 @@ class PrevHairResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('DataID')
+                TextColumn::make('DataID')
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('ModificationDateTime')
+                TextColumn::make('ModificationDateTime')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('CreationDateTime')
+                TextColumn::make('CreationDateTime')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('HairNameHE')
+                TextColumn::make('HairNameHE')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('HairNameEN')
+                TextColumn::make('HairNameEN')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('Remark')
+                TextColumn::make('Remark')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('OldCode')
+                TextColumn::make('OldCode')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -100,12 +109,12 @@ class PrevHairResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -120,9 +129,9 @@ class PrevHairResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevHairs::route('/'),
-            'create' => Pages\CreatePrevHair::route('/create'),
-            'edit' => Pages\EditPrevHair::route('/{record}/edit'),
+            'index' => ListPrevHairs::route('/'),
+            'create' => CreatePrevHair::route('/create'),
+            'edit' => EditPrevHair::route('/{record}/edit'),
         ];
     }
 }

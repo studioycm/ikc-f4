@@ -9,7 +9,7 @@ class RequestsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 70;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $routePath = 'requests';
 
@@ -23,7 +23,7 @@ class RequestsDashboard extends BaseDashboard
         return __('Requests');
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int|array
     {
         return 1;
     }

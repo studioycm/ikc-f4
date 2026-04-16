@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PrevShowArena;
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PrevShowArenaPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_prev::show::arena');
+        return $authUser->can('ViewAny:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PrevShowArena $prevShowArena): bool
+    public function view(AuthUser $authUser, PrevShowArena $prevShowArena): bool
     {
-        return $user->can('view_prev::show::arena');
+        return $authUser->can('View:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_prev::show::arena');
+        return $authUser->can('Create:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PrevShowArena $prevShowArena): bool
+    public function update(AuthUser $authUser, PrevShowArena $prevShowArena): bool
     {
-        return $user->can('update_prev::show::arena');
+        return $authUser->can('Update:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PrevShowArena $prevShowArena): bool
+    public function delete(AuthUser $authUser, PrevShowArena $prevShowArena): bool
     {
-        return $user->can('delete_prev::show::arena');
+        return $authUser->can('Delete:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_prev::show::arena');
+        return $authUser->can('DeleteAny:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, PrevShowArena $prevShowArena): bool
+    public function restore(AuthUser $authUser, PrevShowArena $prevShowArena): bool
     {
-        return $user->can('force_delete_prev::show::arena');
+        return $authUser->can('Restore:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, PrevShowArena $prevShowArena): bool
     {
-        return $user->can('force_delete_any_prev::show::arena');
+        return $authUser->can('ForceDelete:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, PrevShowArena $prevShowArena): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_prev::show::arena');
+        return $authUser->can('ForceDeleteAny:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_prev::show::arena');
+        return $authUser->can('RestoreAny:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, PrevShowArena $prevShowArena): bool
+    public function replicate(AuthUser $authUser, PrevShowArena $prevShowArena): bool
     {
-        return $user->can('replicate_prev::show::arena');
+        return $authUser->can('Replicate:PrevShowArena');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_prev::show::arena');
+        return $authUser->can('Reorder:PrevShowArena');
     }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevClubResource\RelationManagers;
 
+use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -18,7 +19,7 @@ class BreedsRelationManager extends RelationManager
         return __('Breeds');
     }
 
-    public function table(Tables\Table $table): Tables\Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -28,7 +29,7 @@ class BreedsRelationManager extends RelationManager
                 TextColumn::make('BreedCode')->label(__('Breed Code'))->numeric(decimalPlaces: 0, thousandsSeparator: '')->sortable(),
             ])
             ->headerActions([])
-            ->actions([])
-            ->bulkActions([]);
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 }

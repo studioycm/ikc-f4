@@ -2,6 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\TextSize;
+use Filament\Schemas\Components\Livewire;
+use App\Filament\Resources\PrevClubResource\Pages\ListPrevClubs;
+use App\Filament\Resources\PrevClubResource\Pages\CreatePrevClub;
+use App\Filament\Resources\PrevClubResource\Pages\EditPrevClub;
+use App\Filament\Resources\PrevClubResource\Pages\ViewPrevClub;
 use App\Filament\Resources\PrevClubResource\Pages;
 use App\Filament\Resources\PrevClubResource\RelationManagers\BreedsRelationManager;
 use App\Filament\Resources\PrevClubResource\RelationManagers\ManagersRelationManager;
@@ -13,27 +28,12 @@ use App\Livewire\Prev\PrevClub\PrevClubBreedsTable;
 use App\Models\PrevClub;
 use App\Models\PrevUser;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs as FormTabs;
-use Filament\Forms\Components\Tabs\Tab as FormTab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Actions\Action as InfolistAction;
-use Filament\Infolists\Components\Grid as InfolistGrid;
-use Filament\Infolists\Components\Livewire as LivewireEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section as InfolistSection;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -47,7 +47,7 @@ class PrevClubResource extends Resource
 
     protected static ?string $slug = 'prev-clubs';
 
-    protected static ?string $navigationIcon = 'heroicon-o-flag';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-flag';
 
     protected static ?int $navigationSort = 70;
 
@@ -76,13 +76,13 @@ class PrevClubResource extends Resource
         return __('Clubs');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                FormTabs::make('club_form_tabs')
+        return $schema
+            ->components([
+                Tabs::make('club_form_tabs')
                     ->tabs([
-                        FormTab::make(__('General'))
+                        Tab::make(__('General'))
                             ->schema([
                                 Section::make(__('General details'))
                                     ->schema([
@@ -133,7 +133,7 @@ class PrevClubResource extends Resource
                                     ])
                                     ->columns(2),
                             ]),
-                        FormTab::make(__('Pricing'))
+                        Tab::make(__('Pricing'))
                             ->schema([
                                 Section::make(__('Club prices'))
                                     ->schema([
@@ -158,7 +158,7 @@ class PrevClubResource extends Resource
                                     ])
                                     ->columns(3),
                             ]),
-                        FormTab::make(__('Management'))
+                        Tab::make(__('Management'))
                             ->schema([
                                 Section::make(__('Manager details'))
                                     ->schema([
@@ -350,14 +350,14 @@ class PrevClubResource extends Resource
                     ->label(__('Has promoters'))
                     ->query(fn(Builder $q): Builder => $q->whereHas('breeds.promoters')),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('contacts')
                     ->icon('heroicon-o-user-group')
                     ->label('')
                     ->iconButton()
                     ->tooltip(__('Club contacts'))
-                    ->infolist([
-                        InfolistSection::make(__('Club contact'))
+                    ->schema([
+                        Section::make(__('Club contact'))
                             ->schema([
                                 TextEntry::make('Email')
                                     ->label(__('Club Email'))
@@ -373,7 +373,7 @@ class PrevClubResource extends Resource
                                     ->copyMessageDuration(1500),
                             ])
                             ->columns(2),
-                        InfolistSection::make(__('Related users'))
+                        Section::make(__('Related users'))
                             ->schema([
                                 RepeatableEntry::make('contact_directory')
                                     ->state(fn(PrevClub $record): array => $record->contactDirectoryRows()->all())
@@ -409,8 +409,8 @@ class PrevClubResource extends Resource
                     ->label('')
                     ->iconButton()
                     ->tooltip(__('Club emails'))
-                    ->infolist([
-                        InfolistSection::make(__('Emails'))
+                    ->schema([
+                        Section::make(__('Emails'))
                             ->schema([
                                 TextEntry::make('Email')
                                     ->label(__('Club Email'))
@@ -444,7 +444,7 @@ class PrevClubResource extends Resource
                 EditAction::make()->label(__('Edit')),
                 //                DeleteAction::make()->label(__('Delete')),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     //                    DeleteBulkAction::make()->label(__('Delete Selected')),
                 ]),
@@ -455,17 +455,17 @@ class PrevClubResource extends Resource
     /**
      * Build the view Infolist for a given Club record.
      */
-    public static function getInfolistForRecord(PrevClub $record): Infolist
+    public static function getInfolistForRecord(PrevClub $record): Schema
     {
         $record->loadMissing('managers');
 
-        return Infolist::make()
+        return Schema::make()
             ->record($record)
-            ->schema([
+            ->components([
                 Tabs::make('ClubTabs')->tabs([
                     Tab::make('General')->schema([
                         // Use a grid layout to organise the main/general and pricing sections as columns
-                        InfolistGrid::make()
+                        Grid::make()
                             ->columns(5)
                             ->schema([
                                 TextEntry::make('Name')
@@ -488,7 +488,7 @@ class PrevClubResource extends Resource
                                     ->color('gray')
                                     ->placeholder(__('No email provided')) // Better than an empty string
                                     ->suffixAction(
-                                        InfolistAction::make('send_email')
+                                        Action::make('send_email')
                                             ->icon('fas-paper-plane')
                                             ->color('success')
                                             ->url(fn(TextEntry $component) => "mailto:{$component->getState()}")
@@ -504,7 +504,7 @@ class PrevClubResource extends Resource
                                         TextEntry::make('full_name')
                                             ->label('')
                                             ->hiddenLabel()
-                                            ->size(TextEntry\TextEntrySize::Large)
+                                            ->size(TextSize::Large)
                                             ->weight(FontWeight::Bold)
                                             ->color(Color::Blue)
                                             ->columnSpan(1)
@@ -512,7 +512,7 @@ class PrevClubResource extends Resource
                                         TextEntry::make('normalised_phone')
                                             ->label('')
                                             ->hiddenLabel()
-                                            ->size(TextEntry\TextEntrySize::Medium)
+                                            ->size(TextSize::Medium)
                                             ->color('success')
                                             ->columnSpan(1)
                                             ->formatStateUsing(fn ($state, ?PrevUser $manager = null) => $manager?->normalised_phone ?? $state),
@@ -528,9 +528,9 @@ class PrevClubResource extends Resource
                             ]),
 
                         // Prices section placed below the grid, organised as 3 columns
-                        InfolistSection::make(__('Prices'))
+                        Section::make(__('Prices'))
                             ->schema([
-                                InfolistGrid::make()
+                                Grid::make()
                                     ->columns(3)
                                     ->schema([
                                         TextEntry::make('registration_price')
@@ -564,9 +564,9 @@ class PrevClubResource extends Resource
 
                     // Breeds tab unchanged (keeps Livewire entry)
                     Tab::make('Breeds')->schema([
-                        InfolistSection::make(__('Breeds in Club'))
+                        Section::make(__('Breeds in Club'))
                             ->schema([
-                                LivewireEntry::make(PrevClubBreedsTable::class)
+                                Livewire::make(PrevClubBreedsTable::class)
                                     ->key('prev-club-breeds')
 //                                    ->data(fn (PrevClub $record): array => [
 //                                        'clubId' => (int) $record->id,
@@ -593,10 +593,10 @@ class PrevClubResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevClubs::route('/'),
-            'create' => Pages\CreatePrevClub::route('/create'),
-            'edit' => Pages\EditPrevClub::route('/{record}/edit'),
-            'view' => Pages\ViewPrevClub::route('/{record}'),
+            'index' => ListPrevClubs::route('/'),
+            'create' => CreatePrevClub::route('/create'),
+            'edit' => EditPrevClub::route('/{record}/edit'),
+            'view' => ViewPrevClub::route('/{record}'),
         ];
     }
 }

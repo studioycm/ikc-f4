@@ -2,16 +2,17 @@
 
 namespace App\Filament\User\Widgets\Sections;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\Action;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevShowDog;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -47,36 +48,36 @@ class ShowParticipationTable extends BaseWidget
                     ->orderByDesc('ShowID')
             )
             ->columns([
-                Tables\Columns\TextColumn::make('show.TitleName')
+                TextColumn::make('show.TitleName')
                     ->label(__('Show'))
                     ->description(fn(PrevShowDog $record): ?string => $record->show?->club?->Name)
                     ->searchable(['ShowsDB.TitleName'])
                     ->sortable(['ShowID']),
-                Tables\Columns\TextColumn::make('dog.full_name')
+                TextColumn::make('dog.full_name')
                     ->label(__('Dog'))
                     ->description(fn(PrevShowDog $record): ?string => $record->dog?->SagirID ? __('Sagir') . ': ' . $record->dog->SagirID : null)
                     ->searchable(['DogsDB.Heb_Name', 'DogsDB.Eng_Name', 'Shows_Dogs_DB.SagirID'])
                     ->sortable(['SagirID']),
-                Tables\Columns\TextColumn::make('show.StartDate')
+                TextColumn::make('show.StartDate')
                     ->label(__('Show Date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('showClass.ClassName')
+                TextColumn::make('showClass.ClassName')
                     ->label(__('Class'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('arena.GroupName')
+                TextColumn::make('arena.GroupName')
                     ->label(__('Arena'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('breed.BreedName')
+                TextColumn::make('breed.BreedName')
                     ->label(__('Breed'))
                     ->description(fn(PrevShowDog $record): ?string => $record->breed?->BreedNameEN)
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('OrderID')
+                TextColumn::make('OrderID')
                     ->label(__('Order'))
                     ->badge()
                     ->color('primary')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('prevShowResult.DataID')
+                TextColumn::make('prevShowResult.DataID')
                     ->label(__('Result'))
                     ->placeholder(__('Pending'))
                     ->color('success')
@@ -110,10 +111,10 @@ class ShowParticipationTable extends BaseWidget
                         };
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn(PrevShowDog $record): string => __('Show Entry #:id', ['id' => $record->id]))
-                    ->infolist(fn(Infolist $infolist): Infolist => $infolist->schema([
+                    ->schema(fn(Schema $schema): Schema => $schema->components([
                         Section::make(__('Show Entry'))
                             ->schema([
                                 Grid::make(3)
@@ -146,7 +147,7 @@ class ShowParticipationTable extends BaseWidget
                     ->visible(fn(PrevShowDog $record): bool => $record->prevShowResult !== null)
                     ->modalHeading(__('Published Result'))
                     ->modalSubmitAction(false)
-                    ->infolist(fn(Infolist $infolist): Infolist => $infolist->schema([
+                    ->schema(fn(Schema $schema): Schema => $schema->components([
                         Section::make(__('Result Summary'))
                             ->schema([
                                 TextEntry::make('prevShowResult.results_labels')

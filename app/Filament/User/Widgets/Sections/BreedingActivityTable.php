@@ -2,13 +2,16 @@
 
 namespace App\Filament\User\Widgets\Sections;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevBreeding;
-use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -58,52 +61,52 @@ class BreedingActivityTable extends BaseWidget
                     ->orderByDesc('BreddingDate')
             )
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label(__('ID'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('female.full_name')
+                TextColumn::make('female.full_name')
                     ->label(__('Female'))
                     ->description(fn(PrevBreeding $record): ?string => $record->female?->SagirID ? __('Sagir') . ': ' . $record->female->SagirID : null)
                     ->searchable(['DogsDB.Heb_Name', 'DogsDB.Eng_Name'], isIndividual: true, isGlobal: false)
                     ->sortable(['SagirId']),
-                Tables\Columns\TextColumn::make('male.full_name')
+                TextColumn::make('male.full_name')
                     ->label(__('Male'))
                     ->description(fn(PrevBreeding $record): ?string => $record->male?->SagirID ? __('Sagir') . ': ' . $record->male->SagirID : null)
                     ->searchable(['DogsDB.Heb_Name', 'DogsDB.Eng_Name'])
                     ->sortable(['MaleSagirId']),
-                Tables\Columns\TextColumn::make('BreddingDate')
+                TextColumn::make('BreddingDate')
                     ->label(__('Breeding Date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('birthing_date')
+                TextColumn::make('birthing_date')
                     ->label(__('Birth Date'))
                     ->date()
                     ->placeholder('—')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('breedinghouse.name')
+                TextColumn::make('breedinghouse.name')
                     ->label(__('Kennel'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label(__('Status'))
                     ->badge()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('payment_status')
+                TextColumn::make('payment_status')
                     ->label(__('Payment Status'))
                     ->badge()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('total_payment')
+                TextColumn::make('total_payment')
                     ->label(__('Total Payment'))
                     ->money('ILS')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('puppies_count')
+                TextColumn::make('puppies_count')
                     ->label(__('Puppies'))
                     ->counts('puppies')
                     ->sortable(),
-                Tables\Columns\IconColumn::make('Male_DNA')
+                IconColumn::make('Male_DNA')
                     ->label(__('Male DNA'))
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('Female_DNA')
+                IconColumn::make('Female_DNA')
                     ->label(__('Female DNA'))
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -126,10 +129,10 @@ class BreedingActivityTable extends BaseWidget
                         ->pluck('payment_status', 'payment_status')
                         ->all()),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->modalHeading(fn(PrevBreeding $record): string => __('Breeding #:id', ['id' => $record->id]))
-                    ->infolist(fn(Infolist $infolist): Infolist => $infolist->schema([
+                    ->schema(fn(Schema $schema): Schema => $schema->components([
                         Section::make(__('Breeding Summary'))
                             ->schema([
                                 Grid::make(3)

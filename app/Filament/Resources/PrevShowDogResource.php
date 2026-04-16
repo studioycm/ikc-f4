@@ -2,21 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
+use App\Filament\Resources\PrevShowDogResource\Pages\ListPrevShowDogs;
+use App\Filament\Resources\PrevShowDogResource\Pages\CreatePrevShowDog;
+use App\Filament\Resources\PrevShowDogResource\Pages\ViewPrevShowDog;
+use App\Filament\Resources\PrevShowDogResource\Pages\EditPrevShowDog;
 use App\Filament\Exports\PrevShowDogExporter;
 use App\Filament\Resources\PrevShowDogResource\Pages;
 use App\Models\PrevShowDog;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\IconPosition;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -29,7 +32,7 @@ class PrevShowDogResource extends Resource
 
     protected static ?string $slug = 'prev-show-dogs';
 
-    protected static ?string $navigationIcon = 'fas-dog';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-dog';
 
     protected static ?int $navigationSort = 90;
 
@@ -53,10 +56,10 @@ class PrevShowDogResource extends Resource
         return __('Show Dogs');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('DataID')
                     ->required()
                     ->integer(),
@@ -191,7 +194,7 @@ class PrevShowDogResource extends Resource
                     ->action(
                         Action::make('viewShowResult')
                             ->modalHeading(__('Show Result Details'))
-                            ->modalWidth(MaxWidth::FiveExtraLarge) // Optional: Makes the modal a nice readable width
+                            ->modalWidth(Width::FiveExtraLarge) // Optional: Makes the modal a nice readable width
 
                             // 1. Swap the record context to the related result
                             ->record(fn(PrevShowDog $record) => $record->prevShowResult)
@@ -199,7 +202,7 @@ class PrevShowDogResource extends Resource
                             // 2. Hide the submit button so it's view-only
                             ->modalSubmitAction(false)
                             ->modalCancelActionLabel(__('Close'))
-                            ->infolist(fn(Infolist $infolist, PrevShowDog $record) => PrevShowResultResource::infolist($infolist)->record($record->prevShowResult)
+                            ->schema(fn(Schema $schema, PrevShowDog $record) => PrevShowResultResource::infolist($schema)->record($record->prevShowResult)
                             )
                             ->disabled(fn(PrevShowDog $record) => $record->prevShowResult === null)
                     )
@@ -222,7 +225,7 @@ class PrevShowDogResource extends Resource
                         blank: fn(Builder $query) => $query, // Returns all records when the filter is cleared
                     ),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 ViewAction::make(),
             ])
@@ -234,7 +237,7 @@ class PrevShowDogResource extends Resource
                     ->iconPosition('after')
                     ->exporter(PrevShowDogExporter::class),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
@@ -253,10 +256,10 @@ class PrevShowDogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShowDogs::route('/'),
-            'create' => Pages\CreatePrevShowDog::route('/create'),
-            'view' => Pages\ViewPrevShowDog::route('/{record}'),
-            'edit' => Pages\EditPrevShowDog::route('/{record}/edit'),
+            'index' => ListPrevShowDogs::route('/'),
+            'create' => CreatePrevShowDog::route('/create'),
+            'view' => ViewPrevShowDog::route('/{record}'),
+            'edit' => EditPrevShowDog::route('/{record}/edit'),
         ];
     }
 

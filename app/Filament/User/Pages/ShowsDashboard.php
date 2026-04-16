@@ -10,7 +10,7 @@ class ShowsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 30;
 
-    protected static ?string $navigationIcon = 'heroicon-o-trophy';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-trophy';
 
     protected static string $routePath = 'shows';
 
@@ -24,7 +24,7 @@ class ShowsDashboard extends BaseDashboard
         return __('Shows');
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int|array
     {
         return 1;
     }

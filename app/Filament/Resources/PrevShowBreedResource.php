@@ -2,20 +2,23 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use App\Filament\Resources\PrevShowBreedResource\Pages\ListPrevShowBreeds;
+use App\Filament\Resources\PrevShowBreedResource\Pages\CreatePrevShowBreed;
+use App\Filament\Resources\PrevShowBreedResource\Pages\ViewPrevShowBreed;
+use App\Filament\Resources\PrevShowBreedResource\Pages\EditPrevShowBreed;
 use App\Filament\Resources\PrevShowBreedResource\Pages;
 use App\Filament\Resources\PrevShowResource as ShowRes;
 use App\Models\PrevShowBreed;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid as InfolistGrid;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,7 +29,7 @@ class PrevShowBreedResource extends Resource
 
     protected static ?string $slug = 'prev-show-breeds';
 
-    protected static ?string $navigationIcon = 'fas-dna';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-dna';
 
     protected static ?int $navigationSort = 70;
 
@@ -50,10 +53,10 @@ class PrevShowBreedResource extends Resource
         return __('Show Breeds');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('DataID')
                     ->required()
                     ->integer(),
@@ -138,21 +141,21 @@ class PrevShowBreedResource extends Resource
             ])
             ->filters([
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
+        return $schema->components([
             Tabs::make('BreedTabs')->tabs([
                 Tab::make(__('Overview'))
                     ->schema([
-                        InfolistGrid::make(3)->schema([
+                        Grid::make(3)->schema([
                             TextEntry::make('ShowID')->label(__('Show')),
                             TextEntry::make('ArenaID')->label(__('Arena')),
                             TextEntry::make('JudgeID')->label(__('Judge')),
@@ -162,7 +165,7 @@ class PrevShowBreedResource extends Resource
                     ]),
                 Tab::make(__('Breed'))
                     ->schema([
-                        InfolistGrid::make(2)->schema([
+                        Grid::make(2)->schema([
                             TextEntry::make('breed.BreedNameEN')->label(__('Breed (EN)')),
                             TextEntry::make('breed.BreedName')->label(__('Breed (HE)')),
                             TextEntry::make('breed.BreedCode')->label(__('Breed Code')),
@@ -176,10 +179,10 @@ class PrevShowBreedResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShowBreeds::route('/'),
-            'create' => Pages\CreatePrevShowBreed::route('/create'),
-            'view' => Pages\ViewPrevShowBreed::route('/{record}'),
-            'edit' => Pages\EditPrevShowBreed::route('/{record}/edit'),
+            'index' => ListPrevShowBreeds::route('/'),
+            'create' => CreatePrevShowBreed::route('/create'),
+            'view' => ViewPrevShowBreed::route('/{record}'),
+            'edit' => EditPrevShowBreed::route('/{record}/edit'),
         ];
     }
 

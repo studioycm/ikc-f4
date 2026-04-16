@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevUserResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevUserTaskResource;
 use App\Models\PrevUserTask;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -58,12 +59,12 @@ class ManagedTasksRelationManager extends RelationManager
                     ->toggleable(),
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Task'))
                     ->url(fn(PrevUserTask $record): string => PrevUserTaskResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

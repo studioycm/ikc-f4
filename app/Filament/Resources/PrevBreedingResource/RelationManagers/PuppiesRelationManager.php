@@ -2,15 +2,16 @@
 
 namespace App\Filament\Resources\PrevBreedingResource\RelationManagers;
 
+use Filament\Actions\ImportAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\ExportBulkAction;
 use App\Filament\Exports\PrevBreedingRelatedDogExporter;
 use App\Filament\Imports\PrevBreedingRelatedDogImporter;
 use App\Filament\Resources\PrevDogResource;
 use App\Models\PrevBreedingRelatedDog;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -79,14 +80,14 @@ class PuppiesRelationManager extends RelationManager
                     ->iconPosition('after')
                     ->exporter(PrevBreedingRelatedDogExporter::class),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->label(__('View Dog'))
                     ->visible(fn(PrevBreedingRelatedDog $record): bool => $record->dog !== null)
                     ->url(fn(PrevBreedingRelatedDog $record): string => PrevDogResource::getUrl('edit', ['record' => $record->dog]))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')

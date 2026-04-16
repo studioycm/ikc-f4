@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevSkillUserResource\Pages;
 
+use Filament\Actions\EditAction;
 use App\Filament\Resources\PrevSkillUserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
@@ -18,7 +19,7 @@ class ViewPrevSkillUser extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

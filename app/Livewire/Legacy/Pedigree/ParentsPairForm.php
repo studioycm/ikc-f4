@@ -2,32 +2,35 @@
 
 namespace App\Livewire\Legacy\Pedigree;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Enums\Legacy\LegacySagirPrefix;
 use App\Models\PrevDog;
 use App\Services\Legacy\PrevDogService;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
-class ParentsPairForm extends Component implements HasForms
+class ParentsPairForm extends Component implements HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     /** Subject dog (PK id) */
@@ -63,11 +66,11 @@ class ParentsPairForm extends Component implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->model($this->subject)
-            ->schema([
+            ->components([
                 Section::make($this->headingForDepth($this->subject))
                     ->schema([
                         Grid::make(2)

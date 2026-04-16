@@ -2,6 +2,9 @@
 
 namespace App\Filament\User\Resources\BreedingInquiryResource\Pages;
 
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use App\Filament\User\Resources\BreedingInquiryResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -26,9 +29,9 @@ class EditBreedingInquiry extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
+            DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 }

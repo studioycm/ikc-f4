@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PrevBreedingHouseResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PrevDogResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -42,12 +43,12 @@ class DogsRelationManager extends RelationManager
             ])
             ->headerActions([
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->url(fn($record) => PrevDogResource::getUrl('edit', ['record' => $record]))
                     ->openUrlInNewTab()
                     ->label(__('Open Dog')),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

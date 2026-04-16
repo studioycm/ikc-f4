@@ -2,13 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\PrevPriceResource\Pages\ListPrevPrices;
+use App\Filament\Resources\PrevPriceResource\Pages\CreatePrevPrice;
+use App\Filament\Resources\PrevPriceResource\Pages\ViewPrevPrice;
+use App\Filament\Resources\PrevPriceResource\Pages\EditPrevPrice;
 use App\Filament\Resources\PrevPriceResource\Pages;
 use App\Models\PrevPrice;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -20,7 +31,7 @@ class PrevPriceResource extends Resource
 {
     protected static ?string $model = PrevPrice::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -44,17 +55,17 @@ class PrevPriceResource extends Resource
         return __('Pricing');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('Price details'))
+        return $schema
+            ->components([
+                Section::make(__('Price details'))
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label(__('Name'))
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('price')
+                        TextInput::make('price')
                             ->label(__('Price'))
                             ->numeric()
                             ->minValue(0)
@@ -98,17 +109,17 @@ class PrevPriceResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->defaultSort('name', 'asc')
@@ -116,10 +127,10 @@ class PrevPriceResource extends Resource
             ->striped();
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(__('Price details'))
                     ->schema([
                         TextEntry::make('id')
@@ -156,10 +167,10 @@ class PrevPriceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevPrices::route('/'),
-            'create' => Pages\CreatePrevPrice::route('/create'),
-            'view' => Pages\ViewPrevPrice::route('/{record}'),
-            'edit' => Pages\EditPrevPrice::route('/{record}/edit'),
+            'index' => ListPrevPrices::route('/'),
+            'create' => CreatePrevPrice::route('/create'),
+            'view' => ViewPrevPrice::route('/{record}'),
+            'edit' => EditPrevPrice::route('/{record}/edit'),
         ];
     }
 

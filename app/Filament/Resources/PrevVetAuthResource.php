@@ -2,21 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ImportAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Resources\PrevVetAuthResource\Pages\ListPrevVetAuths;
+use App\Filament\Resources\PrevVetAuthResource\Pages\CreatePrevVetAuth;
+use App\Filament\Resources\PrevVetAuthResource\Pages\EditPrevVetAuth;
 use App\Filament\Exports\PrevVetAuthExporter;
 use App\Filament\Imports\PrevVetAuthImporter;
 use App\Filament\Resources\PrevVetAuthResource\Pages;
 use App\Models\PrevVetAuth;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -26,7 +29,7 @@ class PrevVetAuthResource extends Resource
 
     protected static ?string $slug = 'prev-vet-auths';
 
-    protected static ?string $navigationIcon = 'fas-clinic-medical';
+    protected static string | \BackedEnum | null $navigationIcon = 'fas-clinic-medical';
 
     protected static ?int $navigationSort = 10;
 
@@ -50,10 +53,10 @@ class PrevVetAuthResource extends Resource
         return __('Veterinarian Authorities');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required(),
 
@@ -92,11 +95,11 @@ class PrevVetAuthResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
@@ -126,9 +129,9 @@ class PrevVetAuthResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevVetAuths::route('/'),
-            'create' => Pages\CreatePrevVetAuth::route('/create'),
-            'edit' => Pages\EditPrevVetAuth::route('/{record}/edit'),
+            'index' => ListPrevVetAuths::route('/'),
+            'create' => CreatePrevVetAuth::route('/create'),
+            'edit' => EditPrevVetAuth::route('/{record}/edit'),
         ];
     }
 }

@@ -2,6 +2,11 @@
 
 namespace App\Filament\Resources\PrevDogResource\RelationManagers;
 
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
@@ -44,9 +49,9 @@ class PrevDogDocumentRelationManager extends RelationManager
                 TextColumn::make('updated_at')->label(__('Updated'))->since()->toggleable(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label(__('Add Document'))
-                    ->form([
+                    ->schema([
                         TextInput::make('type')->label(__('Type'))->maxLength(255),
                         DatePicker::make('TestDate')->label(__('Test Date')),
                         TextInput::make('TestFile')->label(__('Test File'))->maxLength(255),
@@ -58,16 +63,16 @@ class PrevDogDocumentRelationManager extends RelationManager
                         TextInput::make('grade')->label(__('Grade'))->maxLength(255),
                         TextInput::make('location')->label(__('Location'))->maxLength(255),
                     ])
-                    ->mutateFormDataUsing(function (array $data): array {
+                    ->mutateDataUsing(function (array $data): array {
                         $data['SagirID'] = $this->getOwnerRecord()->SagirID;
 
                         return $data;
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->label(__('Edit'))
-                    ->form([
+                    ->schema([
                         TextInput::make('type')->label(__('Type'))->maxLength(255),
                         DatePicker::make('TestDate')->label(__('Test Date')),
                         TextInput::make('TestFile')->label(__('Test File'))->maxLength(255),
@@ -79,11 +84,11 @@ class PrevDogDocumentRelationManager extends RelationManager
                         TextInput::make('grade')->label(__('Grade'))->maxLength(255),
                         TextInput::make('location')->label(__('Location'))->maxLength(255),
                     ]),
-                Tables\Actions\DeleteAction::make()->label(__('Delete')),
+                DeleteAction::make()->label(__('Delete')),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

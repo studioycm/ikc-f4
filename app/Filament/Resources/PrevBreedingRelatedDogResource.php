@@ -2,22 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use App\Filament\Resources\PrevBreedingRelatedDogResource\Pages\ListPrevBreedingRelatedDogs;
+use App\Filament\Resources\PrevBreedingRelatedDogResource\Pages\CreatePrevBreedingRelatedDog;
+use App\Filament\Resources\PrevBreedingRelatedDogResource\Pages\EditPrevBreedingRelatedDog;
 use App\Filament\Resources\PrevBreedingRelatedDogResource\Pages;
 use App\Models\PrevBreedingRelatedDog;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -32,7 +35,7 @@ class PrevBreedingRelatedDogResource extends Resource
 
     protected static ?string $slug = 'breeding-related-dogs';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getModelLabel(): string
     {
@@ -54,10 +57,10 @@ class PrevBreedingRelatedDogResource extends Resource
         return __('Litter Puppies');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('temparory_name'),
 
                 TextInput::make('chip_number'),
@@ -203,13 +206,13 @@ class PrevBreedingRelatedDogResource extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
@@ -223,9 +226,9 @@ class PrevBreedingRelatedDogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevBreedingRelatedDogs::route('/'),
-            'create' => Pages\CreatePrevBreedingRelatedDog::route('/create'),
-            'edit' => Pages\EditPrevBreedingRelatedDog::route('/{record}/edit'),
+            'index' => ListPrevBreedingRelatedDogs::route('/'),
+            'create' => CreatePrevBreedingRelatedDog::route('/create'),
+            'edit' => EditPrevBreedingRelatedDog::route('/{record}/edit'),
         ];
     }
 

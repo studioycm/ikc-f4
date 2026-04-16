@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PrevBreedResource\Pages;
 
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\PrevBreedResource\Widgets\BreedStats;
 use App\Filament\Resources\PrevBreedResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -16,14 +18,14 @@ class ListPrevBreeds extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
     protected function getHeaderWidgets(): array
     {
         return [
-            PrevBreedResource\Widgets\BreedStats::class,
+            BreedStats::class,
         ];
     }
 

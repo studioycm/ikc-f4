@@ -2,27 +2,29 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\TextSize;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Support\Enums\Width;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
+use App\Filament\Resources\PrevShowResultResource\Pages\ListPrevShowResults;
+use App\Filament\Resources\PrevShowResultResource\Pages\CreatePrevShowResult;
+use App\Filament\Resources\PrevShowResultResource\Pages\ViewPrevShowResult;
+use App\Filament\Resources\PrevShowResultResource\Pages\EditPrevShowResult;
 use App\Filament\Exports\PrevShowResultExporter;
 use App\Filament\Resources\PrevShowResultResource\Pages;
 use App\Models\PrevShowResult;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid as InfolistGrid;
-use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -39,7 +41,7 @@ class PrevShowResultResource extends Resource
 
     protected static ?string $slug = 'prev-show-results';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 100;
 
@@ -63,10 +65,10 @@ class PrevShowResultResource extends Resource
         return __('Show Results');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Grid::make(6)
                     ->schema([
                         Group::make([
@@ -490,15 +492,15 @@ class PrevShowResultResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                InfolistGrid::make(3)->schema([
+        return $schema
+            ->components([
+                Grid::make(3)->schema([
 
                     // Left Column: Main Details
-                    InfolistGrid::make(1)->schema([
-                        InfolistSection::make(__('Dog Information'))
+                    Grid::make(1)->schema([
+                        Section::make(__('Dog Information'))
                             ->schema([
                                 TextEntry::make('SagirID')
                                     ->label(__('Sagir ID'))
@@ -515,7 +517,7 @@ class PrevShowResultResource extends Resource
                                     ->inlineLabel(),
                             ]),
 
-                        InfolistSection::make(__('Show Information'))
+                        Section::make(__('Show Information'))
                             ->schema([
                                 TextEntry::make('show.TitleName')
                                     ->label(__('Show Name'))
@@ -538,18 +540,18 @@ class PrevShowResultResource extends Resource
                                     ->default('-')
                                     ->color('info')
                                     ->weight('bold')
-                                    ->size(TextEntry\TextEntrySize::Large)
+                                    ->size(TextSize::Large)
                                     ->inlineLabel(),
                             ]),
                     ])->columnSpan(1),
 
                     // Right Column: Results, Titles & Meta
-                    InfolistGrid::make(1)->schema([
-                        InfolistSection::make(__('Awards & Ratings'))
+                    Grid::make(1)->schema([
+                        Section::make(__('Awards & Ratings'))
                             ->schema([
                                 TextEntry::make('Rank')
                                     ->label(__('Rank'))
-                                    ->size(TextEntry\TextEntrySize::Large)
+                                    ->size(TextSize::Large)
                                     ->weight('bold')
                                     ->columnSpan(1),
 
@@ -575,7 +577,7 @@ class PrevShowResultResource extends Resource
                             ])
                             ->columns(6),
 
-                        InfolistSection::make(__('System Data'))
+                        Section::make(__('System Data'))
                             ->schema([
                                 TextEntry::make('DataID')
                                     ->label(__('Result ID')),
@@ -642,10 +644,10 @@ class PrevShowResultResource extends Resource
                     ->searchable()
                     ->preload(false),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 ViewAction::make()
-                    ->modalWidth(MaxWidth::Full),
+                    ->modalWidth(Width::Full),
             ])
             ->headerActions([
                 ExportAction::make()
@@ -655,7 +657,7 @@ class PrevShowResultResource extends Resource
                     ->iconPosition('after')
                     ->exporter(PrevShowResultExporter::class),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->label(__('Export Selected'))
                     ->icon('fas-file-export')
@@ -672,10 +674,10 @@ class PrevShowResultResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPrevShowResults::route('/'),
-            'create' => Pages\CreatePrevShowResult::route('/create'),
-            'view' => Pages\ViewPrevShowResult::route('/{record}'),
-            'edit' => Pages\EditPrevShowResult::route('/{record}/edit'),
+            'index' => ListPrevShowResults::route('/'),
+            'create' => CreatePrevShowResult::route('/create'),
+            'view' => ViewPrevShowResult::route('/{record}'),
+            'edit' => EditPrevShowResult::route('/{record}/edit'),
         ];
     }
 
