@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Filament\Resources\PrevPrices\Pages;
+
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\PrevPrices\PrevPriceResource;
+use Filament\Actions;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
+use Filament\Resources\Pages\ListRecords;
+
+class ListPrevPrices extends ListRecords
+{
+    use ExposesTableToWidgets;
+
+    protected static string $resource = PrevPriceResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}

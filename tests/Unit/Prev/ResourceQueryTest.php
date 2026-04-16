@@ -1,10 +1,10 @@
 <?php
 
-use App\Filament\Resources\PrevShowArenaResource;
-use App\Filament\Resources\PrevShowBreedResource;
-use App\Filament\Resources\PrevShowClassResource;
-use App\Filament\Resources\PrevShowDogResource;
-use App\Filament\Resources\PrevShowResultResource;
+use App\Filament\Resources\PrevShowArenas\PrevShowArenaResource;
+use App\Filament\Resources\PrevShowBreeds\PrevShowBreedResource;
+use App\Filament\Resources\PrevShowClasses\PrevShowClassResource;
+use App\Filament\Resources\PrevShowDogs\PrevShowDogResource;
+use App\Filament\Resources\PrevShowResults\PrevShowResultResource;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

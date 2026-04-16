@@ -1,5 +1,5 @@
 @php
-    use App\Filament\Resources\PrevJudgeResource;
+    use App\Filament\Resources\PrevJudges;
 @endphp
 
 <div class="p-4">

@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Filament\Resources\PrevBreeds\Widgets;
+
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
+use App\Filament\Resources\PrevBreeds\Pages\ListPrevBreeds;
+
+class BreedStats extends BaseWidget
+{
+    use InteractsWithPageTable;
+
+    protected ?string $pollingInterval = null;
+
+    protected function getTablePage(): string
+    {
+        return ListPrevBreeds::class;
+    }
+
+    protected function getStats(): array
+    {
+        return [
+            Stat::make(__('Total'), $this->getPageTableQuery()->count()),
+        ];
+    }
+}

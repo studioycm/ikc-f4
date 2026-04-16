@@ -14,7 +14,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use App\Enums\Legacy\LegacyDogGender;
-use App\Filament\User\Resources\BreedingInquiryResource;
+use App\Filament\User\Resources\BreedingInquiries\BreedingInquiryResource;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevDog;
 use Carbon\Carbon;

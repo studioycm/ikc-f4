@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Models\PrevUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

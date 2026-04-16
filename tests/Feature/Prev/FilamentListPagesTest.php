@@ -1,10 +1,10 @@
 <?php
 
-use App\Filament\Resources\PrevShowArenaResource\Pages\ListPrevShowArenas;
-use App\Filament\Resources\PrevShowBreedResource\Pages\ListPrevShowBreeds;
-use App\Filament\Resources\PrevShowClassResource\Pages\ListPrevShowClasses;
-use App\Filament\Resources\PrevShowDogResource\Pages\ListPrevShowDogs;
-use App\Filament\Resources\PrevShowResultResource\Pages\ListPrevShowResults;
+use App\Filament\Resources\PrevShowArenas\Pages\ListPrevShowArenas;
+use App\Filament\Resources\PrevShowBreeds\Pages\ListPrevShowBreeds;
+use App\Filament\Resources\PrevShowClasses\Pages\ListPrevShowClasses;
+use App\Filament\Resources\PrevShowDogs\Pages\ListPrevShowDogs;
+use App\Filament\Resources\PrevShowResults\Pages\ListPrevShowResults;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Str;

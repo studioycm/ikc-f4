@@ -1,8 +1,8 @@
 <?php
 
-use App\Filament\Resources\PrevBreedingResource\Pages\ListPrevBreedings;
-use App\Filament\Resources\PrevBreedResource\Pages\ListPrevBreeds;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\PrevBreedings\Pages\ListPrevBreedings;
+use App\Filament\Resources\PrevBreeds\Pages\ListPrevBreeds;
+use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Tables\Columns\IconColumn;

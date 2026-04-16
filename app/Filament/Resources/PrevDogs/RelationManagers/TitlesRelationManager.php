@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Filament\Resources\PrevDogs\RelationManagers;
+
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\AttachAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Actions\EditAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
+use App\Filament\Resources\PrevShows\PrevShowResource;
+use App\Models\PrevTitle;
+use Filament\Forms;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+
+class TitlesRelationManager extends RelationManager
+{
+    protected static string $relationship = 'titles';
+
+    protected static ?string $recordTitleAttribute = 'TitleName';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Titles');
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('TitleName')
+            ->defaultSort('Dogs_ScoresDB.EventDate', 'desc')
+            ->columns([
+                TextColumn::make('TitleName')
+                    ->label(__('Title'))
+                    ->searchable(),
+                TextColumn::make('awarding.EventPlace')
+                    ->label(__('Event Place'))
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('awarding.EventName')
+                    ->label(__('Event Name'))
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('awarding.EventDate')
+                    ->date()
+                    ->label(__('Event Date')),
+                TextColumn::make('awarding.ShowID')
+                    ->label(__('Show'))
+                    ->url(fn($state) => $state ? PrevShowResource::getUrl('view', ['record' => $state]) : null)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('awarding.created_at')
+                    ->dateTime()
+                    ->label(__('Linked At')),
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->label(__('Attach Title'))
+                    ->preloadRecordSelect()
+                    ->recordSelect(function (Select $select) {
+                        return $select
+                            ->searchable()
+                            ->getSearchResultsUsing(function (string $search) {
+                                return PrevTitle::query()
+                                    ->where('TitleName', 'like', "%{$search}%")
+                                    ->orWhere('TitleCode', 'like', "%{$search}%")
+                                    ->limit(50)
+                                    ->get()
+                                    ->mapWithKeys(fn($t) => [$t->TitleCode => $t->TitleName . ' (#' . $t->TitleCode . ')'])
+                                    ->all();
+                            })
+                            ->getOptionLabelUsing(fn($value) => PrevTitle::query()->where('TitleCode', $value)->value('TitleName'));
+                    })
+                    ->form([
+                        TextInput::make('EventPlace')->label(__('Event Place'))->maxLength(255),
+                        TextInput::make('EventName')->label(__('Event Name'))->maxLength(255),
+                        DatePicker::make('EventDate')->label(__('Event Date')),
+                        TextInput::make('ShowID')->label(__('Show'))->numeric(),
+                    ]),
+            ])
+            ->recordActions([
+                EditAction::make()
+                    ->label(__('Edit Award'))
+                    ->schema([
+                        TextInput::make('EventPlace')->label(__('Event Place'))->maxLength(255),
+                        TextInput::make('EventName')->label(__('Event Name'))->maxLength(255),
+                        DatePicker::make('EventDate')->label(__('Event Date')),
+                        TextInput::make('ShowID')->label(__('Show'))->numeric(),
+                    ]),
+                DetachAction::make()
+                    ->label(__('Detach')),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
+                ]),
+            ]);
+    }
+}

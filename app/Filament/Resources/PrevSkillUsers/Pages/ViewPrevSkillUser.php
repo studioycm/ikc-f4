@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Filament\Resources\PrevSkillUsers\Pages;
+
+use Filament\Actions\EditAction;
+use App\Filament\Resources\PrevSkillUsers\PrevSkillUserResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ViewRecord;
+
+class ViewPrevSkillUser extends ViewRecord
+{
+    protected static string $resource = PrevSkillUserResource::class;
+
+    public function getTitle(): string
+    {
+        return __('Displaying') . ' ' . __('User Skill') . ': #' . $this->record->id;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
+    }
+}

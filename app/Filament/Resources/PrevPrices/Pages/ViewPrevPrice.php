@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Filament\Resources\PrevPrices\Pages;
+
+use Filament\Actions\EditAction;
+use App\Filament\Resources\PrevPrices\PrevPriceResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ViewRecord;
+
+class ViewPrevPrice extends ViewRecord
+{
+    protected static string $resource = PrevPriceResource::class;
+
+    public function getTitle(): string
+    {
+        return __('Displaying') . ' ' . __('Price') . ': ' . $this->record->name;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
+    }
+}

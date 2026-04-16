@@ -5,7 +5,7 @@ namespace App\Livewire\Prev\PrevClub;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Resources\PrevBreedResource;
+use App\Filament\Resources\PrevBreeds\PrevBreedResource;
 use App\Models\PrevBreed;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
