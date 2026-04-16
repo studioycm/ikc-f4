@@ -66,7 +66,7 @@
                             {{ __('Technical details') }}
                         </summary>
 
-                        <div class="mt-2 break-words font-mono">
+                        <div class="mt-2 wrap-break-word font-mono">
                             {{ $this->loadErrorTechnical }}
                         </div>
                     </details>
@@ -217,7 +217,7 @@
         @else
             <x-filament::section>
                 <div
-                    class="min-h-[18rem] rounded-2xl border border-dashed border-gray-200 bg-gray-50/50 dark:border-white/10 dark:bg-white/5"></div>
+                    class="min-h-72 rounded-2xl border border-dashed border-gray-200 bg-gray-50/50 dark:border-white/10 dark:bg-white/5"></div>
             </x-filament::section>
         @endif
     </div>

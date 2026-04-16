@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use App\Filament\User\Pages\Dashboard as UserDashboard;
@@ -151,7 +152,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('fas-shield-dog'),
             ])
             ->userMenuItems([
-                MenuItem::make('user_panel')
+                Action::make('user_panel')
                     ->label(fn(): string => __('User Panel'))
                     ->url(fn() => UserDashboard::getUrl(panel: 'user'))
                     ->icon('fas-house-user')

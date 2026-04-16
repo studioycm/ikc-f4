@@ -131,7 +131,7 @@
                             @foreach ($metadataItems as $item)
                                 <div class="min-w-0 text-gray-600 dark:text-gray-300 {{ $fontMap['meta'] }}">
                                     <span class="font-medium">{{ $item['label'] }}:</span>
-                                    <span class="break-words">{{ $item['value'] }}</span>
+                                    <span class="wrap-break-word">{{ $item['value'] }}</span>
                                 </div>
                             @endforeach
                         </div>

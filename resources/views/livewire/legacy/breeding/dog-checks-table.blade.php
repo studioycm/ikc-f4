@@ -115,13 +115,13 @@
         @if (data_get($this->report, 'summary.blocking'))
                 <div
                     class="mt-4 flex items-start gap-3 rounded-lg border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700 dark:border-danger-500/50 dark:bg-danger-500/20 dark:text-danger-400">
-                    <x-filament::icon icon="heroicon-m-exclamation-circle" class="mt-0.5 h-5 w-5 flex-shrink-0"/>
+                    <x-filament::icon icon="heroicon-m-exclamation-circle" class="mt-0.5 h-5 w-5 shrink-0"/>
                     <span>{{ __('This dog has at least one blocking check.') }}</span>
             </div>
         @elseif (data_get($this->report, 'summary.needs_review'))
                 <div
                     class="mt-4 flex items-start gap-3 rounded-lg border border-warning-200 bg-warning-50 p-3 text-sm text-warning-700 dark:border-warning-500/50 dark:bg-warning-500/20 dark:text-warning-400">
-                    <x-filament::icon icon="heroicon-m-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0"/>
+                    <x-filament::icon icon="heroicon-m-information-circle" class="mt-0.5 h-5 w-5 shrink-0"/>
                     <span>{{ __('Some checks require office review or additional information.') }}</span>
             </div>
         @endif

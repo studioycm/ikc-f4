@@ -56,7 +56,7 @@
                 <div
                     class="rounded-lg bg-danger-50 p-3 text-sm text-danger-700 dark:bg-danger-500/10 dark:text-danger-400">
                     <div class="flex items-start gap-2">
-                        <x-filament::icon icon="heroicon-m-exclamation-circle" class="mt-0.5 h-5 w-5 flex-shrink-0"/>
+                        <x-filament::icon icon="heroicon-m-exclamation-circle" class="mt-0.5 h-5 w-5 shrink-0"/>
                         <div>
                             <p class="font-medium">{{ __('Blocking Issue') }}</p>
                             <p class="mt-1 text-xs">{{ __('This check does not meet the breeding requirements.') }}</p>
@@ -67,7 +67,7 @@
                 <div
                     class="rounded-lg bg-warning-50 p-3 text-sm text-warning-700 dark:bg-warning-500/10 dark:text-warning-400">
                     <div class="flex items-start gap-2">
-                        <x-filament::icon icon="heroicon-m-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0"/>
+                        <x-filament::icon icon="heroicon-m-information-circle" class="mt-0.5 h-5 w-5 shrink-0"/>
                         <div>
                             <p class="font-medium">{{ __('Review Required') }}</p>
                             <p class="mt-1 text-xs">{{ __('This check requires office review or additional information.') }}</p>

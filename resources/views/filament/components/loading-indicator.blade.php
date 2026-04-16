@@ -1,7 +1,7 @@
 <div
         x-cloak
         x-show="$store.isLoading.value"
-        class="fixed max-sm:bottom-4 sm:top-4 left-1/2 -translate-x-1/2 z-[6000001]"
+        class="fixed max-sm:bottom-4 sm:top-4 left-1/2 -translate-x-1/2 z-6000001"
 >
     <div
             class="flex gap-2"

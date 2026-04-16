@@ -8,7 +8,7 @@
     </x-slot>
 
     <div class="space-y-6">
-        <div class="grid gap-6 lg:grid-cols-[1fr,1.35fr,1fr]">
+        <div class="grid gap-6 lg:grid-cols-[1fr_1.35fr_1fr]">
             <div class="space-y-3">
                 <div
                     class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-white/10 dark:bg-white/5">
