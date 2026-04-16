@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users;
 
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
@@ -106,10 +107,14 @@ class UserResource extends Resource
                     ->label(__('Verified At'))
                     ->native(false)
                     ->displayFormat('d/m/Y H:i'),
+                Forms\Components\Toggle::make('edit_password')
+                    ->label(__('Edit Password'))
+                    ->default(fn(string $operation, ?User $record): bool => $operation === 'create')
+                    ->live(),
                 TextInput::make('password')
                     ->label(__('Password'))
                     ->password()
-                    ->hidden(fn(string $operation, ?User $record): bool => $operation === 'edit' && auth()->id() === $record?->id)
+                    ->hidden(fn(string $operation, Get $get, ?User $record): bool => $operation === 'edit' && (auth()->id() === $record?->id || $get('edit_password') === false))
                     ->revealable(),
                 Select::make('roles')
                     ->label(__('Roles'))
@@ -198,6 +203,8 @@ class UserResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         'super_admin' => 'success',
                         'panel_user' => 'warning',
+                        'admin' => 'danger',
+                        default => 'info',
                     })
                     ->sortable()
                     ->searchable(),

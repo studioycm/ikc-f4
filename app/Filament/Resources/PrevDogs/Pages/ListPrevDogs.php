@@ -15,8 +15,8 @@ use Filament\Schemas\Components\Tabs\Tab;
 
 class ListPrevDogs extends ListRecords
 {
-//    use ExposesTableToWidgets;
-    use HasTabs;
+    use ExposesTableToWidgets;
+//    use HasTabs;
 
     protected static string $resource = PrevDogResource::class;
 

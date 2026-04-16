@@ -732,16 +732,16 @@ class PrevDogResource extends Resource
                     ->with([
                         // BelongsTo: include owner key
                         'breed' => fn($r) => $r->select(['BreedsDB.BreedCode', 'BreedsDB.BreedName', 'BreedsDB.BreedNameEN']),
-                        'color' => fn($r) => $r->select(['ColorsDB.OldCode', 'ColorsDB.ColorNameHE', 'ColorsDB.ColorNameEN']),
-                        'hair' => fn($r) => $r->select(['HairsDB.OldCode', 'HairsDB.HairNameHE', 'HairsDB.HairNameEN']),
+//                        'color' => fn($r) => $r->select(['ColorsDB.OldCode', 'ColorsDB.ColorNameHE', 'ColorsDB.ColorNameEN']),
+//                        'hair' => fn($r) => $r->select(['HairsDB.OldCode', 'HairsDB.HairNameHE', 'HairsDB.HairNameEN']),
                         'breedinghouse' => fn($r) => $r->select(['breedinghouses.GidulCode', 'breedinghouses.HebName', 'breedinghouses.EngName']),
                         // Parents (PrevDog): include PK used to match and shown fields
-                        'father' => fn($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
-                        'mother' => fn($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
+//                        'father' => fn($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
+//                        'mother' => fn($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
                         // Many-to-many Owners: include related PK + fields shown in list
                         'owners' => fn($r) => $r->select(['users.id', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
                         //                        'legacyOwner' => fn($r) => $r->select(['users.id', 'owner_code', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
-                        'titles' => fn($r) => $r->select(['dogs_titles_db.TitleCode', 'dogs_titles_db.TitleName']),
+//                        'titles' => fn($r) => $r->select(['dogs_titles_db.TitleCode', 'dogs_titles_db.TitleName']),
                     ]);
                 //                    ->with('duplicates');
             })
@@ -793,20 +793,20 @@ class PrevDogResource extends Resource
                     }, position: 'under')
                     ->sortable(['BreedName'])
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('color.ColorNameHE')
-                    ->label(__('Color'))
-                    ->description(function (PrevDog $record): string {
-                        return $record->color?->ColorNameEN ?? '~';
-                    }, position: 'under')
-                    ->sortable(['ColorNameHE'])
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('hair.HairNameHE')
-                    ->label(__('Hair'))
-                    ->description(function (PrevDog $record): string {
-                        return $record->hair?->HairNameEN ?? '~';
-                    }, position: 'under')
-                    ->sortable(['HairNameHE'])
-                    ->toggleable(isToggledHiddenByDefault: true),
+//                TextColumn::make('color.ColorNameHE')
+//                    ->label(__('Color'))
+//                    ->description(function (PrevDog $record): string {
+//                        return $record->color?->ColorNameEN ?? '~';
+//                    }, position: 'under')
+//                    ->sortable(['ColorNameHE'])
+//                    ->toggleable(isToggledHiddenByDefault: true),
+//                TextColumn::make('hair.HairNameHE')
+//                    ->label(__('Hair'))
+//                    ->description(function (PrevDog $record): string {
+//                        return $record->hair?->HairNameEN ?? '~';
+//                    }, position: 'under')
+//                    ->sortable(['HairNameHE'])
+//                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('GenderID')
                     ->label(__('Gender'))
                     ->badge()
@@ -825,18 +825,18 @@ class PrevDogResource extends Resource
                     ->sinceTooltip()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('titles.name')
-                    ->label(__('Titles'))
-                    ->listWithLineBreaks()
-                    ->limitList(1)
-                    ->tooltip(fn(TextColumn $column): ?string => (($state = $column->getState()) === null) ? null :
-                        (is_array($state)
-                            ? (count($state) > $column->getListLimit() ? implode(' | ', $state) : null)
-                            : (string) $state
-                        )
-                    )
-                    ->searchable(['dogs_titles_db.TitleName'], isIndividual: true, isGlobal: false)
-                    ->toggleable(isToggledHiddenByDefault: true),
+//                TextColumn::make('titles.name')
+//                    ->label(__('Titles'))
+//                    ->listWithLineBreaks()
+//                    ->limitList(1)
+//                    ->tooltip(fn(TextColumn $column): ?string => (($state = $column->getState()) === null) ? null :
+//                        (is_array($state)
+//                            ? (count($state) > $column->getListLimit() ? implode(' | ', $state) : null)
+//                            : (string) $state
+//                        )
+//                    )
+//                    ->searchable(['dogs_titles_db.TitleName'], isIndividual: true, isGlobal: false)
+//                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('owners.full_name')
                     ->label(__('Owners'))
                     ->listWithLineBreaks()
@@ -848,20 +848,20 @@ class PrevDogResource extends Resource
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('father.full_name')
-                    ->label(__('Father'))
-                    ->description(function (PrevDog $record): string {
-                        return $record->father?->SagirID ?? 'n/a';
-                    }, position: 'under')
-                    ->searchable(['Eng_Name', 'Heb_Name', 'SagirID'], isIndividual: true, isGlobal: false)
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('mother.full_name')
-                    ->label(__('Mother'))
-                    ->description(function (PrevDog $record): string {
-                        return $record->mother?->SagirID ?? 'n/a';
-                    }, position: 'under')
-                    ->searchable(['Eng_Name', 'Heb_Name', 'SagirID'], isIndividual: true, isGlobal: false)
-                    ->toggleable(isToggledHiddenByDefault: true),
+//                TextColumn::make('father.full_name')
+//                    ->label(__('Father'))
+//                    ->description(function (PrevDog $record): string {
+//                        return $record->father?->SagirID ?? 'n/a';
+//                    }, position: 'under')
+//                    ->searchable(['Eng_Name', 'Heb_Name', 'SagirID'], isIndividual: true, isGlobal: false)
+//                    ->toggleable(isToggledHiddenByDefault: true),
+//                TextColumn::make('mother.full_name')
+//                    ->label(__('Mother'))
+//                    ->description(function (PrevDog $record): string {
+//                        return $record->mother?->SagirID ?? 'n/a';
+//                    }, position: 'under')
+//                    ->searchable(['Eng_Name', 'Heb_Name', 'SagirID'], isIndividual: true, isGlobal: false)
+//                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('Chip')
                     ->label(__('Chip'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
