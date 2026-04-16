@@ -53,7 +53,6 @@ use App\Enums\Legacy\LegacyDogStatus;
 use App\Enums\Legacy\LegacyPedigreeColor;
 use App\Enums\Legacy\LegacySagirPrefix;
 use App\Filament\Exports\PrevDogExporter;
-use App\Filament\Resources\PrevDogs\Pages;
 use App\Livewire\Legacy\Pedigree\PedigreeTree;
 use App\Models\PrevBreed;
 use App\Models\PrevColor;
@@ -101,6 +100,8 @@ class PrevDogResource extends Resource
     protected static ?string $model = PrevDog::class;
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $slug = 'prev-dogs';
 
     protected static string | \BackedEnum | null $navigationIcon = 'fas-paw';
 
@@ -781,7 +782,7 @@ class PrevDogResource extends Resource
                     ->label(__('Beit Gidul'))
                     ->searchable(['breedinghouses.HebName', 'breedinghouses.EngName'], isIndividual: true, isGlobal: false)
                     ->sortable(['breedinghouses.HebName'])
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('BeitGidulName')
                     ->label(__('Beit Gidul Name (pre 2022)'))
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -791,21 +792,21 @@ class PrevDogResource extends Resource
                         return $record->breed?->BreedNameEN ?? '~';
                     }, position: 'under')
                     ->sortable(['BreedName'])
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('color.ColorNameHE')
                     ->label(__('Color'))
                     ->description(function (PrevDog $record): string {
                         return $record->color?->ColorNameEN ?? '~';
                     }, position: 'under')
                     ->sortable(['ColorNameHE'])
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('hair.HairNameHE')
                     ->label(__('Hair'))
                     ->description(function (PrevDog $record): string {
                         return $record->hair?->HairNameEN ?? '~';
                     }, position: 'under')
                     ->sortable(['HairNameHE'])
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('GenderID')
                     ->label(__('Gender'))
                     ->badge()
@@ -835,7 +836,7 @@ class PrevDogResource extends Resource
                         )
                     )
                     ->searchable(['dogs_titles_db.TitleName'], isIndividual: true, isGlobal: false)
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('owners.full_name')
                     ->label(__('Owners'))
                     ->listWithLineBreaks()
@@ -845,7 +846,7 @@ class PrevDogResource extends Resource
                         // Get the first two owners' names
                         return $record->owners?->pluck('id')->implode(', ');
                     })
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('father.full_name')
                     ->label(__('Father'))
@@ -853,14 +854,14 @@ class PrevDogResource extends Resource
                         return $record->father?->SagirID ?? 'n/a';
                     }, position: 'under')
                     ->searchable(['Eng_Name', 'Heb_Name', 'SagirID'], isIndividual: true, isGlobal: false)
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('mother.full_name')
                     ->label(__('Mother'))
                     ->description(function (PrevDog $record): string {
                         return $record->mother?->SagirID ?? 'n/a';
                     }, position: 'under')
                     ->searchable(['Eng_Name', 'Heb_Name', 'SagirID'], isIndividual: true, isGlobal: false)
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('Chip')
                     ->label(__('Chip'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
@@ -870,7 +871,7 @@ class PrevDogResource extends Resource
                     ->label(__('DNA'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->searchable(isIndividual: true, isGlobal: false)
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('ImportNumber')
                     ->label(__('Import Number'))
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
@@ -1511,10 +1512,10 @@ class PrevDogResource extends Resource
                         ->requiresConfirmation(),
                 ]),
             ])
-            ->paginated([5, 10, 15, 25, 50, 100, 200, 250, 300])
-            ->defaultPaginationPageOption(15)
-            ->defaultSort('SagirID', 'desc')
-            ->persistFiltersInSession()
+            ->paginated([5, 10, 15, 25])
+            ->defaultPaginationPageOption(5)
+            ->defaultSort('id', 'desc')
+            ->defaultKeySort(false)
             ->searchOnBlur()
             ->striped()
             ->deferLoading()
@@ -1815,10 +1816,10 @@ class PrevDogResource extends Resource
         ];
     }
 
-    public static function getWidgets(): array
-    {
-        return [
-            DogStats::class,
-        ];
-    }
+//    public static function getWidgets(): array
+//    {
+//        return [
+//            DogStats::class,
+//        ];
+//    }
 }

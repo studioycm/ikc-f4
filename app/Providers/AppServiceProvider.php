@@ -8,6 +8,7 @@ use App\Observers\PrevBreedObserver;
 use App\Observers\PrevDogObserver;
 use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Filament\Support\Facades\FilamentView;
+use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +33,9 @@ class AppServiceProvider extends ServiceProvider
             $switch
                 ->locales(['he', 'en']); // also accepts a closure
         });
+
+        Table::configureUsing(fn (Table $table) => $table
+            ->defaultKeySort(false));
 
         // Register observers that clear club counts cache when dogs/breeds change.
         PrevDog::observe(PrevDogObserver::class);
