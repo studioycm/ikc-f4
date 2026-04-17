@@ -70,7 +70,7 @@ class ListPrevDogs extends ListRecords
                 ->icon(LegacySagirPrefix::ISR->getIcon())
                 ->badgeColor(LegacySagirPrefix::ISR->getColor())
                 // Add badge to the tab
-//                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::ISR->value)->count())
+                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::ISR->value)->count())
                 // Modify the query only to show completed tasks
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::ISR->value);
@@ -81,7 +81,7 @@ class ListPrevDogs extends ListRecords
                 ->icon(LegacySagirPrefix::IMP->getIcon())
                 ->badgeColor(LegacySagirPrefix::IMP->getColor())
                 // Add badge to the tab
-//                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::IMP->value)->count())
+                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::IMP->value)->count())
                 // Modify the query only to show completed tasks
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::IMP->value);
@@ -92,7 +92,7 @@ class ListPrevDogs extends ListRecords
                 ->icon(LegacySagirPrefix::EXT->getIcon())
                 ->badgeColor(LegacySagirPrefix::EXT->getColor())
                 // Add badge to the tab
-//                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::EXT->value)->count())
+                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::EXT->value)->count())
                 // Modify the query only to show completed tasks
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::EXT->value);
@@ -103,7 +103,7 @@ class ListPrevDogs extends ListRecords
                 ->icon(LegacySagirPrefix::APX->getIcon())
                 ->badgeColor(LegacySagirPrefix::APX->getColor())
                 // Add badge to the tab
-//                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::APX->value)->count())
+                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::APX->value)->count())
                 // Modify the query only to show completed tasks
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::APX->value);

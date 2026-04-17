@@ -13,6 +13,13 @@ class DogStats extends BaseWidget
 
     protected ?string $pollingInterval = null;
 
+    protected int | string | array $columnSpan = [
+        'md' => 1,
+        'xl' => 1,
+        'sm' => 3, // Takes half width on small screens
+    ];
+
+
     protected function getTablePage(): string
     {
         return ListPrevDogs::class;
