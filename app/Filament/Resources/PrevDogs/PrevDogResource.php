@@ -2,58 +2,28 @@
 
 namespace App\Filament\Resources\PrevDogs;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\TextInput;
-use Filament\Actions\Action;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Grid;
-use App\Filament\Resources\PrevDogs\Pages\EditPrevDog;
-use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Livewire;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Enums\RecordActionsPosition;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Support\Enums\Width;
-use Filament\Actions\ExportAction;
-use Filament\Actions\ExportBulkAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Support\Enums\TextSize;
-use App\Filament\Resources\PrevDogs\RelationManagers\OwnersRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\FemaleBreedingsRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\MaleBreedingsRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\ChildrenRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\TitlesRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\HealthRecordsRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\PrevDogDocumentRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\PaymentsRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\UserRequestsRelationManager;
-use App\Filament\Resources\PrevDogs\RelationManagers\ShowDogsRelationManager;
-use App\Filament\Resources\PrevDogs\Pages\ListPrevDogs;
-use App\Filament\Resources\PrevDogs\Pages\CreatePrevDog;
-use App\Filament\Resources\PrevDogs\Pages\ManagePedigree;
-use App\Filament\Resources\PrevDogs\Pages\ViewPrevDog;
-use App\Filament\Resources\PrevDogs\Widgets\DogStats;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Enums\Legacy\LegacyDogSize;
 use App\Enums\Legacy\LegacyDogStatus;
 use App\Enums\Legacy\LegacyPedigreeColor;
 use App\Enums\Legacy\LegacySagirPrefix;
 use App\Filament\Exports\PrevDogExporter;
+use App\Filament\Resources\PrevDogs\Pages\CreatePrevDog;
+use App\Filament\Resources\PrevDogs\Pages\EditPrevDog;
+use App\Filament\Resources\PrevDogs\Pages\ListPrevDogs;
+use App\Filament\Resources\PrevDogs\Pages\ManagePedigree;
+use App\Filament\Resources\PrevDogs\Pages\ViewPrevDog;
+use App\Filament\Resources\PrevDogs\RelationManagers\ChildrenRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\FemaleBreedingsRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\HealthRecordsRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\MaleBreedingsRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\OwnersRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\PaymentsRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\PrevDogDocumentRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\ShowDogsRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\TitlesRelationManager;
+use App\Filament\Resources\PrevDogs\RelationManagers\UserRequestsRelationManager;
+use App\Filament\Resources\PrevDogs\Widgets\DogStats;
 use App\Livewire\Legacy\Pedigree\PedigreeTree;
 use App\Models\PrevBreed;
 use App\Models\PrevColor;
@@ -61,20 +31,50 @@ use App\Models\PrevDog;
 use App\Models\PrevHair;
 use App\Models\PrevUser;
 use App\Services\Legacy\PrevDogService;
-use Filament\Forms;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Livewire;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\TextSize;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -104,7 +104,7 @@ class PrevDogResource extends Resource
 
     protected static ?string $slug = 'prev-dogs';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'fas-paw';
+    protected static string|\BackedEnum|null $navigationIcon = 'fas-paw';
 
     //    protected static ?string $recordRouteKeyName = 'SagirID';
 
@@ -174,13 +174,13 @@ class PrevDogResource extends Resource
                                         TextInput::make('SagirID')
                                             ->label(__('Sagir'))
                                             ->numeric()
-                                            ->extraAttributes(fn(Model $record): array => ['class' => 'dark:disabled:text-white fi-form-sagir fi-form-sagir-' . $record->sagir_prefix?->getColor()])
-                                            ->prefix(fn(Model $record): HtmlString => $record->sagir_prefix?->code() ? new HtmlString('<span class="fi-form-sagir">' . $record->sagir_prefix?->code() . '</span>') : new HtmlString('<span>---</span>'))
+                                            ->extraAttributes(fn (Model $record): array => ['class' => 'dark:disabled:text-white fi-form-sagir fi-form-sagir-'.$record->sagir_prefix?->getColor()])
+                                            ->prefix(fn (Model $record): HtmlString => $record->sagir_prefix?->code() ? new HtmlString('<span class="fi-form-sagir">'.$record->sagir_prefix?->code().'</span>') : new HtmlString('<span>---</span>'))
                                             ->suffixAction(
                                                 Action::make('setPrefix')
                                                     ->label(__('Prefix'))
                                                     ->icon('fas-chevron-circle-down')
-                                                    ->color(fn(Model $record): string => 'white')
+                                                    ->color(fn (Model $record): string => 'white')
                                                     ->modalHeading(__('Select SAGIR Prefix'))
                                                     ->schema([
                                                         Select::make('prefix')
@@ -189,7 +189,7 @@ class PrevDogResource extends Resource
                                                             ->required(),
                                                     ])
                                                     ->action(function (array $data, Get $get, Set $set): void {
-                                                        $set('sagir_prefix', (int)$data['prefix']);
+                                                        $set('sagir_prefix', (int) $data['prefix']);
                                                     })
                                             )
                                             ->disabled(),
@@ -289,10 +289,10 @@ class PrevDogResource extends Resource
                                                     })
                                                     ->limit(50)
                                                     ->get()
-                                                    ->mapWithKeys(fn($u) => [$u->owner_code => $u->name])
+                                                    ->mapWithKeys(fn ($u) => [$u->owner_code => $u->name])
                                                     ->all();
                                             })
-                                            ->getOptionLabelUsing(fn($value): ?string => PrevUser::query()->where('owner_code', $value)->first()?->name),
+                                            ->getOptionLabelUsing(fn ($value): ?string => PrevUser::query()->where('owner_code', $value)->first()?->name),
                                         DatePicker::make('OwnershipDate')
                                             ->label(__('Ownership Date'))
                                             ->timezone('Asia/Jerusalem')
@@ -306,7 +306,7 @@ class PrevDogResource extends Resource
                                             ->label(__('Beit Gidul'))
                                             ->relationship('breedinghouse', 'GidulCode')
                                             ->searchable(['breedinghouses.HebName', 'breedinghouses.EngName', 'GidulCode'])
-                                            ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->name)
+                                            ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->name)
                                             ->preload()
                                             ->optionsLimit(25),
                                         TextInput::make('BeitGidulName')
@@ -376,10 +376,10 @@ class PrevDogResource extends Resource
                                             Select::make('FatherSAGIR')
                                                 ->label(__('Father'))
                                                 ->searchable(['SagirID', 'Heb_Name', 'Eng_Name', 'Chip', 'ImportNumber'])
-                                                ->relationship('father', 'SagirID', modifyQueryUsing: fn(Builder $query) => $query->where('GenderID', '=', LegacyDogGender::Male->value), ignoreRecord: true)
+                                                ->relationship('father', 'SagirID', modifyQueryUsing: fn (Builder $query) => $query->where('GenderID', '=', LegacyDogGender::Male->value), ignoreRecord: true)
                                                 ->optionsLimit(20)
                                                 ->searchDebounce(1500)
-                                                ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->SagirID} - {$record->full_name}")
+                                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->SagirID} - {$record->full_name}")
                                                 ->createOptionForm([
                                                     Grid::make(3)
                                                         ->schema([
@@ -420,7 +420,7 @@ class PrevDogResource extends Resource
                                                                 ->relationship('breed', 'BreedName')
                                                                 ->searchable()
                                                                 ->preload()
-                                                                ->default(fn(EditPrevDog $livewire) => $livewire->getRecord()->RaceID),
+                                                                ->default(fn (EditPrevDog $livewire) => $livewire->getRecord()->RaceID),
                                                             Select::make('ColorID')
                                                                 ->label(__('Color'))
                                                                 ->relationship('color', 'ColorNameHE')
@@ -456,7 +456,7 @@ class PrevDogResource extends Resource
                                                                 ->label(__('Gender'))
                                                                 ->grouped()
                                                                 ->options(LegacyDogGender::class)
-                                                                ->default(fn(Get $get) => LegacyDogGender::Male->value),
+                                                                ->default(fn (Get $get) => LegacyDogGender::Male->value),
                                                             Select::make('sagir_prefix')
                                                                 ->label(__('Sagir Prefix'))
                                                                 ->options(LegacySagirPrefix::class)
@@ -471,7 +471,7 @@ class PrevDogResource extends Resource
 
                                                     return $father->SagirID;
                                                 })
-                                                ->createOptionAction(fn(Action $action) => $action
+                                                ->createOptionAction(fn (Action $action) => $action
                                                     ->modalHeading(__('Create Father'))
                                                     ->modalWidth('6xl')
                                                     ->label(__('Create new dog as Father'))
@@ -482,10 +482,10 @@ class PrevDogResource extends Resource
                                             Select::make('MotherSAGIR')
                                                 ->label(__('Mother'))
                                                 ->searchable(['SagirID', 'Heb_Name', 'Eng_Name', 'Chip', 'ImportNumber'])
-                                                ->relationship('mother', 'SagirID', modifyQueryUsing: fn(Builder $query) => $query->where('GenderID', '=', LegacyDogGender::Female->value), ignoreRecord: true)
+                                                ->relationship('mother', 'SagirID', modifyQueryUsing: fn (Builder $query) => $query->where('GenderID', '=', LegacyDogGender::Female->value), ignoreRecord: true)
                                                 ->optionsLimit(20)
                                                 ->searchDebounce(1500)
-                                                ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->SagirID} - {$record->full_name}")
+                                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->SagirID} - {$record->full_name}")
                                                 ->createOptionForm([
                                                     Grid::make(3)
                                                         ->schema([
@@ -526,7 +526,7 @@ class PrevDogResource extends Resource
                                                                 ->relationship('breed', 'BreedName')
                                                                 ->searchable()
                                                                 ->preload()
-                                                                ->default(fn(EditPrevDog $livewire) => $livewire->getRecord()->RaceID),
+                                                                ->default(fn (EditPrevDog $livewire) => $livewire->getRecord()->RaceID),
                                                             Select::make('ColorID')
                                                                 ->label(__('Color'))
                                                                 ->relationship('color', 'ColorNameHE')
@@ -562,7 +562,7 @@ class PrevDogResource extends Resource
                                                                 ->label(__('Gender'))
                                                                 ->grouped()
                                                                 ->options(LegacyDogGender::class)
-                                                                ->default(fn(Get $get) => LegacyDogGender::Female->value),
+                                                                ->default(fn (Get $get) => LegacyDogGender::Female->value),
                                                             Select::make('sagir_prefix')
                                                                 ->label(__('Sagir Prefix'))
                                                                 ->options(LegacySagirPrefix::class)
@@ -577,7 +577,7 @@ class PrevDogResource extends Resource
 
                                                     return $mother->SagirID;
                                                 })
-                                                ->createOptionAction(fn(Action $action) => $action
+                                                ->createOptionAction(fn (Action $action) => $action
                                                     ->modalHeading(__('Create Mother'))
                                                     ->modalWidth('6xl')
                                                     ->label(__('Create new dog as Mother'))
@@ -602,7 +602,7 @@ class PrevDogResource extends Resource
                                                 ->grouped(),
                                             Select::make('RemarkCode')
                                                 ->label(__('Remark Code'))
-                                                ->options(fn() => array_combine(range(0, 36), range(0, 36)))
+                                                ->options(fn () => array_combine(range(0, 36), range(0, 36)))
                                                 ->searchable(),
                                             Toggle::make('red_pedigree')
                                                 ->label(__('Red Pedigree'))
@@ -648,13 +648,13 @@ class PrevDogResource extends Resource
 
                         Tab::make('pedigree_tree')
                             ->schema([
-                                Livewire::make(PedigreeTree::class, fn(?PrevDog $record): array => [
+                                Livewire::make(PedigreeTree::class, fn (?PrevDog $record): array => [
                                     'dogId' => $record?->getKey(),
                                     'showBuilder' => true,
                                     'settings' => config('pedigree_tree.presets.resource_edit', []),
                                 ])
-                                    ->hidden(fn(?PrevDog $record): bool => $record === null)
-                                    ->key(fn(?PrevDog $record): string => 'prev-dog-form-pedigree-tree-' . ($record?->getKey() ?? 'new'))
+                                    ->hidden(fn (?PrevDog $record): bool => $record === null)
+                                    ->key(fn (?PrevDog $record): string => 'prev-dog-form-pedigree-tree-'.($record?->getKey() ?? 'new'))
                                     ->lazy(),
                             ])
                             ->label(__('Pedigree Tree')),
@@ -732,17 +732,17 @@ class PrevDogResource extends Resource
                 return $query
                     ->with([
                         // BelongsTo: include owner key
-                        'breed' => fn($r) => $r->select(['BreedsDB.BreedCode', 'BreedsDB.BreedName', 'BreedsDB.BreedNameEN']),
-                        'color' => fn($r) => $r->select(['ColorsDB.OldCode', 'ColorsDB.ColorNameHE', 'ColorsDB.ColorNameEN']),
-                        'hair' => fn($r) => $r->select(['HairsDB.OldCode', 'HairsDB.HairNameHE', 'HairsDB.HairNameEN']),
-                        'breedinghouse' => fn($r) => $r->select(['breedinghouses.GidulCode', 'breedinghouses.HebName', 'breedinghouses.EngName']),
+                        'breed' => fn ($r) => $r->select(['BreedsDB.BreedCode', 'BreedsDB.BreedName', 'BreedsDB.BreedNameEN']),
+                        'color' => fn ($r) => $r->select(['ColorsDB.OldCode', 'ColorsDB.ColorNameHE', 'ColorsDB.ColorNameEN']),
+                        'hair' => fn ($r) => $r->select(['HairsDB.OldCode', 'HairsDB.HairNameHE', 'HairsDB.HairNameEN']),
+                        'breedinghouse' => fn ($r) => $r->select(['breedinghouses.GidulCode', 'breedinghouses.HebName', 'breedinghouses.EngName']),
                         // Parents (PrevDog): include PK used to match and shown fields
-                        'father' => fn($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
-                        'mother' => fn($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
+                        'father' => fn ($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
+                        'mother' => fn ($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
                         // Many-to-many Owners: include related PK + fields shown in list
-                        'owners' => fn($r) => $r->select(['users.id', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
+                        'owners' => fn ($r) => $r->select(['users.id', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
                         //                        'legacyOwner' => fn($r) => $r->select(['users.id', 'owner_code', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
-                        'titles' => fn($r) => $r->select(['dogs_titles_db.TitleCode', 'dogs_titles_db.TitleName']),
+                        'titles' => fn ($r) => $r->select(['dogs_titles_db.TitleCode', 'dogs_titles_db.TitleName']),
                     ]);
                 //                    ->with('duplicates');
             })
@@ -757,7 +757,7 @@ class PrevDogResource extends Resource
                     ->color(function (PrevDog $record): string {
                         return $record->sagir_prefix?->getColor() ?? 'grey';
                     })
-                    ->prefix(fn(PrevDog $record): string => ($record->sagir_prefix?->code() ?? 'NUL') . ' | ')
+                    ->prefix(fn (PrevDog $record): string => ($record->sagir_prefix?->code() ?? 'NUL').' | ')
                     ->icon(function (PrevDog $record): ?string {
                         return $record->sagir_prefix?->getIcon();
                     })
@@ -765,7 +765,7 @@ class PrevDogResource extends Resource
                     ->tooltip(__('Copy Sagir'))
                     ->copyable()
                     ->copyMessageDuration(duration: 1200)
-                    ->copyMessage(fn($state): string => __('Copied Sagir: :id', ['id' => $state]))
+                    ->copyMessage(fn ($state): string => __('Copied Sagir: :id', ['id' => $state]))
                     ->searchable(['SagirID'], isIndividual: true, isGlobal: false)
                     ->sortable(['SagirID']),
                 TextColumn::make('fullName')
@@ -876,7 +876,7 @@ class PrevDogResource extends Resource
                     ->label(__('Titles'))
                     ->listWithLineBreaks()
                     ->limitList(1)
-                    ->tooltip(fn(TextColumn $column): ?string => (($state = $column->getState()) === null) ? null :
+                    ->tooltip(fn (TextColumn $column): ?string => (($state = $column->getState()) === null) ? null :
                         (is_array($state)
                             ? (count($state) > $column->getListLimit() ? implode(' | ', $state) : null)
                             : (string) $state
@@ -914,8 +914,8 @@ class PrevDogResource extends Resource
                 TextColumn::make('Status')
                     ->label(__('Status'))
                     ->badge()
-                    ->icon(fn(PrevDog $record): string => $record->Status?->getIcon() ?? 'fas-minus-circle')
-                    ->color(fn(PrevDog $record): string => $record->Status?->getColor() ?? 'gray')
+                    ->icon(fn (PrevDog $record): string => $record->Status?->getIcon() ?? 'fas-minus-circle')
+                    ->color(fn (PrevDog $record): string => $record->Status?->getColor() ?? 'gray')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('BreedID')
@@ -967,14 +967,14 @@ class PrevDogResource extends Resource
                     ->formatStateUsing(function ($state) {
                         $c = $state instanceof LegacyPedigreeColor
                             ? $state
-                            : (!is_null($state) ? LegacyPedigreeColor::tryFrom((string)$state) : null);
+                            : (! is_null($state) ? LegacyPedigreeColor::tryFrom((string) $state) : null);
 
                         return $c?->getLabel();
                     })
                     ->color(function ($state) {
                         $c = $state instanceof LegacyPedigreeColor
                             ? $state
-                            : (!is_null($state) ? LegacyPedigreeColor::tryFrom((string)$state) : null);
+                            : (! is_null($state) ? LegacyPedigreeColor::tryFrom((string) $state) : null);
 
                         return $c?->getColor();
                     })
@@ -1135,270 +1135,246 @@ class PrevDogResource extends Resource
                 //                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-//                Filter::make('trashed')
-//                    ->schema([
-//                        ToggleButtons::make('trashed')
-//                            ->label(__('Trashed'))
-//                            ->options([
-//                                'not_deleted' => 'Not Deleted',
-//                                'deleted' => 'Deleted',
-//                                'all' => 'All',
-//                            ])
-//                            ->colors([
-//                                'not_deleted' => 'success',
-//                                'deleted' => 'danger',
-//                                'all' => 'gray',
-//                            ])
-//                            ->default('not_deleted')
-//                            ->grouped(),
-//                    ])
-//                    ->query(function (Builder $query, array $data) {
-//                        if (empty($data['trashed']) || $data['trashed'] === 'all') {
-//                            return $query;
-//                        }
-//
-//                        return match ($data['trashed']) {
-//                            'deleted' => $query->onlyTrashed(),
-//                            'not_deleted' => $query->withoutTrashed(),
-//                        };
-//                    }),
-//
-//
-//                Filter::make('GenderID')
-//                    ->label(__('Gender'))
-//                    ->schema([
-//                        ToggleButtons::make('GenderID')
-//                            ->label(__('Gender'))
-//                            ->options(LegacyDogGender::class)
-//                            ->grouped()
-//                            ->nullable(),
-//                    ])
-//                    ->query(fn(Builder $query, array $data): Builder => $query->when(
-//                        filled($data['GenderID'] ?? null),
-//                        fn(Builder $q): Builder => $q->where('GenderID', $data['GenderID'])
-//                    )),
-//                Filter::make('sagir_prefix')
-//                    ->schema([
-//                        ToggleButtons::make('sagir_prefix')
-//                            ->label(__('Sagir Prefix'))
-//                            ->options(LegacySagirPrefix::class)
-//                            ->multiple()
-//                            ->grouped()
-//                            ->nullable(),
-//                    ])
-//                    ->query(function (Builder $query, array $data) {
-//                        // If no specific prefix is chosen, return unfiltered results.
-//                        if (empty($data['sagir_prefix'])) {
-//                            return $query;
-//                        }
-//
-//                        return $query->whereIn('sagir_prefix', $data['sagir_prefix']);
-//                    }),
-//                SelectFilter::make('breed')
-//                    ->label(__('Breed'))
-//                    ->relationship('breed', 'BreedName')
-//                    ->multiple()
-//                    ->searchable(['BreedName', 'BreedNameEN'])
-//                    ->getOptionLabelFromRecordUsing(fn(PrevBreed $record): string => $record->BreedName . ' | ' . $record->BreedNameEN),
-//                SelectFilter::make('color')
-//                    ->label(__('Color'))
-//                    ->relationship('color', 'ColorNameHE')
-//                    ->multiple()
-//                    ->searchable(['ColorNameHE', 'ColorNameEN'])
-//                    ->getOptionLabelFromRecordUsing(fn(PrevColor $record): string => $record->ColorNameHE . ' | ' . $record->ColorNameEN),
-//                SelectFilter::make('hair')
-//                    ->label(__('Hair'))
-//                    ->relationship('hair', 'HairNameHE')
-//                    ->multiple()
-//                    ->searchable(['HairNameHE', 'HairNameEN'])
-//                    ->getOptionLabelFromRecordUsing(fn(PrevHair $record): string => $record->HairNameHE . ' | ' . $record->HairNameEN),
-//                // Combined filter for Father (searching by Hebrew Name, English Name or SagirID)
-//                Filter::make('father')
-//                    ->query(function (Builder $query, array $data) {
-//                        if (! empty($data['father_search'])) {
-//                            $query->whereHas('father', function (Builder $query) use ($data) {
-//                                $query->where('Heb_Name', 'like', "%{$data['father_search']}%")
-//                                    ->orWhere('Eng_Name', 'like', "%{$data['father_search']}%")
-//                                    ->orWhere('SagirID', 'like', "%{$data['father_search']}%");
-//                            });
-//                        }
-//                    })
-//                    ->schema([
-//                        TextInput::make('father_search')
-//                            ->label(__('Father'))
-//                            ->hint(__('Name \ Sagir'))
-//                            ->helperText(__('Search by Hebrew\English Name or Sagir')),
-//                    ]),
-//                // Combined filter for Mother (searching by Hebrew Name, English Name or SagirID)
-//                Filter::make('mother')
-//                    ->label(__('Mother'))
-//                    ->query(function (Builder $query, array $data) {
-//                        if (! empty($data['mother_search'])) {
-//                            $query->whereHas('mother', function (Builder $query) use ($data) {
-//                                $query->where('Heb_Name', 'like', "%{$data['mother_search']}%")
-//                                    ->orWhere('Eng_Name', 'like', "%{$data['mother_search']}%")
-//                                    ->orWhere('SagirID', 'like', "%{$data['mother_search']}%");
-//                            });
-//                        }
-//                    })
-//                    ->schema([
-//                        TextInput::make('mother_search')
-//                            ->label(__('Mother'))
-//                            ->hint(__('Name \ Sagir'))
-//                            ->helperText(__('Search by Hebrew\English Name or Sagir')),
-//                    ]),
-//                // create filters to select and search by "owners" (PrevUser many 2 many relationship) fields: first_name, last_name, first_name_en, last_name_en, mobile_phone, id and custom attributes: full_name, name - owners is a relationship, full_name is a custom accessor using: ["first_name", "last_name", "first_name_en", "last_name_en"]
-//                SelectFilter::make('owners')
-//                    ->label(__('Owners'))
-//                    ->multiple()
-//                    ->relationship('owners', 'id') // Defines the relationship to query against
-//                    ->searchable(false) // We provide a custom search, so disable the default
-//
-//                    // What to do when the user types in the search box
-//                    ->getSearchResultsUsing(
-//                        fn (?string $search): array => PrevUser::selectOptions($search)
-//                    )
-//
-//                    // How to get labels for already-selected options when the form loads
-//                    ->getOptionLabelsUsing(
-//                        fn (array $values): array => PrevUser::whereIn('id', $values)->get()->pluck('search_label', 'id')->toArray()
-//                    )
-//
-//                    // This is ALREADY handled by ->relationship(), but left for clarity
-//                    // on how to apply the final filter to the main table query.
-//                    ->query(function (Builder $query, array $data): Builder {
-//                        if (empty($data['values'])) {
-//                            return $query;
-//                        }
-//
-//                        return $query->whereHas('owners', fn(Builder $q): Builder => $q->whereIn('users.id', $data['values']));
-//                    }),
-//
-//                // Date filters for RegDate, BirthDate, OwnershipDate
-//                Filter::make('RegDate')
-//                    ->schema([
-//                        Section::make(__('Registration Date Range'))
-//                            ->description(__('Leave “Until” empty to include up to today'))
-//                            ->schema([
-//                                DatePicker::make('RegDate_from')
-//                                    ->label(__('Registration Date From'))
-//                                    ->timezone('Asia/Jerusalem')
-//                                    ->native(false)
-//                                    ->locale('he')
-//                                    ->format('Y-m-d')
-//                                    ->displayFormat('Y-m-d')
-//                                    ->weekStartsOnSunday()
-//                                    ->closeOnDateSelection(),
-//                                DatePicker::make('RegDate_until')
-//                                    ->label(__('Registration Date Until'))
-//                                    ->timezone('Asia/Jerusalem')
-//                                    ->native(false)
-//                                    ->locale('he')
-//                                    ->format('Y-m-d')
-//                                    ->displayFormat('Y-m-d')
-//                                    ->weekStartsOnSunday()
-//                                    ->closeOnDateSelection(),
-//                            ])
-//                            ->columns(2),
-//                    ])
-//                    ->query(function (Builder $query, array $data): Builder {
-//                        return $query
-//                            ->when(
-//                                $data['RegDate_from'] ?? null,
-//                                    fn(Builder $q, $date): Builder => $q->whereDate('RegDate', '>=', $date),
-//                            )
-//                            ->when(
-//                            // If only "from" is provided and no "until", cap at today
-//                                ($data['RegDate_from'] ?? null) && !($data['RegDate_until'] ?? null),
-//                                fn(Builder $q): Builder => $q->whereDate('RegDate', '<=', now()->toDateString()),
-//                            )
-//                            ->when(
-//                                $data['RegDate_until'] ?? null,
-//                                    fn(Builder $q, $date): Builder => $q->whereDate('RegDate', '<=', $date),
-//                            );
-//                    }),
-//                Filter::make('BirthDate')
-//                    ->schema([
-//                        Section::make(__('Birth Date Range'))
-//                            ->description(__('Leave “Until” empty to include up to today'))
-//                            ->schema([
-//                                DatePicker::make('BirthDate_from')
-//                                    ->label(__('Birth Date From'))
-//                                    ->timezone('Asia/Jerusalem')
-//                                    ->native(false)
-//                                    ->locale('he')
-//                                    ->format('Y-m-d')
-//                                    ->displayFormat('Y-m-d')
-//                                    ->weekStartsOnSunday()
-//                                    ->closeOnDateSelection(),
-//                                DatePicker::make('BirthDate_until')
-//                                    ->label(__('Birth Date Until'))
-//                                    ->timezone('Asia/Jerusalem')
-//                                    ->native(false)
-//                                    ->locale('he')
-//                                    ->format('Y-m-d')
-//                                    ->displayFormat('Y-m-d')
-//                                    ->weekStartsOnSunday()
-//                                    ->closeOnDateSelection(),
-//                            ])
-//                            ->columns(2),
-//                    ])
-//                    ->query(function (Builder $query, array $data): Builder {
-//                        return $query
-//                            ->when(
-//                                $data['BirthDate_from'] ?? null,
-//                                    fn(Builder $q, $date): Builder => $q->whereDate('BirthDate', '>=', $date),
-//                            )
-//                            ->when(
-//                                ($data['BirthDate_from'] ?? null) && !($data['BirthDate_until'] ?? null),
-//                                fn(Builder $q): Builder => $q->whereDate('BirthDate', '<=', now()->toDateString()),
-//                            )
-//                            ->when(
-//                                $data['BirthDate_until'] ?? null,
-//                                    fn(Builder $q, $date): Builder => $q->whereDate('BirthDate', '<=', $date),
-//                            );
-//                    }),
-//                Filter::make('OwnershipDate')
-//                    ->schema([
-//                        Section::make(__('Ownership Date Range'))
-//                            ->description(__('Leave “Until” empty to include up to today'))
-//                            ->schema([
-//                                DatePicker::make('OwnershipDate_from')
-//                                    ->label(__('Ownership Date From'))
-//                                    ->timezone('Asia/Jerusalem')
-//                                    ->native(false)
-//                                    ->locale('he')
-//                                    ->format('Y-m-d')
-//                                    ->displayFormat('Y-m-d')
-//                                    ->weekStartsOnSunday()
-//                                    ->closeOnDateSelection(),
-//                                DatePicker::make('OwnershipDate_until')
-//                                    ->label(__('Ownership Date Until'))
-//                                    ->timezone('Asia/Jerusalem')
-//                                    ->native(false)
-//                                    ->locale('he')
-//                                    ->format('Y-m-d')
-//                                    ->displayFormat('Y-m-d')
-//                                    ->weekStartsOnSunday()
-//                                    ->closeOnDateSelection(),
-//                            ])
-//                            ->columns(2),
-//                    ])
-//                    ->query(function (Builder $query, array $data): Builder {
-//                        return $query
-//                            ->when(
-//                                $data['OwnershipDate_from'] ?? null,
-//                                    fn(Builder $q, $date): Builder => $q->whereDate('OwnershipDate', '>=', $date),
-//                            )
-//                            ->when(
-//                                ($data['OwnershipDate_from'] ?? null) && !($data['OwnershipDate_until'] ?? null),
-//                                fn(Builder $q): Builder => $q->whereDate('OwnershipDate', '<=', now()->toDateString()),
-//                            )
-//                            ->when(
-//                                $data['OwnershipDate_until'] ?? null,
-//                                    fn(Builder $q, $date): Builder => $q->whereDate('OwnershipDate', '<=', $date),
-//                            );
-//                    }),
+                TrashedFilter::make(),
+                Filter::make('GenderID')
+                    ->label(__('Gender'))
+                    ->schema([
+                        ToggleButtons::make('GenderID')
+                            ->label(__('Gender'))
+                            ->options(LegacyDogGender::class)
+                            ->grouped()
+                            ->nullable(),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        filled($data['GenderID'] ?? null),
+                        fn (Builder $query): Builder => $query->where('GenderID', $data['GenderID']),
+                    )),
+                Filter::make('sagir_prefix')
+                    ->schema([
+                        ToggleButtons::make('sagir_prefix')
+                            ->label(__('Sagir Prefix'))
+                            ->options(LegacySagirPrefix::class)
+                            ->multiple()
+                            ->grouped()
+                            ->nullable(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['sagir_prefix'])) {
+                            return $query;
+                        }
+
+                        return $query->whereIn('sagir_prefix', $data['sagir_prefix']);
+                    }),
+                SelectFilter::make('breed')
+                    ->label(__('Breed'))
+                    ->relationship('breed', 'BreedName')
+                    ->multiple()
+                    ->searchable(['BreedName', 'BreedNameEN'])
+                    ->getOptionLabelFromRecordUsing(fn (PrevBreed $record): string => $record->BreedName.' | '.$record->BreedNameEN),
+                SelectFilter::make('color')
+                    ->label(__('Color'))
+                    ->relationship('color', 'ColorNameHE')
+                    ->multiple()
+                    ->searchable(['ColorNameHE', 'ColorNameEN'])
+                    ->getOptionLabelFromRecordUsing(fn (PrevColor $record): string => $record->ColorNameHE.' | '.$record->ColorNameEN),
+                SelectFilter::make('hair')
+                    ->label(__('Hair'))
+                    ->relationship('hair', 'HairNameHE')
+                    ->multiple()
+                    ->searchable(['HairNameHE', 'HairNameEN'])
+                    ->getOptionLabelFromRecordUsing(fn (PrevHair $record): string => $record->HairNameHE.' | '.$record->HairNameEN),
+                Filter::make('father')
+                    ->query(function (Builder $query, array $data): Builder {
+                        $search = trim((string) ($data['father_search'] ?? ''));
+
+                        if ($search === '') {
+                            return $query;
+                        }
+
+                        return $query->whereHas('father', function (Builder $query) use ($search): void {
+                            $query->where(function (Builder $query) use ($search): void {
+                                $query->where('Heb_Name', 'like', "%{$search}%")
+                                    ->orWhere('Eng_Name', 'like', "%{$search}%")
+                                    ->orWhere('SagirID', 'like', "%{$search}%");
+                            });
+                        });
+                    })
+                    ->schema([
+                        TextInput::make('father_search')
+                            ->label(__('Father'))
+                            ->hint(__('Name \ Sagir'))
+                            ->helperText(__('Search by Hebrew\English Name or Sagir')),
+                    ]),
+                Filter::make('mother')
+                    ->label(__('Mother'))
+                    ->query(function (Builder $query, array $data): Builder {
+                        $search = trim((string) ($data['mother_search'] ?? ''));
+
+                        if ($search === '') {
+                            return $query;
+                        }
+
+                        return $query->whereHas('mother', function (Builder $query) use ($search): void {
+                            $query->where(function (Builder $query) use ($search): void {
+                                $query->where('Heb_Name', 'like', "%{$search}%")
+                                    ->orWhere('Eng_Name', 'like', "%{$search}%")
+                                    ->orWhere('SagirID', 'like', "%{$search}%");
+                            });
+                        });
+                    })
+                    ->schema([
+                        TextInput::make('mother_search')
+                            ->label(__('Mother'))
+                            ->hint(__('Name \ Sagir'))
+                            ->helperText(__('Search by Hebrew\English Name or Sagir')),
+                    ]),
+                SelectFilter::make('owners')
+                    ->label(__('Owners'))
+                    ->multiple()
+                    ->searchable()
+                    ->optionsLimit(50)
+                    ->getSearchResultsUsing(fn (?string $search): array => PrevUser::selectOptions($search))
+                    ->getOptionLabelsUsing(fn (array $values): array => PrevUser::query()
+                        ->nativeRecords()
+                        ->whereIn('id', $values)
+                        ->get()
+                        ->pluck('search_label', 'id')
+                        ->toArray())
+                    ->query(function (Builder $query, array $data): Builder {
+                        $ownerIds = collect($data['values'] ?? [])
+                            ->filter(static fn (mixed $value): bool => filled($value))
+                            ->map(static fn (mixed $value): int => (int) $value)
+                            ->all();
+
+                        if ($ownerIds === []) {
+                            return $query;
+                        }
+
+                        return $query->whereHas('owners', fn (Builder $query): Builder => $query->whereIn('users.id', $ownerIds));
+                    }),
+                Filter::make('RegDate')
+                    ->schema([
+                        Section::make(__('Registration Date Range'))
+                            ->description(__('Leave “Until” empty to include up to today'))
+                            ->schema([
+                                DatePicker::make('RegDate_from')
+                                    ->label(__('Registration Date From'))
+                                    ->timezone('Asia/Jerusalem')
+                                    ->native(false)
+                                    ->locale('he')
+                                    ->format('Y-m-d')
+                                    ->displayFormat('Y-m-d')
+                                    ->weekStartsOnSunday()
+                                    ->closeOnDateSelection(),
+                                DatePicker::make('RegDate_until')
+                                    ->label(__('Registration Date Until'))
+                                    ->timezone('Asia/Jerusalem')
+                                    ->native(false)
+                                    ->locale('he')
+                                    ->format('Y-m-d')
+                                    ->displayFormat('Y-m-d')
+                                    ->weekStartsOnSunday()
+                                    ->closeOnDateSelection(),
+                            ])
+                            ->columns(2),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['RegDate_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('RegDate', '>=', $date),
+                            )
+                            ->when(
+                                ($data['RegDate_from'] ?? null) && ! ($data['RegDate_until'] ?? null),
+                                fn (Builder $query): Builder => $query->whereDate('RegDate', '<=', now()->toDateString()),
+                            )
+                            ->when(
+                                $data['RegDate_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('RegDate', '<=', $date),
+                            );
+                    }),
+                Filter::make('BirthDate')
+                    ->schema([
+                        Section::make(__('Birth Date Range'))
+                            ->description(__('Leave “Until” empty to include up to today'))
+                            ->schema([
+                                DatePicker::make('BirthDate_from')
+                                    ->label(__('Birth Date From'))
+                                    ->timezone('Asia/Jerusalem')
+                                    ->native(false)
+                                    ->locale('he')
+                                    ->format('Y-m-d')
+                                    ->displayFormat('Y-m-d')
+                                    ->weekStartsOnSunday()
+                                    ->closeOnDateSelection(),
+                                DatePicker::make('BirthDate_until')
+                                    ->label(__('Birth Date Until'))
+                                    ->timezone('Asia/Jerusalem')
+                                    ->native(false)
+                                    ->locale('he')
+                                    ->format('Y-m-d')
+                                    ->displayFormat('Y-m-d')
+                                    ->weekStartsOnSunday()
+                                    ->closeOnDateSelection(),
+                            ])
+                            ->columns(2),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['BirthDate_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('BirthDate', '>=', $date),
+                            )
+                            ->when(
+                                ($data['BirthDate_from'] ?? null) && ! ($data['BirthDate_until'] ?? null),
+                                fn (Builder $query): Builder => $query->whereDate('BirthDate', '<=', now()->toDateString()),
+                            )
+                            ->when(
+                                $data['BirthDate_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('BirthDate', '<=', $date),
+                            );
+                    }),
+                Filter::make('OwnershipDate')
+                    ->schema([
+                        Section::make(__('Ownership Date Range'))
+                            ->description(__('Leave “Until” empty to include up to today'))
+                            ->schema([
+                                DatePicker::make('OwnershipDate_from')
+                                    ->label(__('Ownership Date From'))
+                                    ->timezone('Asia/Jerusalem')
+                                    ->native(false)
+                                    ->locale('he')
+                                    ->format('Y-m-d')
+                                    ->displayFormat('Y-m-d')
+                                    ->weekStartsOnSunday()
+                                    ->closeOnDateSelection(),
+                                DatePicker::make('OwnershipDate_until')
+                                    ->label(__('Ownership Date Until'))
+                                    ->timezone('Asia/Jerusalem')
+                                    ->native(false)
+                                    ->locale('he')
+                                    ->format('Y-m-d')
+                                    ->displayFormat('Y-m-d')
+                                    ->weekStartsOnSunday()
+                                    ->closeOnDateSelection(),
+                            ])
+                            ->columns(2),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['OwnershipDate_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('OwnershipDate', '>=', $date),
+                            )
+                            ->when(
+                                ($data['OwnershipDate_from'] ?? null) && ! ($data['OwnershipDate_until'] ?? null),
+                                fn (Builder $query): Builder => $query->whereDate('OwnershipDate', '<=', now()->toDateString()),
+                            )
+                            ->when(
+                                $data['OwnershipDate_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('OwnershipDate', '<=', $date),
+                            );
+                    }),
 
             ], layout: FiltersLayout::AboveContentCollapsible)
             ->filtersFormColumns(3)
@@ -1418,19 +1394,19 @@ class PrevDogResource extends Resource
                     ->tooltip(__('Pedigree'))
                     ->icon('fas-sitemap')
                     ->color('info')
-                    ->hidden(fn(PrevDog $record): bool => empty($record->father) && empty($record->mother))
+                    ->hidden(fn (PrevDog $record): bool => empty($record->father) && empty($record->mother))
                     ->modalHeading(__('Pedigree Tree'))
                     ->modalWidth(Width::Full)
                     ->modalSubmitAction(false)
-                    ->modalCancelAction(fn(Action $action) => $action->label(__('Close')))
-                    ->modalContent(fn(PrevDog $record): View => view('legacy.pedigree.pedigree-tree-modal', ['dogId' => $record->id])),
+                    ->modalCancelAction(fn (Action $action) => $action->label(__('Close')))
+                    ->modalContent(fn (PrevDog $record): View => view('legacy.pedigree.pedigree-tree-modal', ['dogId' => $record->id])),
 
                 Action::make('edit_pedigree')
                     ->iconButton()
                     ->iconSize(IconSize::Large)
                     ->tooltip(__('Manage Pedigree'))
                     ->icon(Heroicon::Share)
-                    ->url(fn(PrevDog $record): string => PrevDogResource::getUrl('pedigree', ['record' => $record])),
+                    ->url(fn (PrevDog $record): string => PrevDogResource::getUrl('pedigree', ['record' => $record])),
                 //                Tables\Actions\DeleteAction::make()
                 //                    ->iconButton()
                 //                    ->iconSize(IconSize::Large)
@@ -1498,7 +1474,7 @@ class PrevDogResource extends Resource
                                 TextEntry::make('SagirID')
                                     ->label(__('Sagir'))
                                     ->inlineLabel()
-                                    ->prefix(fn(PrevDog $record): string => $record->sagir_prefix->code())
+                                    ->prefix(fn (PrevDog $record): string => $record->sagir_prefix->code())
                                     ->numeric(decimalPlaces: 0, thousandsSeparator: ''),
                                 TextEntry::make('full_name')
                                     ->label(__('Full Name'))
@@ -1514,12 +1490,12 @@ class PrevDogResource extends Resource
                                 TextEntry::make('GenderID')
                                     ->label(__('Gender'))
                                     ->inlineLabel()
-                                    ->state(fn(PrevDog $record): string => ($record->GenderID?->getLabel() ?? 'n/a')
-                                        . (!empty($record->Sex) ? " ({$record->Sex})" : '')
+                                    ->state(fn (PrevDog $record): string => ($record->GenderID?->getLabel() ?? 'n/a')
+                                        .(! empty($record->Sex) ? " ({$record->Sex})" : '')
                                     )
-                                    ->color(fn(PrevDog $record) => $record->GenderID?->getColor())
-                                    ->icon(fn(PrevDog $record) => $record->GenderID?->getIcon())
-                                    ->iconColor(fn(PrevDog $record) => $record->GenderID?->getColor()),
+                                    ->color(fn (PrevDog $record) => $record->GenderID?->getColor())
+                                    ->icon(fn (PrevDog $record) => $record->GenderID?->getIcon())
+                                    ->iconColor(fn (PrevDog $record) => $record->GenderID?->getColor()),
                             ])
                                 ->columnSpan(1),
                             Grid::make(1)->schema([
@@ -1539,8 +1515,8 @@ class PrevDogResource extends Resource
                                     ->label(__('Status'))
                                     ->inlineLabel()
                                     ->badge()
-                                    ->icon(fn(PrevDog $record): string => $record->Status?->getIcon() ?? 'fas-minus-circle')
-                                    ->color(fn(PrevDog $record): string => $record->Status?->getColor() ?? 'gray'),
+                                    ->icon(fn (PrevDog $record): string => $record->Status?->getIcon() ?? 'fas-minus-circle')
+                                    ->color(fn (PrevDog $record): string => $record->Status?->getColor() ?? 'gray'),
                             ])
                                 ->columnSpan(1),
                         ])
@@ -1556,7 +1532,7 @@ class PrevDogResource extends Resource
                                     TextEntry::make('mobile_phone')->label(__('Phone')),
                                     TextEntry::make('email')->label(__('Email')),
                                 ])
-                                ->label(fn(PrevDog $record): string => __('Owners') . " ({$record->owners->count()})")
+                                ->label(fn (PrevDog $record): string => __('Owners')." ({$record->owners->count()})")
                                 ->grid(4),
                             TextEntry::make('legacyOwner.full_name')
                                 ->label(__('Owner pre 2022')),
@@ -1628,7 +1604,7 @@ class PrevDogResource extends Resource
                             ]),
                         Section::make('Titles & Shows')->schema([
                             RepeatableEntry::make('titles')
-                                ->label(fn(PrevDog $record): string => __('Titles') . " ({$record->titles->count()})")
+                                ->label(fn (PrevDog $record): string => __('Titles')." ({$record->titles->count()})")
                                 ->schema([
                                     TextEntry::make('name')
                                         ->hiddenLabel()
@@ -1661,12 +1637,12 @@ class PrevDogResource extends Resource
 
                     Tab::make('Pedigree Tree')
                         ->schema([
-                            Livewire::make(PedigreeTree::class, fn(PrevDog $record): array => [
+                            Livewire::make(PedigreeTree::class, fn (PrevDog $record): array => [
                                 'dogId' => $record->getKey(),
                                 'showBuilder' => false,
                                 'settings' => config('pedigree_tree.presets.resource_view', []),
                             ])
-                                ->key(fn(PrevDog $record): string => "prev-dog-pedigree-tree-{$record->getKey()}")
+                                ->key(fn (PrevDog $record): string => "prev-dog-pedigree-tree-{$record->getKey()}")
                                 ->lazy()
                                 ->columnSpanFull(),
                         ])

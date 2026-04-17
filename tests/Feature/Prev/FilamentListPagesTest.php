@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Resources\PrevDogs\Pages\ListPrevDogs;
 use App\Filament\Resources\PrevShowArenas\Pages\ListPrevShowArenas;
 use App\Filament\Resources\PrevShowBreeds\Pages\ListPrevShowBreeds;
 use App\Filament\Resources\PrevShowClasses\Pages\ListPrevShowClasses;
@@ -7,8 +8,11 @@ use App\Filament\Resources\PrevShowDogs\Pages\ListPrevShowDogs;
 use App\Filament\Resources\PrevShowResults\Pages\ListPrevShowResults;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+
 use function Pest\Livewire\livewire;
 
 /**
@@ -25,7 +29,7 @@ function ensureSuperAdminUser(): User
     $user = User::factory()->create([
         'email_verified_at' => now(),
         // Unique email to avoid collisions; password not needed for actingAs.
-        'email' => 'test+' . Str::random(8) . '@example.com',
+        'email' => 'test+'.Str::random(8).'@example.com',
     ]);
 
     $user->assignRole($role);
@@ -64,4 +68,18 @@ it('renders Prev Show Dogs list page', function () {
 
 it('renders Prev Show Results list page', function () {
     livewire(ListPrevShowResults::class)->assertOk();
+});
+
+it('renders Prev Dogs list page', function () {
+    livewire(ListPrevDogs::class)->assertOk();
+});
+
+it('uses safe Prev Dogs table filters after the Filament 4 upgrade', function () {
+    $component = livewire(ListPrevDogs::class);
+    $filters = $component->instance()->getTable()->getFilters();
+
+    expect($filters['trashed'])->toBeInstanceOf(TrashedFilter::class);
+    expect($filters['owners'])->toBeInstanceOf(SelectFilter::class);
+    expect($filters['owners']->getFormField()->isSearchable())->toBeTrue();
+    expect($filters['owners']->getFormField()->getOptionsLimit())->toBe(50);
 });
