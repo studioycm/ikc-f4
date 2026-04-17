@@ -97,14 +97,13 @@ class PrevUserResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['first_name', 'last_name', 'first_name_en', 'last_name_en'];
+        return ['first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'phone'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Email' => $record->email,
-            'Phone' => $record->mobile_phone,
+            ($record->normalised_phone ? '☎ ' . $record->normalised_phone . ' ' : '') . ($record->email ? '✉ ' . $record->email : ''),
         ];
     }
 
