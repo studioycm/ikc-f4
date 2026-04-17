@@ -150,3 +150,7 @@
     position: relative;
     height: 100%;
 }
+
+.fi-badge-larger .fi-badge {
+    @apply font-semibold text-2xl px-4 py-2 rounded-lg;
+}

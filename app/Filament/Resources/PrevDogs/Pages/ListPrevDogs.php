@@ -12,6 +12,7 @@ use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Support\Enums\IconPosition;
 
 class ListPrevDogs extends ListRecords
 {
@@ -63,53 +64,59 @@ class ListPrevDogs extends ListRecords
 
     public function getTabs(): array
     {
+        $count_israeli = PrevDog::where('sagir_prefix', LegacySagirPrefix::ISR->value)->count();
+        $count_import = PrevDog::where('sagir_prefix', LegacySagirPrefix::IMP->value)->count();
+        $count_external = PrevDog::where('sagir_prefix', LegacySagirPrefix::EXT->value)->count();
+        $count_appendix = PrevDog::where('sagir_prefix', LegacySagirPrefix::APX->value)->count();
+
 
         return [
             'israeli' => Tab::make()
                 ->label(__('ISR Studbook'))
-                ->icon(LegacySagirPrefix::ISR->getIcon())
+                ->badgeIcon(LegacySagirPrefix::ISR->getIcon())
+                ->badgeIconPosition(IconPosition::Before)
                 ->badgeColor(LegacySagirPrefix::ISR->getColor())
-                // Add badge to the tab
-                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::ISR->value)->count())
-                // Modify the query only to show completed tasks
+                ->badge(fn (): string => LegacySagirPrefix::ISR->getLabel() . ' (' . $count_israeli . ')')
+                ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::ISR->value);
                 }),
 
             'import' => Tab::make()
                 ->label(__('IMP Studbook'))
-                ->icon(LegacySagirPrefix::IMP->getIcon())
+                ->badgeIcon(LegacySagirPrefix::IMP->getIcon())
+                ->badgeIconPosition(IconPosition::Before)
                 ->badgeColor(LegacySagirPrefix::IMP->getColor())
-                // Add badge to the tab
-                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::IMP->value)->count())
-                // Modify the query only to show completed tasks
+                ->badge(fn (): string => LegacySagirPrefix::IMP->getLabel() . ' (' . $count_import . ')')
+                ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::IMP->value);
                 }),
 
             'external' => Tab::make()
                 ->label(__('EXT Studbook'))
-                ->icon(LegacySagirPrefix::EXT->getIcon())
+                ->badgeIcon(LegacySagirPrefix::EXT->getIcon())
+                ->badgeIconPosition(IconPosition::Before)
                 ->badgeColor(LegacySagirPrefix::EXT->getColor())
-                // Add badge to the tab
-                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::EXT->value)->count())
-                // Modify the query only to show completed tasks
+                ->badge(fn (): string => LegacySagirPrefix::EXT->getLabel() . ' (' . $count_external . ')')
+                ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::EXT->value);
                 }),
 
             'appendix' => Tab::make()
                 ->label(__('APX Studbook'))
-                ->icon(LegacySagirPrefix::APX->getIcon())
+                ->badgeIcon(LegacySagirPrefix::APX->getIcon())
+                ->badgeIconPosition(IconPosition::Before)
                 ->badgeColor(LegacySagirPrefix::APX->getColor())
-                // Add badge to the tab
-                ->badge(PrevDog::where('sagir_prefix', LegacySagirPrefix::APX->value)->count())
-                // Modify the query only to show completed tasks
+                ->badge(fn (): string => LegacySagirPrefix::APX->getLabel() . ' (' . $count_appendix . ')')
+                ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::APX->value);
                 }),
             'all' => Tab::make()
-                ->label(__('Show All')),
+                ->label(__('Show All'))
+                ->extraAttributes(['class' => 'text-xl']),
         ];
     }
 

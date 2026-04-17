@@ -10,7 +10,9 @@
     "mcp": true,
     "nightwatch_mcp": false,
     "packages": [
-        "filament/filament"
+        "filament/filament",
+        "filament/blueprint",
+        "laraveldaily/filacheck"
     ],
     "sail": false,
     "skills": [
