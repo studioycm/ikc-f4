@@ -76,6 +76,24 @@ return [
     ],
 
     /*
+   |--------------------------------------------------------------------------
+   | Super Admin
+   |--------------------------------------------------------------------------
+   |
+   | Here you may define an admin that has unrestricted access to your
+   | application. You can choose to implement this via Laravel's gate system
+   | or as a traditional role with all permissions explicitly assigned.
+   |
+   */
+
+//    'admin' => [
+//        'enabled' => true,
+//        'name' => 'admin',
+//        'define_via_gate' => false,
+//        'intercept_gate' => 'before',
+//    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Panel User
     |--------------------------------------------------------------------------
