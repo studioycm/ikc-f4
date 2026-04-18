@@ -1456,7 +1456,7 @@ class PrevDogResource extends Resource
             ->defaultKeySort(false)
             ->searchOnBlur()
             ->striped()
-            ->deferLoading()
+//            ->deferLoading()
             ->recordUrl(false)
 //            ->recordUrl(fn(PrevDog $record): string => PrevDogResource::getUrl('edit', ['record' => $record]))
             ->recordClasses(fn (Model $record) => $record->trashed() ? 'fi-ta-row-deleted' : null);

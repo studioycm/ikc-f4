@@ -17,7 +17,6 @@ use Filament\Support\Enums\IconPosition;
 class ListPrevDogs extends ListRecords
 {
     use ExposesTableToWidgets;
-    use HasTabs;
 
     protected static string $resource = PrevDogResource::class;
 
@@ -64,10 +63,6 @@ class ListPrevDogs extends ListRecords
 
     public function getTabs(): array
     {
-        $count_israeli = PrevDog::where('sagir_prefix', LegacySagirPrefix::ISR->value)->count();
-        $count_import = PrevDog::where('sagir_prefix', LegacySagirPrefix::IMP->value)->count();
-        $count_external = PrevDog::where('sagir_prefix', LegacySagirPrefix::EXT->value)->count();
-        $count_appendix = PrevDog::where('sagir_prefix', LegacySagirPrefix::APX->value)->count();
 
 
         return [
@@ -76,7 +71,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIcon(LegacySagirPrefix::ISR->getIcon())
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::ISR->getColor())
-                ->badge(fn (): string => LegacySagirPrefix::ISR->getLabel() . ' (' . $count_israeli . ')')
+                ->badge(fn (): string => LegacySagirPrefix::ISR->getLabel() . ' (' . PrevDog::where('sagir_prefix', LegacySagirPrefix::ISR->value)->count() . ')')
                 ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
@@ -88,7 +83,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIcon(LegacySagirPrefix::IMP->getIcon())
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::IMP->getColor())
-                ->badge(fn (): string => LegacySagirPrefix::IMP->getLabel() . ' (' . $count_import . ')')
+                ->badge(fn (): string => LegacySagirPrefix::IMP->getLabel() . ' (' . PrevDog::where('sagir_prefix', LegacySagirPrefix::IMP->value)->count() . ')')
                 ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
@@ -100,7 +95,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIcon(LegacySagirPrefix::EXT->getIcon())
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::EXT->getColor())
-                ->badge(fn (): string => LegacySagirPrefix::EXT->getLabel() . ' (' . $count_external . ')')
+                ->badge(fn (): string => LegacySagirPrefix::EXT->getLabel() . ' (' . PrevDog::where('sagir_prefix', LegacySagirPrefix::EXT->value)->count() . ')')
                 ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
@@ -112,7 +107,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIcon(LegacySagirPrefix::APX->getIcon())
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::APX->getColor())
-                ->badge(fn (): string => LegacySagirPrefix::APX->getLabel() . ' (' . $count_appendix . ')')
+                ->badge(fn (): string => LegacySagirPrefix::APX->getLabel() . ' (' . PrevDog::where('sagir_prefix', LegacySagirPrefix::APX->value)->count() . ')')
                 ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
@@ -121,10 +116,11 @@ class ListPrevDogs extends ListRecords
             'all' => Tab::make()
                 ->label(__('Show All'))
                 ->extraAttributes(['class' => 'text-xl']),
+
         ];
     }
 
-    public function getDefaultActiveTab(): string|int|null
+    public function getDefaultActiveTab(): string | int | null
     {
         return 'all';
     }
