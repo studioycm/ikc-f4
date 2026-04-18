@@ -8,6 +8,7 @@ use App\Models\PrevShowDog;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 class ShowsOverviewStats extends BaseWidget
 {
@@ -38,7 +39,7 @@ class ShowsOverviewStats extends BaseWidget
                 ->color('info')
                 ->url(ShowsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Show entries'), (clone $showEntriesQuery)->count())
-                ->icon('heroicon-o-ticket')
+                ->icon(Heroicon::OutlinedTicket)
                 ->url(ShowsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Upcoming entries'), (clone $showEntriesQuery)
                 ->whereHas('show', fn(Builder $query): Builder => $query->whereDate('StartDate', '>=', now()->toDateString()))

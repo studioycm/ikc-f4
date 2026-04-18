@@ -5,12 +5,13 @@ namespace App\Filament\User\Pages;
 use App\Filament\User\Widgets\ClubManagersWidget;
 use App\Filament\User\Widgets\Sections\UserClubMembershipsTable;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Support\Icons\Heroicon;
 
 class MembershipsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 60;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static string $routePath = 'memberships';
 

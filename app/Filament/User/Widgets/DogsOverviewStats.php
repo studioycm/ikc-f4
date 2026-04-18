@@ -9,6 +9,7 @@ use App\Models\PrevDog;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 class DogsOverviewStats extends BaseWidget
 {
@@ -32,7 +33,7 @@ class DogsOverviewStats extends BaseWidget
 
         return [
             Stat::make(__('Total dogs'), $dogsQuery->count())
-                ->icon('heroicon-o-heart')
+                ->icon(Heroicon::OutlinedHeart)
                 ->url(DogsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Female dogs'), (clone $dogsQuery)->where('GenderID', LegacyDogGender::Female->value)->count())
                 ->color('pink')

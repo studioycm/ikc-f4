@@ -17,6 +17,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 class BreedingActivityTable extends BaseWidget
 {
@@ -182,6 +183,6 @@ class BreedingActivityTable extends BaseWidget
             ->defaultPaginationPageOption(5)
             ->emptyStateHeading(__('No breeding activity found'))
             ->emptyStateDescription(__('Breedings linked to your dogs or kennels will appear here.'))
-            ->emptyStateIcon('heroicon-o-heart');
+            ->emptyStateIcon(Heroicon::OutlinedHeart);
     }
 }

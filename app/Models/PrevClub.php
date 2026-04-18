@@ -396,14 +396,46 @@ class PrevClub extends Model
                 ->all(),
         );
 
-        $decoratedUser->setAttribute(
-            'club_breeds_text',
-            collect($decoratedUser->getAttribute('club_breeds'))
-                ->filter()
-                ->join(', '),
-        );
+        $breedNames = collect($decoratedUser->getAttribute('club_breeds'))->filter()->values();
+        $limit = 5;
+        $breedsText = $breedNames
+            ->take($limit)
+            ->map(fn(string $name): string => $this->shortenBreedName($name))
+            ->join(', ');
+
+        $extra = $breedNames->count() - $limit;
+        if ($extra > 0) {
+            $breedsText .= '... '.trans_choice(
+                    '{1} + :count more|[2,*] + :count more',
+                    $extra,
+                    ['count' => $extra],
+                );
+        }
+
+        $decoratedUser->setAttribute('club_breeds_text', $breedsText);
 
         return $decoratedUser;
+    }
+
+    /**
+     * Shorten a multi-word breed name:
+     *   1st word → initials, 2nd word → full, remaining words → initials.
+     *   Names with 2 or fewer words are returned unchanged.
+     */
+    protected function shortenBreedName(string $name): string
+    {
+        $words = preg_split('/\s+/u', trim($name), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        if (count($words) <= 2) {
+            return $name;
+        }
+
+        $parts = [];
+        foreach ($words as $index => $word) {
+            $parts[] = $index === 1 ? $word : mb_substr($word, 0, 1).'.';
+        }
+
+        return implode(' ', $parts);
     }
 
     protected function decorateClubUser(PrevUser $user, SupportCollection $titles): PrevUser

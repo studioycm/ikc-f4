@@ -20,6 +20,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Filament\Support\Icons\Heroicon;
 
 class UserClubMembershipsTable extends BaseWidget
 {
@@ -189,7 +190,7 @@ class UserClubMembershipsTable extends BaseWidget
                 Action::make('renew')
                     ->hiddenLabel()
                     ->tooltip(__('Renew'))
-                    ->icon('heroicon-o-arrow-path')
+                    ->icon(Heroicon::OutlinedArrowPath)
                     ->color('success')
                     ->visible(fn(PrevClubUser $record): bool => (!$record->isActive || $record->isExpiringSoon(60)))
                     ->schema([
@@ -244,7 +245,7 @@ class UserClubMembershipsTable extends BaseWidget
                 Action::make('view_details')
                     ->hiddenLabel()
                     ->tooltip(__('Details'))
-                    ->icon('heroicon-o-eye')
+                    ->icon(Heroicon::OutlinedEye)
                     ->color('info')
                     ->modalHeading(fn(PrevClubUser $record): string => __('Membership Details - :club', ['club' => $record->club->Name]))
                     ->modalContent(fn(PrevClubUser $record) => view('filament.user.modals.membership-details', [
@@ -257,6 +258,6 @@ class UserClubMembershipsTable extends BaseWidget
             ->description(__('Your active club memberships by breed associations'))
             ->emptyStateHeading(__('No Memberships Found'))
             ->emptyStateDescription(__("You don't have any active club memberships yet."))
-            ->emptyStateIcon('heroicon-o-user-group');
+            ->emptyStateIcon(Heroicon::OutlinedUserGroup);
     }
 }

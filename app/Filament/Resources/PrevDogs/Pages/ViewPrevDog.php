@@ -6,10 +6,14 @@ use Filament\Actions\EditAction;
 use Filament\Actions\Action;
 use App\Filament\Resources\PrevDogs\PrevDogResource;
 use Filament\Actions;
+use Filament\Resources\Concerns\HasTabs;
+use Filament\Resources\Pages\Concerns\HasRelationManagers;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Icons\Heroicon;
 
 class ViewPrevDog extends ViewRecord
 {
+
     protected static string $resource = PrevDogResource::class;
 
     public function getTitle(): string
@@ -23,7 +27,7 @@ class ViewPrevDog extends ViewRecord
             EditAction::make(),
             Action::make('pedigree')
                 ->label(__('Manage Pedigree'))
-                ->icon('heroicon-m-share')
+                ->icon(Heroicon::Share)
                 ->url(PrevDogResource::getUrl('pedigree', ['record' => $this->record])),
         ];
     }

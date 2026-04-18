@@ -28,6 +28,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Support\Icons\Heroicon;
 
 class PrevBreedingRelatedDogResource extends Resource
 {
@@ -35,7 +36,7 @@ class PrevBreedingRelatedDogResource extends Resource
 
     protected static ?string $slug = 'breeding-related-dogs';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getModelLabel(): string
     {

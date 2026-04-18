@@ -5,12 +5,13 @@ namespace App\Filament\User\Pages;
 use App\Filament\User\Widgets\BreedingOverviewStats;
 use App\Filament\User\Widgets\Sections\BreedingActivityTable;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Support\Icons\Heroicon;
 
 class BreedingActivityDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 50;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-heart';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedHeart;
 
     protected static string $routePath = 'breeding-activity';
 

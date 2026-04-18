@@ -24,6 +24,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Icons\Heroicon;
 
 class ManagersRelationManager extends RelationManager
 {
@@ -140,7 +141,7 @@ class ManagersRelationManager extends RelationManager
                     ->extraModalFooterActions([
                         Action::make('editManager')
                             ->label(__('Edit Manager'))
-                            ->icon('heroicon-o-pencil-square')
+                            ->icon(Heroicon::OutlinedPencilSquare)
                             ->url(fn(PrevUser $record): string => PrevUserResource::getUrl('edit', ['record' => $record]))
                             ->openUrlInNewTab(),
                     ]),

@@ -7,6 +7,7 @@ use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevPayment;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Support\Icons\Heroicon;
 
 class BillingOverviewStats extends BaseWidget
 {
@@ -47,11 +48,11 @@ class BillingOverviewStats extends BaseWidget
             Stat::make(__('Paid this year'), number_format((float)((clone $paymentsQuery)
                 ->whereYear('payment_date_time', now()->year)
                 ->sum('amount')), 0))
-                ->icon('heroicon-o-banknotes')
+                ->icon(Heroicon::OutlinedBanknotes)
                 ->url(PaymentsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Paid Total'), number_format((float)((clone $paymentsQuery)
                 ->sum('amount')), 0))
-                ->icon('heroicon-o-banknotes')
+                ->icon(Heroicon::OutlinedBanknotes)
                 ->url(PaymentsDashboard::getUrl(panel: 'user')),
         ];
     }

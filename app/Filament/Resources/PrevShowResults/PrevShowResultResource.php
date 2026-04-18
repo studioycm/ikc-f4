@@ -29,6 +29,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Icons\Heroicon;
 
 // use App\Filament\Resources\PrevDogs as DogRes;
 // use App\Filament\Resources\PrevShowArenas as ArenaRes;
@@ -41,7 +43,7 @@ class PrevShowResultResource extends Resource
 
     protected static ?string $slug = 'prev-show-results';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?int $navigationSort = 100;
 
@@ -539,7 +541,7 @@ class PrevShowResultResource extends Resource
                                     ->label(__('Position'))
                                     ->default('-')
                                     ->color('info')
-                                    ->weight('bold')
+                                    ->weight(FontWeight::Bold)
                                     ->size(TextSize::Large)
                                     ->inlineLabel(),
                             ]),
@@ -552,7 +554,7 @@ class PrevShowResultResource extends Resource
                                 TextEntry::make('Rank')
                                     ->label(__('Rank'))
                                     ->size(TextSize::Large)
-                                    ->weight('bold')
+                                    ->weight(FontWeight::Bold)
                                     ->columnSpan(1),
 
                                 // Utilizing your model's excellent custom accessors

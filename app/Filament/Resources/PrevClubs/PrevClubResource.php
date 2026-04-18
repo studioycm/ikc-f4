@@ -40,6 +40,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Filament\Support\Icons\Heroicon;
 
 class PrevClubResource extends Resource
 {
@@ -47,7 +48,7 @@ class PrevClubResource extends Resource
 
     protected static ?string $slug = 'prev-clubs';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-flag';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedFlag;
 
     protected static ?int $navigationSort = 70;
 
@@ -116,10 +117,10 @@ class PrevClubResource extends Resource
                                             ->maxLength(255)
                                             ->autocomplete('email') // Helps browsers autofill correctly
                                             ->placeholder('user@example.com')
-                                            ->prefixIcon('heroicon-m-envelope') // Adds a visual indicator inside the input
-                                            ->suffixIcon('heroicon-m-check-circle') // Optional: Visual confirm icon (static or dynamic)
+                                            ->prefixIcon(Heroicon::Envelope) // Adds a visual indicator inside the input
+                                            ->suffixIcon(Heroicon::CheckCircle) // Optional: Visual confirm icon (static or dynamic)
                                             ->suffixIconColor('success') // Color for the suffix icon
-                                            ->unique(ignoreRecord: true)
+                                            ->unique()
                                             ->helperText(__('We will never share your email with anyone else.')),
                                         TextInput::make('Address')
                                             ->label(__('Address'))
@@ -275,7 +276,7 @@ class PrevClubResource extends Resource
                     ->copyMessageDuration(1500)
                     ->searchable(isIndividual: true, isGlobal: false) // Enables searching by email
                     ->sortable()
-                    ->weight('medium')
+                    ->weight(FontWeight::Medium)
                     ->color(fn(?string $state) => filled($state) ? 'primary' : 'gray')
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('full_address')
@@ -352,8 +353,8 @@ class PrevClubResource extends Resource
             ])
             ->recordActions([
                 Action::make('contacts')
-                    ->icon('heroicon-o-user-group')
-                    ->label('')
+                    ->icon(Heroicon::OutlinedUserGroup)
+                    ->iconButton()
                     ->iconButton()
                     ->tooltip(__('Club contacts'))
                     ->schema([
@@ -405,8 +406,8 @@ class PrevClubResource extends Resource
                     ->modalHeading(fn(PrevClub $record): string => __('Club contacts: :club', ['club' => $record->Name]))
                     ->modalSubmitAction(false),
                 Action::make('emails')
-                    ->icon('heroicon-o-envelope')
-                    ->label('')
+                    ->icon(Heroicon::OutlinedEnvelope)
+                    ->iconButton()
                     ->iconButton()
                     ->tooltip(__('Club emails'))
                     ->schema([
@@ -455,12 +456,9 @@ class PrevClubResource extends Resource
     /**
      * Build the view Infolist for a given Club record.
      */
-    public static function getInfolistForRecord(PrevClub $record): Schema
+    public static function infolist(Schema $schema): Schema
     {
-        $record->loadMissing('managers');
-
-        return Schema::make()
-            ->record($record)
+        return $schema
             ->components([
                 Tabs::make('ClubTabs')->tabs([
                     Tab::make('General')->schema([
@@ -502,7 +500,7 @@ class PrevClubResource extends Resource
                                     ->label(fn (PrevClub $record): string => __('Managers').' ('.($record->managers?->count() ?? 0).')')
                                     ->schema([
                                         TextEntry::make('full_name')
-                                            ->label('')
+                                            ->hiddenLabel()
                                             ->hiddenLabel()
                                             ->size(TextSize::Large)
                                             ->weight(FontWeight::Bold)
@@ -510,14 +508,14 @@ class PrevClubResource extends Resource
                                             ->columnSpan(1)
                                             ->formatStateUsing(fn ($state, ?PrevUser $manager = null) => $manager?->full_name ?? $state),
                                         TextEntry::make('normalised_phone')
-                                            ->label('')
+                                            ->hiddenLabel()
                                             ->hiddenLabel()
                                             ->size(TextSize::Medium)
                                             ->color('success')
                                             ->columnSpan(1)
                                             ->formatStateUsing(fn ($state, ?PrevUser $manager = null) => $manager?->normalised_phone ?? $state),
                                         TextEntry::make('email')
-                                            ->label('')
+                                            ->hiddenLabel()
                                             ->hiddenLabel()
                                             ->columnSpan(1)
                                             ->formatStateUsing(fn ($state, ?PrevUser $manager = null) => $manager?->email ?? $state),

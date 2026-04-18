@@ -33,12 +33,13 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Support\Icons\Heroicon;
 
 class PrevSkillUserResource extends Resource
 {
     protected static ?string $model = PrevSkillUser::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shield-check';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
     public static function getModelLabel(): string
     {

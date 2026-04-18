@@ -12,6 +12,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Support\Icons\Heroicon;
 
 class PaymentHistoryTable extends BaseWidget
 {
@@ -92,6 +93,6 @@ class PaymentHistoryTable extends BaseWidget
             ->defaultPaginationPageOption(5)
             ->emptyStateHeading(__('No Payments Found'))
             ->emptyStateDescription(__('Payments linked to your account will appear here.'))
-            ->emptyStateIcon('heroicon-o-banknotes');
+            ->emptyStateIcon(Heroicon::OutlinedBanknotes);
     }
 }

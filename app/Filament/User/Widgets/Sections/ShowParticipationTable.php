@@ -17,6 +17,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 class ShowParticipationTable extends BaseWidget
 {
@@ -81,7 +82,7 @@ class ShowParticipationTable extends BaseWidget
                     ->label(__('Result'))
                     ->placeholder(__('Pending'))
                     ->color('success')
-                    ->icon('heroicon-o-trophy')
+                    ->icon(Heroicon::OutlinedTrophy)
                     ->iconPosition(IconPosition::After)
                     ->description(fn(PrevShowDog $record): string => $record->prevShowResult?->results_labels ? implode(', ', $record->prevShowResult->results_labels) : __('No published result'))
                     ->toggleable(),
@@ -143,7 +144,7 @@ class ShowParticipationTable extends BaseWidget
                     ])),
                 Action::make('viewResult')
                     ->label(__('View Result'))
-                    ->icon('heroicon-o-trophy')
+                    ->icon(Heroicon::OutlinedTrophy)
                     ->visible(fn(PrevShowDog $record): bool => $record->prevShowResult !== null)
                     ->modalHeading(__('Published Result'))
                     ->modalSubmitAction(false)
@@ -166,6 +167,6 @@ class ShowParticipationTable extends BaseWidget
             ->defaultPaginationPageOption(5)
             ->emptyStateHeading(__('No show participation found'))
             ->emptyStateDescription(__('Show registrations for your dogs will appear here.'))
-            ->emptyStateIcon('heroicon-o-trophy');
+            ->emptyStateIcon(Heroicon::OutlinedTrophy);
     }
 }

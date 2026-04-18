@@ -383,6 +383,7 @@
     "Show All": "הצג הכל",
     "Show all (:count more)": "הצג הכל (:count נותרים)",
     "Show compact list": "הצג רשימה מקוצרת",
+    "{1} + :count more|[2,*] + :count more": "{1} + :count נוסף|[2,*] + :count נוספים",
     "None": "ללא",
     "Yes": "כן",
     "No": "לא",

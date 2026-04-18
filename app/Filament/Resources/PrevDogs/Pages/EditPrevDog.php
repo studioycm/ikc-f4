@@ -8,6 +8,7 @@ use App\Filament\Resources\PrevDogs\PrevDogResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Filament\Support\Icons\Heroicon;
 
 class EditPrevDog extends EditRecord
 {
@@ -31,7 +32,7 @@ class EditPrevDog extends EditRecord
             DeleteAction::make(),
             Action::make('pedigree')
                 ->label(__('Manage Pedigree'))
-                ->icon('heroicon-m-share')
+                ->icon(Heroicon::Share)
                 ->url(PrevDogResource::getUrl('pedigree', ['record' => $this->record])),
         ];
     }

@@ -221,19 +221,19 @@ class ManagePedigree extends Page implements HasForms
                                                 ->live(debounce: 1000)
                                                 ->required()
                                                 ->maxLength(50)
-                                                ->unique(PrevDog::class, 'ImportNumber', ignoreRecord: true),
+                                                ->unique(PrevDog::class, 'ImportNumber'),
 
                                             TextInput::make('Chip')
                                                 ->label(__('Chip'))
                                                 ->live(debounce: 1000)
                                                 ->maxLength(50)
-                                                ->unique(PrevDog::class, 'Chip', ignoreRecord: true),
+                                                ->unique(PrevDog::class, 'Chip'),
 
                                             TextInput::make('DnaID')
                                                 ->label(__('DNA'))
                                                 ->live(debounce: 1000)
                                                 ->maxLength(50)
-                                                ->unique(PrevDog::class, 'DnaID', ignoreRecord: true),
+                                                ->unique(PrevDog::class, 'DnaID'),
 
                                             TextInput::make('BirthDate')
                                                 ->label(__('Birth Date'))

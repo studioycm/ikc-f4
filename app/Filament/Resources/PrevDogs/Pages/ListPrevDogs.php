@@ -77,6 +77,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::ISR->getColor())
                 ->badge(fn (): string => LegacySagirPrefix::ISR->getLabel() . ' (' . $count_israeli . ')')
+                ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::ISR->value);
@@ -88,6 +89,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::IMP->getColor())
                 ->badge(fn (): string => LegacySagirPrefix::IMP->getLabel() . ' (' . $count_import . ')')
+                ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::IMP->value);
@@ -99,6 +101,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::EXT->getColor())
                 ->badge(fn (): string => LegacySagirPrefix::EXT->getLabel() . ' (' . $count_external . ')')
+                ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::EXT->value);
@@ -110,6 +113,7 @@ class ListPrevDogs extends ListRecords
                 ->badgeIconPosition(IconPosition::After)
                 ->badgeColor(LegacySagirPrefix::APX->getColor())
                 ->badge(fn (): string => LegacySagirPrefix::APX->getLabel() . ' (' . $count_appendix . ')')
+                ->deferBadge()
                 ->extraAttributes(['class' => 'fi-badge-larger'])
                 ->modifyQueryUsing(function ($query) {
                     return $query->where('sagir_prefix', LegacySagirPrefix::APX->value);

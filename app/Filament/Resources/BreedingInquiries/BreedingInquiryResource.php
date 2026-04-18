@@ -27,12 +27,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Support\Icons\Heroicon;
 
 class BreedingInquiryResource extends Resource
 {
     protected static ?string $model = BreedingInquiry::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?int $navigationSort = 3;
 

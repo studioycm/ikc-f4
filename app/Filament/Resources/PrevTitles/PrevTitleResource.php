@@ -35,6 +35,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Support\Icons\Heroicon;
 
 class PrevTitleResource extends Resource
 {
@@ -62,7 +63,7 @@ class PrevTitleResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     //    public static function getNavigationBadge(): ?string
     //    {

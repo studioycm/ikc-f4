@@ -10,12 +10,13 @@ use App\Filament\User\Widgets\MembershipOverviewStats;
 use App\Filament\User\Widgets\RequestsOverviewStats;
 use App\Filament\User\Widgets\ShowsOverviewStats;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Support\Icons\Heroicon;
 
 class Dashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 1;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-home';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedHome;
 
     public static function getRoutePath(Panel $panel): string
     {

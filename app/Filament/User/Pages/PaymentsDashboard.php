@@ -4,12 +4,13 @@ namespace App\Filament\User\Pages;
 
 use App\Filament\User\Widgets\Sections\PaymentHistoryTable;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Support\Icons\Heroicon;
 
 class PaymentsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 80;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-banknotes';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedBanknotes;
 
     protected static string $routePath = 'payments';
 

@@ -45,6 +45,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Support\Icons\Heroicon;
 
 class PrevBreedingResource extends Resource
 {
@@ -52,7 +53,7 @@ class PrevBreedingResource extends Resource
 
     protected static ?string $slug = 'prev-breedings';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getModelLabel(): string
     {

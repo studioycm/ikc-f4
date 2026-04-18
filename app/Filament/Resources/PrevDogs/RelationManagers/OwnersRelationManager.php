@@ -20,6 +20,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Icons\Heroicon;
 
 class OwnersRelationManager extends RelationManager
 {
@@ -47,7 +48,7 @@ class OwnersRelationManager extends RelationManager
                     ->copyable()
                     ->copyMessage(fn($state) => __('Phone number') . " $state " . __('copied to clipboard'))
                     ->copyMessageDuration(1000)
-                    ->icon('heroicon-o-phone')
+                    ->icon(Heroicon::OutlinedPhone)
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('email')
@@ -55,7 +56,7 @@ class OwnersRelationManager extends RelationManager
                     ->copyable()
                     ->copyMessage(fn($state) => __('Email') . " $state " . __('copied to clipboard'))
                     ->copyMessageDuration(1000)
-                    ->icon('heroicon-o-envelope')
+                    ->icon(Heroicon::OutlinedEnvelope)
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('ownership.status')
@@ -110,7 +111,7 @@ class OwnersRelationManager extends RelationManager
                     ->extraModalFooterActions([
                         Action::make('editOwner')
                             ->label(__('Edit Owner'))
-                            ->icon('heroicon-o-pencil-square')
+                            ->icon(Heroicon::OutlinedPencilSquare)
                             ->url(fn(PrevUser $record) => PrevUserResource::getUrl('edit', ['record' => $record]))
                             ->openUrlInNewTab(),
                     ]),

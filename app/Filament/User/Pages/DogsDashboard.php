@@ -4,12 +4,13 @@ namespace App\Filament\User\Pages;
 
 use App\Filament\User\Widgets\Sections\UserDogsTable;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Support\Icons\Heroicon;
 
 class DogsDashboard extends BaseDashboard
 {
     protected static ?int $navigationSort = 20;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-heart';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedHeart;
 
     protected static string $routePath = 'dogs';
 

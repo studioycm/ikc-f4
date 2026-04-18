@@ -312,7 +312,7 @@ class PrevShowResource extends Resource
                     ->toggleable()
                     ->extraAttributes(fn(int $state) => $state > 0 ? ['class' => 'cursor-pointer font-bold'] : [])
                     ->url(fn(PrevShow $record, int $state): ?string => $state > 0
-                        ? PrevShowDogResource::getUrl('index', ['tableFilters' => ['ShowID' => ['value' => $record->id]]])
+                        ? PrevShowDogResource::getUrl('index', ['filters' => ['ShowID' => ['value' => $record->id]]])
                         : null
                     ),
 
@@ -325,7 +325,7 @@ class PrevShowResource extends Resource
                     ->color(fn(int $state): string => $state > 0 ? 'warning' : 'grey')
                     ->extraAttributes(fn(int $state) => $state > 0 ? ['class' => 'cursor-pointer font-bold'] : [])
                     ->url(fn(PrevShow $record, int $state): ?string => $state > 0
-                        ? PrevShowResultResource::getUrl('index', ['tableFilters' => ['ShowID' => ['value' => $record->id]]])
+                        ? PrevShowResultResource::getUrl('index', ['filters' => ['ShowID' => ['value' => $record->id]]])
                         : null
                     ),
 

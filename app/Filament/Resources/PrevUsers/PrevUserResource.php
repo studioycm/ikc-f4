@@ -55,6 +55,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification as LaravelNotification;
+use Filament\Support\Icons\Heroicon;
 
 // use App\Filament\Resources\PrevUsers\RelationManagers;
 
@@ -783,13 +784,13 @@ class PrevUserResource extends Resource
                     ->tooltip(__('Edit')),
                 Action::make('send_email')
                     ->label(false)
-                    ->icon('heroicon-o-envelope')
+                    ->icon(Heroicon::OutlinedEnvelope)
                     ->iconButton()
                     ->tooltip(__('Send an email message'))
                     ->color('primary')
                     ->modalHeading(__('Send Email'))
                     ->modalSubmitActionLabel(__('Queue Email'))
-                    ->modalIcon('heroicon-o-envelope')
+                    ->modalIcon(Heroicon::OutlinedEnvelope)
                     ->schema([
                         TextInput::make('subject')
                             ->label(__('Subject'))
@@ -854,12 +855,12 @@ class PrevUserResource extends Resource
                     // Bulk send (queued) to many PrevUsers
                     BulkAction::make('bulk_send_email')
                         ->label(__('Send Email'))
-                        ->icon('heroicon-o-envelope')
+                        ->icon(Heroicon::OutlinedEnvelope)
                         ->color('primary')
                         ->requiresConfirmation()
                         ->modalHeading(__('Send Email'))
                         ->modalSubmitActionLabel(__('Queue Emails'))
-                        ->form([
+                        ->schema([
                             TextInput::make('subject')
                                 ->label(__('Subject'))
                                 ->required()
@@ -904,7 +905,8 @@ class PrevUserResource extends Resource
                                 ->body(__('Emails queued to :count owners', ['count' => $records->count()]))
                                 ->success()
                                 ->send();
-                        }),
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ])

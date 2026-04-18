@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification as LaravelNotification;
 use Illuminate\Support\Str;
+use Filament\Support\Icons\Heroicon;
 
 class UserResource extends Resource
 {
@@ -67,7 +68,7 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 98;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedUsers;
 
     //    public static function getNavigationBadge(): ?string
     //    {
@@ -102,7 +103,7 @@ class UserResource extends Resource
                             ->find($value)
                             ?->search_label;
                     })
-                    ->unique(ignoreRecord: true),
+                    ->unique(),
                 DateTimePicker::make('email_verified_at')
                     ->label(__('Verified At'))
                     ->native(false)
@@ -149,7 +150,7 @@ class UserResource extends Resource
                     ->searchable(),
                 TextColumn::make('email')
                     ->label(__('Email'))
-                    ->icon('heroicon-o-envelope')
+                    ->icon(Heroicon::OutlinedEnvelope)
                     ->iconColor('warning')
                     ->sortable()
                     ->searchable()
@@ -231,7 +232,7 @@ class UserResource extends Resource
                     ->button()
                     ->tooltip(__('Send email verification link'))
                     ->color(Color::generateV3Palette('#ec8200'))
-                    ->icon('heroicon-o-shield-check')
+                    ->icon(Heroicon::OutlinedShieldCheck)
                     ->action(function (User $user) {
                         $notification = app(VerifyEmail::class);
                         $notification->url = Filament::getVerifyEmailUrl($user);
@@ -243,7 +244,7 @@ class UserResource extends Resource
                                 'url' => $notification->url,
                             ]))
                             ->success()
-                            ->icon('heroicon-o-shield-check')
+                            ->icon(Heroicon::OutlinedShieldCheck)
                             ->iconColor('primary')
                             ->persistent()
                             ->send();
@@ -253,7 +254,7 @@ class UserResource extends Resource
                     ->button()
                     ->tooltip(__('Mark as verified'))
                     ->color(Color::generateV3Palette('#10b138'))
-                    ->icon('heroicon-o-check')
+                    ->icon(Heroicon::OutlinedCheck)
                     ->action(function (User $user) {
                         $user->markEmailAsVerified();
                     }),
@@ -262,7 +263,7 @@ class UserResource extends Resource
                     ->button()
                     ->tooltip(__('Send a database notification to this user'))
                     ->color('gray')
-                    ->icon('heroicon-o-bell')
+                    ->icon(Heroicon::OutlinedBell)
                     ->schema([
                         TextInput::make('subject')
                             ->label(__('Subject'))
@@ -311,7 +312,7 @@ class UserResource extends Resource
                     ->button()
                     ->tooltip(__('Send an email to this user'))
                     ->color('primary')
-                    ->icon('heroicon-o-envelope')
+                    ->icon(Heroicon::OutlinedEnvelope)
                     ->schema([
                         TextInput::make('subject')
                             ->label(__('Subject'))
@@ -360,10 +361,10 @@ class UserResource extends Resource
                 BulkActionGroup::make([
                     BulkAction::make('bulk_send_email')
                         ->label(__('Send Email'))
-                        ->icon('heroicon-o-envelope')
+                        ->icon(Heroicon::OutlinedEnvelope)
                         ->color('primary')
                         ->requiresConfirmation()
-                        ->form([
+                        ->schema([
                             TextInput::make('subject')
                                 ->label(__('Subject'))
                                 ->required()
@@ -407,7 +408,8 @@ class UserResource extends Resource
                                 ->body(__('Email sent to :count users', ['count' => $records->count()]))
                                 ->success()
                                 ->send();
-                        }),
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ]);

@@ -30,6 +30,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Icons\Heroicon;
 
 class MembersRelationManager extends RelationManager
 {
@@ -189,7 +190,7 @@ class MembersRelationManager extends RelationManager
                     ->extraModalFooterActions([
                         Action::make('editMember')
                             ->label(__('Edit Member'))
-                            ->icon('heroicon-o-pencil-square')
+                            ->icon(Heroicon::OutlinedPencilSquare)
                             ->url(fn(PrevUser $record): string => PrevUserResource::getUrl('edit', ['record' => $record]))
                             ->openUrlInNewTab(),
                     ]),

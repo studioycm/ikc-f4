@@ -17,6 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\Number;
+use Filament\Support\Icons\Heroicon;
 
 class UserRequestsTable extends BaseWidget
 {
@@ -165,6 +166,6 @@ class UserRequestsTable extends BaseWidget
             ->defaultPaginationPageOption(5)
             ->emptyStateHeading(__('No Requests Found'))
             ->emptyStateDescription(__('Your submitted registration and paperwork requests will appear here.'))
-            ->emptyStateIcon('heroicon-o-document-text');
+            ->emptyStateIcon(Heroicon::OutlinedDocumentText);
     }
 }

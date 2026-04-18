@@ -8,6 +8,7 @@ use App\Models\PrevBreeding;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 class BreedingOverviewStats extends BaseWidget
 {
@@ -48,7 +49,7 @@ class BreedingOverviewStats extends BaseWidget
 
         return [
             Stat::make(__('Breeding Count'), (clone $breedingQuery)->count())
-                ->icon('heroicon-o-heart')
+                ->icon(Heroicon::OutlinedHeart)
                 ->url(BreedingActivityDashboard::getUrl(panel: 'user')),
             Stat::make(__('Recent breedings'), (clone $breedingQuery)
                 ->whereDate('BreddingDate', '>=', now()->subMonths(12)->toDateString())
@@ -62,7 +63,7 @@ class BreedingOverviewStats extends BaseWidget
                 ->url(BreedingActivityDashboard::getUrl(panel: 'user')),
             Stat::make(__('Puppies recorded'), (string)((clone $breedingQuery)->sum('live_male_puppie') + (clone $breedingQuery)->sum('live_female_puppie')))
                 ->color('info')
-                ->icon('heroicon-o-sparkles')
+                ->icon(Heroicon::OutlinedSparkles)
                 ->url(BreedingActivityDashboard::getUrl(panel: 'user')),
         ];
     }

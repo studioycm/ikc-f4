@@ -20,6 +20,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Icons\Heroicon;
 
 class PromotersRelationManager extends RelationManager
 {
@@ -51,15 +52,17 @@ class PromotersRelationManager extends RelationManager
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable(),
                 TextColumn::make('name')
-                    ->label(__('Promoter'))
+                    ->label(__('Name'))
                     ->sortable(['last_name', 'first_name'])
                     ->searchable(['first_name', 'last_name', 'first_name_en', 'last_name_en'], isIndividual: true, isGlobal: false),
                 TextColumn::make('club_titles_text')
                     ->label(__('Title'))
                     ->state(fn(PrevUser $record): string => $this->getOwnerRecord()->decoratePromoterUser($record)->getAttribute('club_titles_text') ?: '-'),
-                TextColumn::make('club_breeds_text')
+                TextColumn::make('club_breeds')
                     ->label(__('Breeds'))
-                    ->state(fn(PrevUser $record): string => $this->getOwnerRecord()->decoratePromoterUser($record)->getAttribute('club_breeds_text') ?: '-'),
+                    ->state(fn(PrevUser $record): array|null => $this->getOwnerRecord()->decoratePromoterUser($record)->getAttribute('club_breeds') ?? null)
+                    ->badge()
+                    ->limitList(5),
                 TextColumn::make('email')
                     ->label(__('Email'))
                     ->toggleable(),
@@ -78,7 +81,8 @@ class PromotersRelationManager extends RelationManager
                     ->dateTime()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->orderBy('users.id', $direction);
-                    }),
+                    })
+                    ->toggleable(),
                 TextColumn::make('promoter_updated_at')
                     ->label(__('Updated At'))
                     ->state(fn(PrevUser $record): ?string => $record->promotedBreeds
@@ -87,7 +91,8 @@ class PromotersRelationManager extends RelationManager
                         ->filter()
                         ->sortDesc()
                         ->first()?->toDateTimeString())
-                    ->dateTime(),
+                    ->dateTime()
+                    ->toggleable(),
             ])
             ->filters([
                 Filter::make('created_between')
@@ -129,7 +134,7 @@ class PromotersRelationManager extends RelationManager
             ->headerActions([
                 Action::make('attachPromoter')
                     ->label(__('Attach Promoter'))
-                    ->icon('heroicon-o-plus')
+                    ->icon(Heroicon::OutlinedPlus)
                     ->schema([
                         Select::make('user_id')
                             ->label(__('User'))
@@ -162,9 +167,10 @@ class PromotersRelationManager extends RelationManager
                         TextEntry::make('club_titles_text')
                             ->label(__('Title'))
                             ->state(fn(PrevUser $record): string => $this->getOwnerRecord()->decoratePromoterUser($record)->getAttribute('club_titles_text') ?: '-'),
-                        TextEntry::make('club_breeds_text')
+                        TextEntry::make('club_breeds')
                             ->label(__('Breeds'))
-                            ->state(fn(PrevUser $record): string => $this->getOwnerRecord()->decoratePromoterUser($record)->getAttribute('club_breeds_text') ?: '-'),
+                            ->state(fn(PrevUser $record): array|null => $this->getOwnerRecord()->decoratePromoterUser($record)->getAttribute('club_breeds') ?? null)
+                            ->badge(),
                         TextEntry::make('email')
                             ->label(__('Email'))
                             ->copyable()
@@ -190,7 +196,7 @@ class PromotersRelationManager extends RelationManager
                     ->extraModalFooterActions([
                         Action::make('editPromoter')
                             ->label(__('Edit Promoter'))
-                            ->icon('heroicon-o-pencil-square')
+                            ->icon(Heroicon::OutlinedPencilSquare)
                             ->url(fn(PrevUser $record): string => PrevUserResource::getUrl('edit', ['record' => $record]))
                             ->openUrlInNewTab(),
                     ]),

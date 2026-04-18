@@ -16,6 +16,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Icons\Heroicon;
 
 class PrevDogDocumentRelationManager extends RelationManager
 {
@@ -40,8 +41,8 @@ class PrevDogDocumentRelationManager extends RelationManager
                 IconColumn::make('result')
                     ->label(__('Result'))
                     ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueIcon(Heroicon::OutlinedCheckCircle)
+                    ->falseIcon(Heroicon::OutlinedXCircle)
                     ->trueColor('success')
                     ->falseColor('gray'),
                 TextColumn::make('location')->label(__('Location'))->toggleable(),

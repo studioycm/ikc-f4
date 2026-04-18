@@ -29,6 +29,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 class UserDogsTable extends BaseWidget
 {
@@ -339,7 +340,7 @@ class UserDogsTable extends BaseWidget
                 Action::make('breeding')
                     ->label(__('Litter'))
                     ->tooltip(__('Open Litter Report'))
-                    ->icon('heroicon-o-heart')
+                    ->icon(Heroicon::OutlinedHeart)
                     ->color('success')
                     ->visible(fn(PrevDog $record): bool => $record->GenderID === LegacyDogGender::Female)
                     ->url(fn(PrevDog $record): string => BreedingInquiryResource::getUrl('create', ['female_sagir_id' => $record->SagirID])),

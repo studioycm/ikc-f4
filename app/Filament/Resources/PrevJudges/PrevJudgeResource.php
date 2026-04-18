@@ -26,6 +26,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Filament\Support\Icons\Heroicon;
 
 class PrevJudgeResource extends Resource
 {
@@ -160,7 +161,7 @@ class PrevJudgeResource extends Resource
             ->recordActions([
                 Action::make('view_judge')
                     ->label(__('common.actions.view'))
-                    ->icon('heroicon-o-eye')
+                    ->icon(Heroicon::OutlinedEye)
                     ->modalHeading(__('common.actions.view'))
                     ->color('grey')
                     // Return a custom-loaded record for the modal (with eager loads and counts)
