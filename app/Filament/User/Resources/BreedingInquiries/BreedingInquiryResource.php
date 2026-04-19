@@ -1,7 +1,9 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\User\Resources\BreedingInquiries;
 
+use BackedEnum;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
@@ -32,7 +34,6 @@ use App\Models\PrevUser;
 use App\Services\Legacy\LegacyMembershipResolverService;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -50,7 +51,7 @@ class BreedingInquiryResource extends Resource
 {
     protected static ?string $model = BreedingInquiry::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?int $navigationSort = 40;
 
@@ -224,10 +225,10 @@ class BreedingInquiryResource extends Resource
 
                             Section::make(__('Breed Information'))
                                 ->schema([
-                                    Placeholder::make('breed_conditions')
+                                    TextEntry::make('breed_conditions')
                                         ->label(__('Breed Breeding Conditions'))
                                         ->columnSpanFull()
-                                        ->content(fn() => __('Breed special breeding conditions will be displayed here.')),
+                                        ->state(fn() => __('Breed special breeding conditions will be displayed here.')),
                                 ])
                                 ->columns(2)
                                 ->columnSpan(1),
@@ -247,10 +248,10 @@ class BreedingInquiryResource extends Resource
                             Section::make('breeder_rights_section')
                                 ->heading(__('Breeder Rights'))
                                 ->schema([
-                                    Placeholder::make('breeder_rights_explanation')
+                                    TextEntry::make('breeder_rights_explanation')
                                         ->label(false)
                                         ->columnSpanFull()
-                                        ->content(fn() => __('Breeder rights explanation will be displayed here.')),
+                                        ->state(fn() => __('Breeder rights explanation will be displayed here.')),
                                     ToggleButtons::make('type')
                                         ->label(__('Transfer Breeder / Kennel'))
                                         ->options(function (Get $get) {

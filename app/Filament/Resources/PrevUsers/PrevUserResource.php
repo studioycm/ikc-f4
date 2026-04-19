@@ -1,8 +1,9 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevUsers;
 
 use App\Filament\Resources\PrevDogs\PrevDogResource;
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -85,7 +86,7 @@ class PrevUserResource extends Resource
 
     protected static ?string $slug = 'prev-users';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'fas-user';
+    protected static string | BackedEnum | null $navigationIcon = 'fas-user';
 
     protected static ?int $navigationSort = 3;
 

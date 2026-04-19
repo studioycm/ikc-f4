@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\Users;
 
+use BackedEnum;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -68,7 +69,7 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 98;
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedUsers;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedUsers;
 
     //    public static function getNavigationBadge(): ?string
     //    {

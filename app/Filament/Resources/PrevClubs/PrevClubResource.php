@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevClubs;
 
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -48,7 +49,7 @@ class PrevClubResource extends Resource
 
     protected static ?string $slug = 'prev-clubs';
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedFlag;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedFlag;
 
     protected static ?int $navigationSort = 70;
 

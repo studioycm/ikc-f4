@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevShowDogs;
 
@@ -7,6 +7,7 @@ use App\Filament\Resources\PrevShowArenas\PrevShowArenaResource;
 use App\Filament\Resources\PrevShowBreeds\PrevShowBreedResource;
 use App\Filament\Resources\PrevShowClasses\PrevShowClassResource;
 use App\Filament\Resources\PrevShowResults\PrevShowResultResource;
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
@@ -37,7 +38,7 @@ class PrevShowDogResource extends Resource
 
     protected static ?string $slug = 'prev-show-dogs';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'fas-dog';
+    protected static string | BackedEnum | null $navigationIcon = 'fas-dog';
 
     protected static ?int $navigationSort = 90;
 

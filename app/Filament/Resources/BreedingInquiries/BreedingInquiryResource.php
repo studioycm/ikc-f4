@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\BreedingInquiries;
 
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -33,7 +34,7 @@ class BreedingInquiryResource extends Resource
 {
     protected static ?string $model = BreedingInquiry::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?int $navigationSort = 3;
 

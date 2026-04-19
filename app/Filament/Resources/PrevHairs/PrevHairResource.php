@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevHairs;
 
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
@@ -42,7 +43,7 @@ class PrevHairResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'fas-wind';
+    protected static string | BackedEnum | null $navigationIcon = 'fas-wind';
 
 //    public static function getNavigationBadge(): ?string
 //    {

@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevShowClasses;
 
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
@@ -17,7 +18,6 @@ use App\Filament\Resources\PrevShowClasses\Pages;
 use App\Filament\Resources\PrevShows\PrevShowResource as ShowRes;
 use App\Models\PrevShowClass;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -32,7 +32,7 @@ class PrevShowClassResource extends Resource
 
     protected static ?string $slug = 'prev-show-classes';
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?int $navigationSort = 80;
 
@@ -146,13 +146,13 @@ class PrevShowClassResource extends Resource
                     ->required()
                     ->integer(),
 
-                Placeholder::make('created_at')
+                TextEntry::make('created_at')
                     ->label(__('Created Date'))
-                    ->content(fn(?PrevShowClass $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                    ->state(fn(?PrevShowClass $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
-                Placeholder::make('updated_at')
+                TextEntry::make('updated_at')
                     ->label(__('Last Modified Date'))
-                    ->content(fn(?PrevShowClass $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                    ->state(fn(?PrevShowClass $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
             ]);
     }
 

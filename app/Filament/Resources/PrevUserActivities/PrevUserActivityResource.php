@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevUserActivities;
 
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
@@ -39,7 +40,7 @@ class PrevUserActivityResource extends Resource
 {
     protected static ?string $model = PrevUserActivity::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedClock;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedClock;
 
     protected static ?string $recordTitleAttribute = 'Activity_Type';
 

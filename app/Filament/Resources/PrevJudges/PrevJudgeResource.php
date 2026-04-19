@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevJudges;
 
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -34,7 +35,7 @@ class PrevJudgeResource extends Resource
 
     protected static ?string $slug = 'prev-judges';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'fas-gavel';
+    protected static string | BackedEnum | null $navigationIcon = 'fas-gavel';
 
     protected static ?int $navigationSort = 10;
 

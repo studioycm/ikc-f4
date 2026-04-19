@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevDogs;
 
@@ -31,6 +31,7 @@ use App\Models\PrevDog;
 use App\Models\PrevHair;
 use App\Models\PrevUser;
 use App\Services\Legacy\PrevDogService;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -104,7 +105,7 @@ class PrevDogResource extends Resource
 
     protected static ?string $slug = 'prev-dogs';
 
-    protected static string|\BackedEnum|null $navigationIcon = 'fas-paw';
+    protected static string|BackedEnum|null $navigationIcon = 'fas-paw';
 
     //    protected static ?string $recordRouteKeyName = 'SagirID';
 

@@ -18,9 +18,9 @@ class PrevClub extends Model
 {
     use SoftDeletes;
 
-    public const CLUB_STAFF_SKILL_IDS = [5, 7, 8, 10, 11];
+    public const array CLUB_STAFF_SKILL_IDS = [5, 7, 8, 10, 11];
 
-    public const PROMOTER_SKILL_ID = 3;
+    public const int PROMOTER_SKILL_ID = 3;
 
     protected $connection = 'mysql_prev';
 

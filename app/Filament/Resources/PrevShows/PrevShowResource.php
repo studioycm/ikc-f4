@@ -1,9 +1,10 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevShows;
 
 use App\Filament\Resources\PrevShowDogs\PrevShowDogResource;
 use App\Filament\Resources\PrevShowResults\PrevShowResultResource;
+use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
@@ -50,7 +51,7 @@ class PrevShowResource extends Resource
 
     protected static ?string $slug = 'prev-shows';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'fas-trophy';
+    protected static string | BackedEnum | null $navigationIcon = 'fas-trophy';
 
     protected static ?int $navigationSort = 20;
 
