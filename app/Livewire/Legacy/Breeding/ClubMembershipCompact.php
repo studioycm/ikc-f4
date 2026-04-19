@@ -10,6 +10,7 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Reactive;
 use Livewire\Component;
+use Filament\Support\Icons\Heroicon;
 
 class ClubMembershipCompact extends Component implements HasActions, HasForms
 {
@@ -23,7 +24,7 @@ class ClubMembershipCompact extends Component implements HasActions, HasForms
     {
         return Action::make('viewDetails')
             ->label(__('More details'))
-            ->icon('heroicon-m-information-circle')
+            ->icon(Heroicon::InformationCircle)
             ->button()
             ->outlined()
             ->visible(fn(): bool => filled($this->membershipState))

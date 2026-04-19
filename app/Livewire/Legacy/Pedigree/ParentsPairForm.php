@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use Filament\Support\Icons\Heroicon;
 
 class ParentsPairForm extends Component implements HasForms, HasActions
 {
@@ -91,7 +92,7 @@ class ParentsPairForm extends Component implements HasForms, HasActions
                         Actions::make([
                             Action::make('expand')
                                 ->label(__('Add Parents'))
-                                ->icon('heroicon-m-plus')
+                                ->icon(Heroicon::Plus)
                                 ->visible(fn() => $this->canExpand())
                                 ->action(function () {
                                     $this->expanded = true;
@@ -126,7 +127,7 @@ class ParentsPairForm extends Component implements HasForms, HasActions
                     ->schema([
                         TextInput::make('ImportNumber')
                             ->label(__('Import Number'))
-                            ->unique(PrevDog::class, 'ImportNumber', ignoreRecord: true)
+                            ->unique(PrevDog::class, 'ImportNumber')
                             ->maxLength(200)
                             ->suffixAction(
                                 Action::make('search_import_number')
@@ -197,11 +198,11 @@ class ParentsPairForm extends Component implements HasForms, HasActions
                             ->default(4),
                         TextInput::make('Chip')
                             ->label(__('Chip'))
-                            ->unique(PrevDog::class, 'Chip', ignoreRecord: true)
+                            ->unique(PrevDog::class, 'Chip')
                             ->maxLength(200),
                         TextInput::make('DnaID')
                             ->label(__('DNA'))
-                            ->unique(PrevDog::class, 'DnaID', ignoreRecord: true)
+                            ->unique(PrevDog::class, 'DnaID')
                             ->maxLength(200),
                         TextInput::make('Breeder_Name')
                             ->label(__('Breeder Name'))

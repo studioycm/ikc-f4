@@ -15,6 +15,7 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use Filament\Support\Enums\FontWeight;
 
 class DogSummary extends Component implements HasForms, HasInfolists, HasActions
 {
@@ -49,9 +50,9 @@ class DogSummary extends Component implements HasForms, HasInfolists, HasActions
         return $schema->record($d)->components([
             Grid::make(8)->schema([
                 TextEntry::make('full_name')
-                    ->label('')
+                    ->hiddenLabel()
                     ->size(TextSize::Large)
-                    ->weight('bold')
+                    ->weight(FontWeight::Bold)
                     ->columnSpan(3),
                 TextEntry::make('isbr')
                     ->label(__('I.S.B.R'))

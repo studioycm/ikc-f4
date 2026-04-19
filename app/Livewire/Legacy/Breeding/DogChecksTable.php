@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\App;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
 use Livewire\Component;
+use Filament\Support\Icons\Heroicon;
+use Filament\Support\Enums\FontWeight;
 
 class DogChecksTable extends Component implements HasActions, HasForms, HasInfolists
 {
@@ -90,7 +92,7 @@ class DogChecksTable extends Component implements HasActions, HasForms, HasInfol
                     ->schema([
                         TextEntry::make('label')
                             ->label(__('Check'))
-                            ->weight('bold'),
+                            ->weight(FontWeight::Bold),
                         TextEntry::make('state_label')
                             ->label(__('Status'))
                             ->badge(),
@@ -118,7 +120,7 @@ class DogChecksTable extends Component implements HasActions, HasForms, HasInfol
     public function viewDetailsAction(): Action
     {
         return Action::make('viewDetails')
-            ->icon('heroicon-m-information-circle')
+            ->icon(Heroicon::InformationCircle)
             ->modalHeading(__('Check Details'))
             ->modalContent(function (array $arguments): Schema {
                 $checkKey = $arguments['checkKey'] ?? null;
