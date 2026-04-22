@@ -23,3 +23,5 @@ yarn-error.log
 /.zed
 /app/Console/Commands/LegacyResearch
 /.output.txt
+/tests/Browser/Screenshots
+/tests/_archive

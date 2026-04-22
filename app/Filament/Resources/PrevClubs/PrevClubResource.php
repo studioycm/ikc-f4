@@ -1,24 +1,13 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php
+
+/** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevClubs;
 
-use BackedEnum;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Schemas\Components\Grid;
-use Filament\Support\Enums\TextSize;
-use Filament\Schemas\Components\Livewire;
-use App\Filament\Resources\PrevClubs\Pages\ListPrevClubs;
 use App\Filament\Resources\PrevClubs\Pages\CreatePrevClub;
 use App\Filament\Resources\PrevClubs\Pages\EditPrevClub;
+use App\Filament\Resources\PrevClubs\Pages\ListPrevClubs;
 use App\Filament\Resources\PrevClubs\Pages\ViewPrevClub;
-use App\Filament\Resources\PrevClubs\Pages;
 use App\Filament\Resources\PrevClubs\RelationManagers\BreedsRelationManager;
 use App\Filament\Resources\PrevClubs\RelationManagers\ManagersRelationManager;
 use App\Filament\Resources\PrevClubs\RelationManagers\MembersRelationManager;
@@ -28,20 +17,32 @@ use App\Filament\Resources\PrevClubs\RelationManagers\UserRequestsRelationManage
 use App\Livewire\Prev\PrevClub\PrevClubBreedsTable;
 use App\Models\PrevClub;
 use App\Models\PrevUser;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Livewire;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Filament\Support\Icons\Heroicon;
 
 class PrevClubResource extends Resource
 {
@@ -49,7 +50,7 @@ class PrevClubResource extends Resource
 
     protected static ?string $slug = 'prev-clubs';
 
-    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedFlag;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFlag;
 
     protected static ?int $navigationSort = 70;
 
@@ -218,8 +219,8 @@ class PrevClubResource extends Resource
                     ->selectRaw('clubs.*')
                     ->selectSub($dogsCountSub, 'dogs_count')
                     ->with([
-                        'managers.skills' => fn($skillsQuery) => $skillsQuery->whereIn('skills.id', PrevClub::CLUB_STAFF_SKILL_IDS),
-                        'breeds.promoters.skills' => fn($skillsQuery) => $skillsQuery->where('skills.id', PrevClub::PROMOTER_SKILL_ID),
+                        'managers.skills' => fn ($skillsQuery) => $skillsQuery->whereIn('skills.id', PrevClub::CLUB_STAFF_SKILL_IDS),
+                        'breeds.promoters.skills' => fn ($skillsQuery) => $skillsQuery->where('skills.id', PrevClub::PROMOTER_SKILL_ID),
                     ]);
             })
             ->columns([
@@ -256,14 +257,14 @@ class PrevClubResource extends Resource
                     ->toggleable(),
                 TextColumn::make('manager_titles')
                     ->label(__('Manager Titles'))
-                    ->state(fn(PrevClub $record): array => $record->managerTitleSummary())
+                    ->state(fn (PrevClub $record): array => $record->managerTitleSummary())
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList()
                     ->toggleable(),
                 TextColumn::make('promoters')
                     ->label(__('Promoters'))
-                    ->state(fn(PrevClub $record): array => $record->promoterSummary())
+                    ->state(fn (PrevClub $record): array => $record->promoterSummary())
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList()
@@ -278,7 +279,7 @@ class PrevClubResource extends Resource
                     ->searchable(isIndividual: true, isGlobal: false) // Enables searching by email
                     ->sortable()
                     ->weight(FontWeight::Medium)
-                    ->color(fn(?string $state) => filled($state) ? 'primary' : 'gray')
+                    ->color(fn (?string $state) => filled($state) ? 'primary' : 'gray')
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('full_address')
                     ->label(__('Address'))
@@ -331,14 +332,10 @@ class PrevClubResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('status')
                     ->label(__('Status'))
-                    ->icons([
-                        'heroicon-o-x-circle' => fn ($state): bool => $state === 'not for use' || empty($state),
-                        'heroicon-o-check-circle' => fn ($state): bool => $state === 'for use',
-                    ])
-                    ->colors([
-                        'danger' => fn ($state): bool => $state === 'not for use',
-                        'success' => fn ($state): bool => $state === 'for use',
-                    ])
+                    ->icon(fn (?string $state): Heroicon => $state === 'for use'
+                        ? Heroicon::OutlinedCheckCircle
+                        : Heroicon::OutlinedXCircle)
+                    ->color(fn (?string $state): string => $state === 'for use' ? 'success' : 'danger')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -350,7 +347,7 @@ class PrevClubResource extends Resource
                     ->query(fn (Builder $q): Builder => $q->has('managers')),
                 Filter::make('has_promoters')
                     ->label(__('Has promoters'))
-                    ->query(fn(Builder $q): Builder => $q->whereHas('breeds.promoters')),
+                    ->query(fn (Builder $q): Builder => $q->whereHas('breeds.promoters')),
             ])
             ->recordActions([
                 Action::make('contacts')
@@ -363,13 +360,13 @@ class PrevClubResource extends Resource
                             ->schema([
                                 TextEntry::make('Email')
                                     ->label(__('Club Email'))
-                                    ->state(fn(PrevClub $record): ?string => $record->Email)
+                                    ->state(fn (PrevClub $record): ?string => $record->Email)
                                     ->copyable()
                                     ->copyMessage(__('filament::components/copyable.messages.copied'))
                                     ->copyMessageDuration(1500),
                                 TextEntry::make('full_address')
                                     ->label(__('Club Address'))
-                                    ->state(fn(PrevClub $record): string => $record->full_address)
+                                    ->state(fn (PrevClub $record): string => $record->full_address)
                                     ->copyable()
                                     ->copyMessage(__('filament::components/copyable.messages.copied'))
                                     ->copyMessageDuration(1500),
@@ -378,7 +375,7 @@ class PrevClubResource extends Resource
                         Section::make(__('Related users'))
                             ->schema([
                                 RepeatableEntry::make('contact_directory')
-                                    ->state(fn(PrevClub $record): array => $record->contactDirectoryRows()->all())
+                                    ->state(fn (PrevClub $record): array => $record->contactDirectoryRows()->all())
                                     ->schema([
                                         TextEntry::make('role_type')
                                             ->label(__('Relation'))
@@ -404,7 +401,7 @@ class PrevClubResource extends Resource
                                     ->grid(2),
                             ]),
                     ])
-                    ->modalHeading(fn(PrevClub $record): string => __('Club contacts: :club', ['club' => $record->Name]))
+                    ->modalHeading(fn (PrevClub $record): string => __('Club contacts: :club', ['club' => $record->Name]))
                     ->modalSubmitAction(false),
                 Action::make('emails')
                     ->icon(Heroicon::OutlinedEnvelope)
@@ -416,12 +413,12 @@ class PrevClubResource extends Resource
                             ->schema([
                                 TextEntry::make('Email')
                                     ->label(__('Club Email'))
-                                    ->state(fn(PrevClub $record): ?string => $record->Email)
+                                    ->state(fn (PrevClub $record): ?string => $record->Email)
                                     ->copyable()
                                     ->copyMessage(__('filament::components/copyable.messages.copied'))
                                     ->copyMessageDuration(1500),
                                 RepeatableEntry::make('email_directory')
-                                    ->state(fn(PrevClub $record): array => $record->emailDirectoryRows()->all())
+                                    ->state(fn (PrevClub $record): array => $record->emailDirectoryRows()->all())
                                     ->schema([
                                         TextEntry::make('role_type')
                                             ->label(__('Relation'))
@@ -440,7 +437,7 @@ class PrevClubResource extends Resource
                                     ->grid(2),
                             ]),
                     ])
-                    ->modalHeading(fn(PrevClub $record): string => __('Club emails: :club', ['club' => $record->Name]))
+                    ->modalHeading(fn (PrevClub $record): string => __('Club emails: :club', ['club' => $record->Name]))
                     ->modalSubmitAction(false),
                 ViewAction::make()->label(__('View')),
                 EditAction::make()->label(__('Edit')),
@@ -490,8 +487,8 @@ class PrevClubResource extends Resource
                                         Action::make('send_email')
                                             ->icon('fas-paper-plane')
                                             ->color('success')
-                                            ->url(fn(TextEntry $component) => "mailto:{$component->getState()}")
-                                            ->visible(fn(TextEntry $component) => filled($component->getState()))
+                                            ->url(fn (TextEntry $component) => "mailto:{$component->getState()}")
+                                            ->visible(fn (TextEntry $component) => filled($component->getState()))
                                     ),
                                 TextEntry::make('full_address')
                                     ->label(__('Address'))

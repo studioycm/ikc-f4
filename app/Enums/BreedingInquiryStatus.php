@@ -2,7 +2,11 @@
 
 namespace App\Enums;
 
-enum BreedingInquiryStatus: string
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
+
+enum BreedingInquiryStatus: string implements HasColor, HasIcon, HasLabel
 {
     case Draft = 'draft';
     case Submitted = 'submitted';

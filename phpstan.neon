@@ -1,0 +1,17 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+
+    level: 3
+
+    ignoreErrors:
+        # Filament uses magic methods extensively
+        - '#Call to an undefined method Filament\\#'
+        # Laravel dynamic properties on models
+        - '#Access to an undefined property App\\Models\\#'
+
+    excludePaths:
+        - app/Http/Middleware/HandleInertiaRequests.php (?)

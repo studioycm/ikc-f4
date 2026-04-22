@@ -2,10 +2,10 @@
 [mcp_servers.herd]
 command = "php"
 args = ["C:/Users/user-pc/.config/herd/bin/herd-mcp.phar"]
-cwd = "D:\\0-Dev\\Herd\\ikc-dev"
+cwd = "D:\\0-Dev\\Herd\\ikc-f4"
 
 [mcp_servers.herd.env]
-SITE_PATH = "D:\\0-Dev\\Herd\\ikc-dev"
+SITE_PATH = "D:\\0-Dev\\Herd\\ikc-f4"
 
 [mcp_servers.laravel-boost]
 command = "php"
