@@ -6,6 +6,9 @@ cwd = "D:\\0-Dev\\Herd\\ikc-f4"
 
 [mcp_servers.herd.env]
 SITE_PATH = "D:\\0-Dev\\Herd\\ikc-f4"
+[mcp_servers.filament-examples]
+url = "https://filamentexamples.com/mcp"
+http_headers = { Authorization = "Bearer 25|vzNQN8UzTmBlfaleqq3w3hqqbfsZoJ5D2S143uOx29da9fac" }
 
 [mcp_servers.laravel-boost]
 command = "php"

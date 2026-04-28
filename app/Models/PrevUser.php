@@ -415,9 +415,9 @@ class PrevUser extends Model implements HasName
 
         return [
             'city' => $this->address_city,
-            'city_en' => $this->address_city_en,
+//            'city_en' => $this->address_city_en,
             'street' => $this->address_street,
-            'street_en' => $this->address_street_en,
+//            'street_en' => $this->address_street_en,
             'street_number' => $this->address_street_number,
             'house_number' => $this->house_number,
             'zip' => $this->address_zip,

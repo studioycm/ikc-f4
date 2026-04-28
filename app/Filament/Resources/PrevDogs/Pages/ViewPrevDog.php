@@ -10,6 +10,7 @@ use Filament\Resources\Concerns\HasTabs;
 use Filament\Resources\Pages\Concerns\HasRelationManagers;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewPrevDog extends ViewRecord
 {
@@ -41,4 +42,13 @@ class ViewPrevDog extends ViewRecord
     {
         return __('dog/model/general.labels.singular');
     }
+
+    protected function resolveRecord(int | string $key): Model
+    {
+        return parent::resolveRecord($key)->load([
+            'breedinghouse.users:id,first_name,last_name,first_name_en,last_name_en', // Nested
+            'mother.owners:id,first_name,last_name,first_name_en,last_name_en',       // Nested Fallback
+        ]);
+    }
+
 }

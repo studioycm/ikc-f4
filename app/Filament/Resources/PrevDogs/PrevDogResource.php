@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php
+
+/** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\Resources\PrevDogs;
 
@@ -30,6 +32,7 @@ use App\Models\PrevColor;
 use App\Models\PrevDog;
 use App\Models\PrevHair;
 use App\Models\PrevUser;
+use App\Services\Legacy\Pedigree\PedigreeTreeBuilderService;
 use App\Services\Legacy\PrevDogService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -732,18 +735,29 @@ class PrevDogResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 return $query
                     ->with([
-                        // BelongsTo: include owner key
-                        'breed' => fn ($r) => $r->select(['BreedsDB.BreedCode', 'BreedsDB.BreedName', 'BreedsDB.BreedNameEN']),
-                        'color' => fn ($r) => $r->select(['ColorsDB.OldCode', 'ColorsDB.ColorNameHE', 'ColorsDB.ColorNameEN']),
-                        'hair' => fn ($r) => $r->select(['HairsDB.OldCode', 'HairsDB.HairNameHE', 'HairsDB.HairNameEN']),
-                        'breedinghouse' => fn ($r) => $r->select(['breedinghouses.GidulCode', 'breedinghouses.HebName', 'breedinghouses.EngName']),
-                        // Parents (PrevDog): include PK used to match and shown fields
-                        'father' => fn ($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
-                        'mother' => fn ($r) => $r->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
-                        // Many-to-many Owners: include related PK + fields shown in list
-                        'owners' => fn ($r) => $r->select(['users.id', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
-                        //                        'legacyOwner' => fn($r) => $r->select(['users.id', 'owner_code', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
-                        'titles' => fn ($r) => $r->select(['dogs_titles_db.TitleCode', 'dogs_titles_db.TitleName']),
+                        // Standard Relations
+                        'breed' => fn ($q) => $q->select(['BreedsDB.id', 'BreedsDB.BreedCode', 'BreedsDB.BreedName', 'BreedsDB.BreedNameEN']),
+                        'color' => fn ($q) => $q->select(['ColorsDB.id', 'ColorsDB.OldCode', 'ColorsDB.ColorNameHE', 'ColorsDB.ColorNameEN']),
+                        'hair' => fn ($q) => $q->select(['HairsDB.id', 'HairsDB.OldCode', 'HairsDB.HairNameHE', 'HairsDB.HairNameEN']),
+                        'titles' => fn ($q) => $q->select(['dogs_titles_db.id', 'dogs_titles_db.TitleCode', 'dogs_titles_db.TitleName']),
+
+                        // Parents
+                        'father' => fn ($q) => $q->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name']),
+
+                        // Nested: Mother + her Owners (for your breederNames fallback)
+                        'mother' => function ($q) {
+                            $q->select(['id', 'SagirID', 'Heb_Name', 'Eng_Name'])
+                                ->with(['owners' => fn ($oq) => $oq->select(['users.id', 'first_name', 'last_name', 'first_name_en', 'last_name_en'])]);
+                        },
+
+                        // Nested: Breeding House + its Users (for your primary breederNames logic)
+                        'breedinghouse' => function ($q) {
+                            $q->select(['breedinghouses.id', 'breedinghouses.GidulCode', 'breedinghouses.HebName', 'breedinghouses.EngName'])
+                                ->with(['users' => fn ($uq) => $uq->select(['users.id', 'first_name', 'last_name', 'first_name_en', 'last_name_en'])]);
+                        },
+
+                        // Direct Owners
+                        'owners' => fn ($q) => $q->select(['users.id', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email']),
                     ]);
                 //                    ->with('duplicates');
             })
@@ -780,10 +794,25 @@ class PrevDogResource extends Resource
                     ->label(__('English Name'))
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('owners.full_name')
+                    ->label(__('Owners'))
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->searchable(['users.first_name', 'users.last_name', 'users.first_name_en', 'users.last_name_en'], isIndividual: true, isGlobal: false)
+                    ->description(function (PrevDog $record): string {
+                        // Get the first two owners' names
+                        return $record->owners?->pluck('id')->implode(', ');
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('breedinghouse.name')
                     ->label(__('Beit Gidul'))
                     ->searchable(['breedinghouses.HebName', 'breedinghouses.EngName'], isIndividual: true, isGlobal: false)
                     ->sortable(['breedinghouses.HebName'])
+                    ->toggleable(),
+                TextColumn::make('breeder_names')
+                    ->label(__('Breeders'))
+                    ->listWithLineBreaks()
+                    ->limitList(2)
                     ->toggleable(),
                 TextColumn::make('BeitGidulName')
                     ->label(__('Beit Gidul Name (pre 2022)'))
@@ -848,16 +877,6 @@ class PrevDogResource extends Resource
                     ->sinceTooltip()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('owners.full_name')
-                    ->label(__('Owners'))
-                    ->listWithLineBreaks()
-                    ->limitList(2)
-                    ->searchable(['users.first_name', 'users.last_name', 'users.first_name_en', 'users.last_name_en'], isIndividual: true, isGlobal: false)
-                    ->description(function (PrevDog $record): string {
-                        // Get the first two owners' names
-                        return $record->owners?->pluck('id')->implode(', ');
-                    })
-                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('father.full_name')
                     ->label(__('Father'))
@@ -896,6 +915,7 @@ class PrevDogResource extends Resource
                     ->numeric(decimalPlaces: 0, thousandsSeparator: '')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('Breeder_Name')
                     ->label(__('Breeder Name'))
                     ->wrapHeader()
@@ -1135,6 +1155,13 @@ class PrevDogResource extends Resource
                 //                    ->wrap()
                 //                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->columnManagerColumns(3)
+            ->columnManagerLayout(Tables\Enums\ColumnManagerLayout::Modal)
+            ->columnManagerTriggerAction(fn (Action $action) => $action
+                ->modalHeading(__('Table Columns Settings'))
+                ->modalWidth('xl')
+                ->slideOver()
+            )
             ->filters([
                 TrashedFilter::make(),
                 Filter::make('GenderID')
@@ -1543,8 +1570,15 @@ class PrevDogResource extends Resource
                         ])
                             ->label(__('Ownership')),
                         Section::make('Breeding')->schema([
-                            TextEntry::make('Breeder_Name')->label(__('Breeder')),
-                            TextEntry::make('Foreign_Breeder_name')->label(__('Foreign Breeder')),
+                            TextEntry::make('breeder_names')
+                                ->listWithLineBreaks()
+                                ->bulleted()
+                                ->label(__('Breeder')),
+
+                            TextEntry::make('Breeder_Name')
+                                ->label(__('Breeder (pre 2022)')),
+                            TextEntry::make('Foreign_Breeder_name')
+                                ->label(__('Foreign Breeder (pre 2022)')),
                             TextEntry::make('breedingManager.full_name')->label(__('Breeding Manager')),
                         ])
                             ->label(__('Breeding')),

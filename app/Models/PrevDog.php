@@ -564,4 +564,33 @@ class PrevDog extends Model implements HasName
             }
         );
     }
+
+    protected function breederNames(): Attribute
+    {
+        return Attribute::get(function () {
+            // Try Breeding House Users first
+            if ($this->breedinghouse?->users?->isNotEmpty()) {
+                return $this->getNamesFromCollection($this->breedinghouse->users);
+            }
+
+            // Fallback to Mother's Owners
+            if ($this->mother?->owners?->isNotEmpty()) {
+                return $this->getNamesFromCollection($this->mother->owners);
+            }
+
+            return ['---'];
+        });
+    }
+
+// Helper to keep logic dry
+    protected function getNamesFromCollection($users): array
+    {
+        return $users
+            ->map(fn ($user) => $user->name)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
 }

@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum LegacySagirPrefix: int implements HasLabel, HasColor, HasIcon
+enum LegacySagirPrefix: int implements HasColor, HasIcon, HasLabel
 {
     case ISR = 1;
     case IMP = 2;
@@ -52,26 +52,14 @@ enum LegacySagirPrefix: int implements HasLabel, HasColor, HasIcon
         };
     }
 
-    public static function options(): array
-    {
-        $out = [];
-        foreach (self::cases() as $case) {
-            $out[$case->value] = $case->getLabel();
-        }
-
-        return $out;
-    }
-
     public function description(): string
     {
         return match ($this) {
-            self::ISR => 'Israeli',
-            self::IMP => 'Imported',
-            self::APX => 'Apex',
-            self::EXT => 'External',
-            self::NUL => 'No prefix',
+            self::ISR => __('Israeli'),
+            self::IMP => __('Import'),
+            self::APX => __('Appendix'),
+            self::EXT => __('External'),
+            self::NUL => __('No prefix'),
         };
     }
-
-
 }

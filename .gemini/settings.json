@@ -15,6 +15,12 @@
             "env": {
                 "SITE_PATH": "D:\\0-Dev\\Herd\\ikc-f4"
             }
+        },
+        "filament-examples": {
+            "url": "https://filamentexamples.com/mcp",
+            "headers": {
+                "Authorization": "Bearer 25|vzNQN8UzTmBlfaleqq3w3hqqbfsZoJ5D2S143uOx29da9fac"
+            }
         }
     }
 }

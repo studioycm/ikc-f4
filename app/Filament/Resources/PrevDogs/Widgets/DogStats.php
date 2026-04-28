@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\PrevDogs\Widgets;
 
+use App\Filament\Resources\PrevDogs\Pages\ListPrevDogs;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Filament\Widgets\Concerns\InteractsWithPageTable;
-use App\Filament\Resources\PrevDogs\Pages\ListPrevDogs;
 
 class DogStats extends BaseWidget
 {
@@ -13,12 +13,11 @@ class DogStats extends BaseWidget
 
     protected ?string $pollingInterval = null;
 
-    protected int | string | array $columnSpan = [
+    protected int|string|array $columnSpan = [
         'md' => 1,
         'xl' => 1,
         'sm' => 3, // Takes half width on small screens
     ];
-
 
     protected function getTablePage(): string
     {
@@ -28,7 +27,7 @@ class DogStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make(__('Total'), $this->getPageTableQuery()->count()),
+            Stat::make(__('Displaying'), $this->getPageTableQuery()->count()),
         ];
     }
 }

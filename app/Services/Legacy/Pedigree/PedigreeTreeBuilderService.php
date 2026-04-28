@@ -50,8 +50,7 @@ class PedigreeTreeBuilderService
         int $depth = 4,
         string $direction = 'rtl',
         bool $includeNodeTitles = false,
-    ): array
-    {
+    ): array {
         $depth = max(2, min(10, $depth));
         $direction = $direction === 'ltr' ? 'ltr' : 'rtl';
 
@@ -85,8 +84,7 @@ class PedigreeTreeBuilderService
         int $dogId,
         int $depth,
         bool $includeNodeTitles,
-    ): ?PrevDog
-    {
+    ): ?PrevDog {
         return PrevDog::query()
             ->select($this->rootColumns)
             ->with($this->rootRelations())
@@ -108,10 +106,10 @@ class PedigreeTreeBuilderService
             'breed:BreedCode,BreedName,BreedNameEN',
             'color:OldCode,ColorNameHE,ColorNameEN',
             'breedinghouse:id,GidulCode,HebName,EngName',
-            'owners' => fn(BelongsToMany $query) => $query->select($this->ownerSelectColumns()),
-            'breedinghouse.users' => fn(BelongsToMany $query) => $query->select($this->ownerSelectColumns()),
-            'mother.owners' => fn(BelongsToMany $query) => $query->select($this->ownerSelectColumns()),
-            'titles' => fn(BelongsToMany $query) => $query->select($this->titleRelationSelect()),
+            'owners' => fn (BelongsToMany $query) => $query->select($this->ownerSelectColumns()),
+            'breedinghouse.users' => fn (BelongsToMany $query) => $query->select($this->ownerSelectColumns()),
+            'mother.owners' => fn (BelongsToMany $query) => $query->select($this->ownerSelectColumns()),
+            'titles' => fn (BelongsToMany $query) => $query->select($this->titleRelationSelect()),
         ];
     }
 
@@ -124,7 +122,7 @@ class PedigreeTreeBuilderService
         ];
 
         if ($includeTitles) {
-            $relations['titles'] = fn(BelongsToMany $query) => $query->select($this->titleRelationSelect());
+            $relations['titles'] = fn (BelongsToMany $query) => $query->select($this->titleRelationSelect());
         }
 
         return $relations;
@@ -137,12 +135,12 @@ class PedigreeTreeBuilderService
         }
 
         return [
-            'father' => fn(Relation $query) => $this->configureAncestorQuery(
+            'father' => fn (Relation $query) => $this->configureAncestorQuery(
                 query: $query,
                 remainingDepth: $depth,
                 includeTitles: $includeTitles,
             ),
-            'mother' => fn(Relation $query) => $this->configureAncestorQuery(
+            'mother' => fn (Relation $query) => $this->configureAncestorQuery(
                 query: $query,
                 remainingDepth: $depth,
                 includeTitles: $includeTitles,
@@ -154,8 +152,7 @@ class PedigreeTreeBuilderService
         Relation $query,
         int $remainingDepth,
         bool $includeTitles,
-    ): void
-    {
+    ): void {
         $query
             ->select($this->ancestorColumns)
             ->with($this->nodeRelations($includeTitles));
@@ -183,7 +180,7 @@ class PedigreeTreeBuilderService
 
         usort(
             $headers,
-            fn(array $a, array $b): int => $a['column_start'] <=> $b['column_start'],
+            fn (array $a, array $b): int => $a['column_start'] <=> $b['column_start'],
         );
 
         return $headers;
@@ -208,8 +205,7 @@ class PedigreeTreeBuilderService
         PrevDog $dog,
         int $depth,
         string $direction,
-    ): array
-    {
+    ): array {
         $nodes = [];
         $currentGeneration = [$dog->father, $dog->mother];
 
@@ -227,7 +223,7 @@ class PedigreeTreeBuilderService
                     'column_start' => $columnStart,
                     'row_start' => ($index * $rowSpan) + 1,
                     'row_span' => $rowSpan,
-                    'is_placeholder' => !($ancestor instanceof PrevDog),
+                    'is_placeholder' => ! ($ancestor instanceof PrevDog),
                     'dog' => $ancestor instanceof PrevDog
                         ? $this->normalizeNodeDog($ancestor)
                         : $this->emptyNodeDog(),
@@ -276,7 +272,7 @@ class PedigreeTreeBuilderService
                 'owner_address_display' => $this->resolveOwnerAddressDisplay($owners),
 
                 'breeder_names' => $breederNames,
-                'breeder_text' => !empty($breederNames) ? implode(', ', $breederNames) : null,
+                'breeder_text' => ! empty($breederNames) ? implode(', ', $breederNames) : null,
 
                 'titles' => $titles,
                 'titles_count' => count($titles),
@@ -370,13 +366,13 @@ class PedigreeTreeBuilderService
 
     protected function normalizeTitles(PrevDog $dog): array
     {
-        if (!$dog->relationLoaded('titles')) {
+        if (! $dog->relationLoaded('titles')) {
             return [];
         }
 
         return $dog->titles
             ->pluck('TitleName')
-            ->map(fn($title) => $this->blankToNull($title))
+            ->map(fn ($title) => $this->blankToNull($title))
             ->filter()
             ->values()
             ->all();
@@ -385,9 +381,9 @@ class PedigreeTreeBuilderService
     protected function normalizeOwners(array $owners): array
     {
         return collect($owners)
-            ->filter(fn($owner) => $owner instanceof PrevUser)
-            ->map(fn(PrevUser $owner) => $this->normalizeUser($owner))
-            ->filter(fn(array $owner) => filled($owner['display_name']))
+            ->filter(fn ($owner) => $owner instanceof PrevUser)
+            ->map(fn (PrevUser $owner) => $this->normalizeUser($owner))
+            ->filter(fn (array $owner) => filled($owner['display_name']))
             ->values()
             ->all();
     }
@@ -405,7 +401,7 @@ class PedigreeTreeBuilderService
 
         $addressArray = method_exists($user, 'addressArray')
             ? $user->addressArray()
-            : ((array)($user->address ?? []));
+            : ((array) ($user->address ?? []));
 
         $addressText = method_exists($user, 'buildAddress')
             ? $this->blankToNull($user->buildAddress())
@@ -445,28 +441,31 @@ class PedigreeTreeBuilderService
                 : collect();
 
             $names = $users
-                ->map(fn(PrevUser $user) => $this->normalizeUser($user)['display_name'])
+                ->map(fn (PrevUser $user) => $this->normalizeUser($user)['display_name'])
                 ->filter()
                 ->unique()
                 ->values()
                 ->all();
 
-            if (!empty($names)) {
+            if (! empty($names)) {
                 return $names;
             }
         }
 
-        $motherFirstOwner = $dog->relationLoaded('mother')
-            ? $dog->mother?->owners?->first()
-            : null;
+        if ($dog->relationLoaded('mother') && $dog->mother) {
+            $users = $dog->mother->relationLoaded('owners')
+                ? $dog->mother->owners
+                : collect();
 
-        if (!$motherFirstOwner instanceof PrevUser) {
-            return [];
+            return $users
+                ->map(fn (PrevUser $user) => $this->normalizeUser($user)['display_name'])
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
         }
 
-        $name = $this->normalizeUser($motherFirstOwner)['display_name'];
-
-        return filled($name) ? [$name] : [];
+        return [];
     }
 
     protected function ownerSelectColumns(): array
@@ -527,7 +526,7 @@ class PedigreeTreeBuilderService
     {
         $locale = App::currentLocale();
 
-        if (!filled($locale)) {
+        if (! filled($locale)) {
             return true;
         }
 
@@ -579,7 +578,7 @@ class PedigreeTreeBuilderService
             return null;
         }
 
-        $totalMonths = (int)$birth->diffInMonths(now());
+        $totalMonths = (int) $birth->diffInMonths(now());
         $years = intdiv($totalMonths, 12);
         $months = $totalMonths % 12;
 
@@ -588,14 +587,14 @@ class PedigreeTreeBuilderService
 
     protected function joinName(array $parts): ?string
     {
-        $parts = array_values(array_filter(array_map(fn($value) => $this->blankToNull($value), $parts)));
+        $parts = array_values(array_filter(array_map(fn ($value) => $this->blankToNull($value), $parts)));
 
         return empty($parts) ? null : implode(' ', $parts);
     }
 
     protected function joinAddressParts(array $parts): ?string
     {
-        $values = array_values(array_filter(array_map(fn($value) => $this->blankToNull($value), $parts)));
+        $values = array_values(array_filter(array_map(fn ($value) => $this->blankToNull($value), $parts)));
 
         return empty($values) ? null : implode(', ', $values);
     }
@@ -606,7 +605,7 @@ class PedigreeTreeBuilderService
             return null;
         }
 
-        $value = trim((string)$value);
+        $value = trim((string) $value);
 
         return $value === '' ? null : $value;
     }
