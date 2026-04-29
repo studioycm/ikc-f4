@@ -176,15 +176,16 @@ class PrevDogResource extends Resource
                                     ->schema([
                                         Hidden::make('sagir_prefix'),
                                         TextInput::make('SagirID')
+                                            ->hidden(fn (string $operation) => $operation === 'create')
                                             ->label(__('Sagir'))
                                             ->numeric()
-                                            ->extraAttributes(fn (Model $record): array => ['class' => 'dark:disabled:text-white fi-form-sagir fi-form-sagir-'.$record->sagir_prefix?->getColor()])
-                                            ->prefix(fn (Model $record): HtmlString => $record->sagir_prefix?->code() ? new HtmlString('<span class="fi-form-sagir">'.$record->sagir_prefix?->code().'</span>') : new HtmlString('<span>---</span>'))
+                                            ->extraAttributes(fn (string $operation, PrevDog $record): array => ['class' => 'dark:disabled:text-white fi-form-sagir' . (($operation == 'create') ? '' : ' fi-form-sagir-' . $record?->sagir_prefix?->getColor())])
+                                            ->prefix(fn (string $operation, PrevDog $record): HtmlString => $record?->sagir_prefix?->code() ? new HtmlString('<span class="fi-form-sagir">'.$record?->sagir_prefix?->code().'</span>') : new HtmlString('<span>---</span>'))
                                             ->suffixAction(
                                                 Action::make('setPrefix')
                                                     ->label(__('Prefix'))
                                                     ->icon('fas-chevron-circle-down')
-                                                    ->color(fn (Model $record): string => 'white')
+                                                    ->color(fn (PrevDog $record): string => 'primary')
                                                     ->modalHeading(__('Select SAGIR Prefix'))
                                                     ->schema([
                                                         Select::make('prefix')
@@ -238,7 +239,7 @@ class PrevDogResource extends Resource
                                             ->label(__('Chip 2'))
                                             ->maxLength(255),
                                         ToggleButtons::make('Status')
-                                            ->label(__('Status'))
+                                            ->label(__('Approval Status'))
                                             ->options(LegacyDogStatus::class)
                                             ->grouped()
                                             ->nullable()
@@ -933,7 +934,7 @@ class PrevDogResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('Status')
-                    ->label(__('Status'))
+                    ->label(__('Approval Status'))
                     ->badge()
                     ->icon(fn (PrevDog $record): string => $record->Status?->getIcon() ?? 'fas-minus-circle')
                     ->color(fn (PrevDog $record): string => $record->Status?->getColor() ?? 'gray')
@@ -1540,7 +1541,7 @@ class PrevDogResource extends Resource
                                     ->label(__('Hair'))
                                     ->inlineLabel(),
                                 TextEntry::make('Status')
-                                    ->label(__('Status'))
+                                    ->label(__('Approval Status'))
                                     ->inlineLabel()
                                     ->badge()
                                     ->icon(fn (PrevDog $record): string => $record->Status?->getIcon() ?? 'fas-minus-circle')
@@ -1552,7 +1553,7 @@ class PrevDogResource extends Resource
                         ->columns(2),
 
                     /***** 2. Ownership & Breeding *****/
-                    Tab::make('Ownership & Breeding')->schema([
+                    Tab::make('Ownership and Breeding')->schema([
                         Section::make('Ownership')->schema([
                             RepeatableEntry::make('owners')
                                 ->schema([
@@ -1568,7 +1569,7 @@ class PrevDogResource extends Resource
                                 ->label(__('Ownership pre 2022'))
                                 ->date(),
                         ])
-                            ->label(__('Ownership')),
+                            ->heading(__('Ownership')),
                         Section::make('Breeding')->schema([
                             TextEntry::make('breeder_names')
                                 ->listWithLineBreaks()
@@ -1581,9 +1582,9 @@ class PrevDogResource extends Resource
                                 ->label(__('Foreign Breeder (pre 2022)')),
                             TextEntry::make('breedingManager.full_name')->label(__('Breeding Manager')),
                         ])
-                            ->label(__('Breeding')),
+                            ->heading(__('Breeding')),
                     ])
-                        ->label(__('Ownership & Breeding')),
+                        ->label(__('Ownership and Breeding')),
 
                     /***** 3. Pedigree & Titles *****/
                     Tab::make('Pedigree & Titles')->schema([
@@ -1619,24 +1620,7 @@ class PrevDogResource extends Resource
                                     ->label(__('Pedigree Notes'))
                                     ->columnSpan(2),
                             ])
-                            ->heading(__('Pedigree'))
-                            ->headerActions([
-                                //                                InfolistAction::make('pedigree_tree_modal')
-                                //                                    ->label(__('Pedigree'))
-                                //                                    ->icon('fas-sitemap')
-                                //                                    ->color('info')
-                                //                                    ->hidden(fn(PrevDog $record): bool => empty($record->father) && empty($record->mother))
-                                //                                    ->modalWidth(MaxWidth::Full)
-                                //                                    ->modalHeading(__('Pedigree'))
-                                //                                    ->modalSubmitAction(false)
-                                //                                    ->modalCancelAction(fn(StaticAction $action) => $action->label(__('Close')))
-                                //                                    ->modalContent(fn(PrevDog $record): View => view('legacy.pedigree.pedigree-tree-modal', ['dogId' => $record->id])),
-
-                                //                                InfolistAction::make('edit_pedigree')
-                                //                                ->label(__('Manage Pedigree'))
-                                //                                ->icon('heroicon-m-share')
-                                //                                ->url(fn (PrevDog $record): string => PrevDogResource::getUrl('pedigree', ['record' => $record])),
-                            ]),
+                            ->heading(__('Pedigree')),
                         Section::make('Titles & Shows')->schema([
                             RepeatableEntry::make('titles')
                                 ->label(fn (PrevDog $record): string => __('Titles')." ({$record->titles->count()})")

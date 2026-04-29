@@ -24,7 +24,7 @@ enum LegacyDogStatus: string implements HasColor, HasIcon, HasLabel
             self::NotRecommended => __('Not Recommended'),
             self::OnHold => __('On Hold'),
             self::Waiting => __('Waiting'),
-            self::Off => __("Off"),
+            self::Off => __("Without"),
 
         };
     }
