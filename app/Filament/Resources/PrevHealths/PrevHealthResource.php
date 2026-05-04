@@ -21,11 +21,14 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class PrevHealthResource extends Resource
 {
@@ -111,7 +114,22 @@ class PrevHealthResource extends Resource
                 TextColumn::make('TestDate')
                     ->date(),
 
-                TextColumn::make('TestFile'),
+//                TextColumn::make('TestFile'),
+                TextColumn::make('TestFile')
+                    ->label(__('File'))
+                    ->formatStateUsing(fn () => 'Open File') // Shows "Open File" instead of the long filename
+                    ->icon(Heroicon::ArrowTopRightOnSquare)
+                    ->color('primary')
+                    ->url(function ($state) {
+                        if (blank($state)) return null;
+
+                        // Best practice: Generate the signed URL directly here
+                        return Storage::disk('s3')->temporaryUrl(
+                            $state,
+                            now()->addMinutes(120)
+                        );
+                    })
+                    ->openUrlInNewTab(),
 
                 TextColumn::make('Notes'),
 
