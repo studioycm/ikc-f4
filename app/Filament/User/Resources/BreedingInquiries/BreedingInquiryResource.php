@@ -1,37 +1,27 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php
+
+/** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Filament\User\Resources\BreedingInquiries;
 
-use BackedEnum;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Wizard;
-use Filament\Schemas\Components\Wizard\Step;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Livewire;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use App\Filament\User\Resources\BreedingInquiries\Pages\ListBreedingInquiries;
-use App\Filament\User\Resources\BreedingInquiries\Pages\CreateBreedingInquiry;
-use App\Filament\User\Resources\BreedingInquiries\Pages\ViewBreedingInquiry;
-use App\Filament\User\Resources\BreedingInquiries\Pages\EditBreedingInquiry;
 use App\Enums\Legacy\LegacyDogGender;
-use App\Filament\User\Resources\BreedingInquiries\Pages;
+use App\Filament\User\Resources\BreedingInquiries\Pages\CreateBreedingInquiry;
+use App\Filament\User\Resources\BreedingInquiries\Pages\EditBreedingInquiry;
+use App\Filament\User\Resources\BreedingInquiries\Pages\ListBreedingInquiries;
+use App\Filament\User\Resources\BreedingInquiries\Pages\ViewBreedingInquiry;
 use App\Livewire\Legacy\Breeding\ClubMembershipCompact;
 use App\Livewire\Legacy\Breeding\DogChecksTable;
 use App\Models\BreedingInquiry;
 use App\Models\PrevDog;
 use App\Models\PrevUser;
 use App\Services\Legacy\LegacyMembershipResolverService;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -39,19 +29,29 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\ViewField;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Livewire;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-use Filament\Support\Icons\Heroicon;
 
 class BreedingInquiryResource extends Resource
 {
     protected static ?string $model = BreedingInquiry::class;
 
-    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?int $navigationSort = 40;
 
@@ -124,23 +124,23 @@ class BreedingInquiryResource extends Resource
                                             ->optionsLimit(20)
                                             ->searchDebounce(800)
                                             ->getOptionLabelFromRecordUsing(
-                                                fn(PrevDog $record) => "{$record->SagirID} - {$record->full_name}"
+                                                fn (PrevDog $record) => "{$record->SagirID} - {$record->full_name}"
                                             )
                                             ->live()
                                             ->afterStateHydrated(
-                                                fn(Set $set, Get $get, ?string $state, Select $component) => self::hydrateFemale($get, $set, $component)
+                                                fn (Set $set, Get $get, ?string $state, Select $component) => self::hydrateFemale($get, $set, $component)
                                             )
                                             ->afterStateUpdated(
-                                                fn(Set $set, Get $get, ?string $state, Select $component) => self::hydrateFemale($get, $set, $component)
+                                                fn (Set $set, Get $get, ?string $state, Select $component) => self::hydrateFemale($get, $set, $component)
                                             ),
 
-                                        Livewire::make(DogChecksTable::class, fn(Get $get): array => [
+                                        Livewire::make(DogChecksTable::class, fn (Get $get): array => [
                                             'sagirId' => $get('female_sagir_id'),
                                             'role' => 'female',
                                             'title' => __('Dam validity and breeding checks'),
                                         ])
-                                            ->hidden(fn(Get $get): bool => blank($get('female_sagir_id')))
-                                            ->key(fn(Get $get): string => 'female-checks-' . ($get('female_sagir_id') ?: 'empty')),
+                                            ->hidden(fn (Get $get): bool => blank($get('female_sagir_id')))
+                                            ->key(fn (Get $get): string => 'female-checks-'.($get('female_sagir_id') ?: 'empty')),
 
                                     ])
                                     ->columnSpan(1),
@@ -150,7 +150,7 @@ class BreedingInquiryResource extends Resource
                                         Select::make('male_sagir_id')
                                             ->label(__('Male'))
                                             ->hint(__('Search dogs by import number, sagir, chip or name'))
-                                            ->disabled(fn(Get $get) => blank($get('female_sagir_id')))
+                                            ->disabled(fn (Get $get) => blank($get('female_sagir_id')))
                                             ->searchable(['SagirID', 'Heb_Name', 'Eng_Name', 'Chip', 'ImportNumber'])
                                             ->relationship(
                                                 name: 'maleDog',
@@ -173,23 +173,23 @@ class BreedingInquiryResource extends Resource
                                             ->optionsLimit(20)
                                             ->searchDebounce(800)
                                             ->getOptionLabelFromRecordUsing(
-                                                fn(PrevDog $record) => "{$record->SagirID} - {$record->full_name}"
+                                                fn (PrevDog $record) => "{$record->SagirID} - {$record->full_name}"
                                             )
                                             ->live()
                                             ->afterStateHydrated(
-                                                fn(Set $set, Get $get, ?string $state, Select $component) => self::hydrateMale($get, $set, $component)
+                                                fn (Set $set, Get $get, ?string $state, Select $component) => self::hydrateMale($get, $set, $component)
                                             )
                                             ->afterStateUpdated(
-                                                fn(Set $set, Get $get, ?string $state, Select $component) => self::hydrateMale($get, $set, $component)
+                                                fn (Set $set, Get $get, ?string $state, Select $component) => self::hydrateMale($get, $set, $component)
                                             ),
 
-                                        Livewire::make(DogChecksTable::class, fn(Get $get): array => [
+                                        Livewire::make(DogChecksTable::class, fn (Get $get): array => [
                                             'sagirId' => $get('male_sagir_id'),
                                             'role' => 'male',
                                             'title' => __('Sire validity and breeding checks'),
                                         ])
-                                            ->hidden(fn(Get $get): bool => blank($get('male_sagir_id')))
-                                            ->key(fn(Get $get): string => 'male-checks-' . ($get('male_sagir_id') ?: 'empty')),
+                                            ->hidden(fn (Get $get): bool => blank($get('male_sagir_id')))
+                                            ->key(fn (Get $get): string => 'male-checks-'.($get('male_sagir_id') ?: 'empty')),
 
                                     ])
                                     ->columnSpan(1),
@@ -202,16 +202,16 @@ class BreedingInquiryResource extends Resource
                             |--------------------------------------------------------------------------
                             */
 
-                            Livewire::make(ClubMembershipCompact::class, fn(Get $get): array => [
+                            Livewire::make(ClubMembershipCompact::class, fn (Get $get): array => [
                                 'membershipState' => $get('club_membership_state'),
                             ])
-                                ->hidden(fn(Get $get): bool => blank($get('female_sagir_id')))
-                                ->key(fn(Get $get): string => 'club-membership-' . ($get('female_sagir_id') ?: 'empty'))
+                                ->hidden(fn (Get $get): bool => blank($get('female_sagir_id')))
+                                ->key(fn (Get $get): string => 'club-membership-'.($get('female_sagir_id') ?: 'empty'))
                                 ->columnSpan(1),
 
                             ViewField::make('membership_badges')
                                 ->view('legacy.breeding.fields.membership-badges')
-                                ->viewData(fn(Get $get): array => [
+                                ->viewData(fn (Get $get): array => [
                                     'sagirId' => $get('female_sagir_id'),
                                     'prevUserId' => auth()->user()?->prev_user_id,
                                     'strategies' => [
@@ -220,7 +220,7 @@ class BreedingInquiryResource extends Resource
                                         'at_least_one_co_owner_breed_club',
                                     ],
                                 ])
-                                ->visible(fn(Get $get) => filled($get('female_sagir_id')))
+                                ->visible(fn (Get $get) => filled($get('female_sagir_id')))
                                 ->columnSpan(1),
 
                             Section::make(__('Breed Information'))
@@ -228,7 +228,7 @@ class BreedingInquiryResource extends Resource
                                     TextEntry::make('breed_conditions')
                                         ->label(__('Breed Breeding Conditions'))
                                         ->columnSpanFull()
-                                        ->state(fn() => __('Breed special breeding conditions will be displayed here.')),
+                                        ->state(fn () => __('Breed special breeding conditions will be displayed here.')),
                                 ])
                                 ->columns(2)
                                 ->columnSpan(1),
@@ -251,7 +251,7 @@ class BreedingInquiryResource extends Resource
                                     TextEntry::make('breeder_rights_explanation')
                                         ->label(false)
                                         ->columnSpanFull()
-                                        ->state(fn() => __('Breeder rights explanation will be displayed here.')),
+                                        ->state(fn () => __('Breeder rights explanation will be displayed here.')),
                                     ToggleButtons::make('type')
                                         ->label(__('Transfer Breeder / Kennel'))
                                         ->options(function (Get $get) {
@@ -262,12 +262,12 @@ class BreedingInquiryResource extends Resource
                                                 'kennel' => __('Kennel'),
                                             ];
                                             // Hide 'archived' if 'other_field' is filled
-                                            if (!filled($get('female_sagir_id'))) {
+                                            if (! filled($get('female_sagir_id'))) {
                                                 unset($options['female_co_owner']);
                                             }
 
                                             // Hide 'published' if 'other_field' equals 'hide_pub'
-                                            if (!filled($get('male_sagir_id'))) {
+                                            if (! filled($get('male_sagir_id'))) {
                                                 unset($options['male_owner']);
                                             }
 
@@ -281,18 +281,18 @@ class BreedingInquiryResource extends Resource
                                     // PrevUser Select (“Breeder”)
                                     Select::make('prev_breeder_id')
                                         ->label(__('Breeder'))
-                                        ->required(fn($get) => $get('type') !== 'kennel')
-                                        ->getSearchResultsUsing(fn($search, $get) => PrevUser::query()
-                                            ->when($get('type') == 'owner', fn($q) => $q->where('id', auth()->user()->prev_user_id))
-                                            ->when($get('type') == 'female_co_owner', fn($q) => $q->whereHas('dogs', fn($q2) => $q2->where('SagirID', $get('female_sagir_id')))
+                                        ->required(fn ($get) => $get('type') !== 'kennel')
+                                        ->getSearchResultsUsing(fn ($search, $get) => PrevUser::query()
+                                            ->when($get('type') == 'owner', fn ($q) => $q->where('id', auth()->user()->prev_user_id))
+                                            ->when($get('type') == 'female_co_owner', fn ($q) => $q->whereHas('dogs', fn ($q2) => $q2->where('SagirID', $get('female_sagir_id')))
                                                 ->where('id', '!=', auth()->user()->prev_user_id))
-                                            ->when($get('type') == 'male_owner', fn($q) => $q->whereHas('dogs', fn($q2) => $q2->where('SagirID', $get('male_sagir_id'))))->limit(50)->get()->pluck('name', 'id')->toArray()
+                                            ->when($get('type') == 'male_owner', fn ($q) => $q->whereHas('dogs', fn ($q2) => $q2->where('SagirID', $get('male_sagir_id'))))->limit(50)->get()->pluck('name', 'id')->toArray()
                                         )
-                                        ->getOptionLabelUsing(fn($value): ?string => PrevUser::find($value)->name)
+                                        ->getOptionLabelUsing(fn ($value): ?string => PrevUser::find($value)->name)
                                         ->searchable(['first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'email'])
                                         ->preload()
                                         ->columnSpan(1)
-                                        ->visible(fn($get) => $get('type') !== 'kennel'),
+                                        ->visible(fn ($get) => $get('type') !== 'kennel'),
 
                                     // PrevBreedingHouse Select (“Kennel”)
                                     Select::make('prev_breeding_house_id')
@@ -300,7 +300,7 @@ class BreedingInquiryResource extends Resource
                                         ->relationship('breedingHouse', 'HebName')
                                         ->searchable(['HebName', 'EngName'])
                                         ->columnSpan(1)
-                                        ->visible(fn($get) => $get('type') === 'kennel'),
+                                        ->visible(fn ($get) => $get('type') === 'kennel'),
 
                                     // SMS Request Approval Action
                                     //                                            Action::make('sms')
@@ -330,7 +330,7 @@ class BreedingInquiryResource extends Resource
                                 ->default([])
                                 ->schema([
                                     Hidden::make('uuid')
-                                        ->default(fn() => (string)Str::uuid())
+                                        ->default(fn () => (string) Str::uuid())
                                         ->dehydrated(true),
 
                                     TextInput::make('name')
@@ -355,7 +355,7 @@ class BreedingInquiryResource extends Resource
 
                                     DatePicker::make('vaccinated_date')
                                         ->nullable()
-                                        ->visible(fn(Get $get) => $get('vaccinated') === 'yes'),
+                                        ->visible(fn (Get $get) => $get('vaccinated') === 'yes'),
 
                                     ToggleButtons::make('alive')
                                         ->options([
@@ -407,7 +407,8 @@ class BreedingInquiryResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with(['femaleDog', 'maleDog'])->orderBy('created_at', 'asc');
+                $query->with(['femaleDog', 'maleDog'])
+                    ->orderBy('created_at', 'asc');
             })
             ->columns([
                 TextColumn::make('litter_report_name')
@@ -415,10 +416,10 @@ class BreedingInquiryResource extends Resource
                     ->searchable(),
                 TextColumn::make('femaleDog.SagirID')
                     ->label(__('Dam'))
-                    ->description(fn(BreedingInquiry $record) => $record->femaleDog->full_name),
+                    ->description(fn (BreedingInquiry $record) => $record->femaleDog->full_name),
                 TextColumn::make('maleDog.SagirID')
                     ->label(__('Sire'))
-                    ->description(fn(BreedingInquiry $record) => $record->maleDog->full_name),
+                    ->description(fn (BreedingInquiry $record) => $record->maleDog->full_name),
                 TextColumn::make('breeding_date')
                     ->label(__('Breeding Date'))
                     ->date()
@@ -487,8 +488,7 @@ class BreedingInquiryResource extends Resource
         Get $get,
         Set $set,
         ?Select $component
-    ): void
-    {
+    ): void {
 
         $femaleId = $get('female_sagir_id');
 
@@ -500,7 +500,7 @@ class BreedingInquiryResource extends Resource
 
         $dog = $component?->getSelectedRecord();
 
-        if (!$dog instanceof PrevDog) {
+        if (! $dog instanceof PrevDog) {
             $dog = PrevDog::query()
                 ->with([
                     'breed',
@@ -514,7 +514,7 @@ class BreedingInquiryResource extends Resource
                 ->loadCount('femaleBreedings');
         }
 
-        if (!$dog) {
+        if (! $dog) {
             self::resetFemale($set);
 
             return;
@@ -543,7 +543,7 @@ class BreedingInquiryResource extends Resource
         return [
             'has_dna' => filled($dog->DnaID),
             'is_adult' => $dog->age_years >= 1,
-            'red_pedigree' => (bool)$dog->RedPedigree,
+            'red_pedigree' => (bool) $dog->RedPedigree,
             'breeding_limit_ok' => $dog->female_breedings_count < 6,
         ];
     }
@@ -552,8 +552,7 @@ class BreedingInquiryResource extends Resource
         Get $get,
         Set $set,
         ?Select $component
-    ): void
-    {
+    ): void {
 
         $maleId = $get('male_sagir_id');
 
@@ -565,7 +564,7 @@ class BreedingInquiryResource extends Resource
 
         $dog = $component?->getSelectedRecord();
 
-        if (!$dog instanceof PrevDog) {
+        if (! $dog instanceof PrevDog) {
             $dog = PrevDog::query()
                 ->withCount('maleBreedings')
                 ->where('SagirID', $maleId)
@@ -574,7 +573,7 @@ class BreedingInquiryResource extends Resource
             $dog->loadCount('maleBreedings');
         }
 
-        if (!$dog) {
+        if (! $dog) {
             self::resetMale($set);
 
             return;
