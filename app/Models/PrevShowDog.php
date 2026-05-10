@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevShowDog extends Model
 {
-    use SoftDeletes, Compoships;
+    use Compoships, SoftDeletes;
+    use LogsActivity;
 
     protected $connection = 'mysql_prev';
 
@@ -44,14 +47,14 @@ class PrevShowDog extends Model
     protected function hebDogName(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $this->dog?->Heb_Name ?? '-',
+            get: fn ($value) => $this->dog?->Heb_Name ?? '-',
         );
     }
 
     protected function engDogName(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $this->dog?->Eng_Name ?? '-',
+            get: fn ($value) => $this->dog?->Eng_Name ?? '-',
         );
     }
 
@@ -59,7 +62,7 @@ class PrevShowDog extends Model
     {
         // return hebrew name if available, else english name
         return Attribute::make(
-            get: fn($value) => $this->dog?->Heb_Name ?? $this->dog?->Eng_Name ?? '-',
+            get: fn ($value) => $this->dog?->Heb_Name ?? $this->dog?->Eng_Name ?? '-',
         );
     }
 
@@ -104,5 +107,11 @@ class PrevShowDog extends Model
     {
         // Bind by literals so eager loading does not inject nulls or try to reference parent table
         return $this->hasOne(PrevShowResult::class, ['SagirID', 'ShowID'], ['SagirID', 'ShowID']);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

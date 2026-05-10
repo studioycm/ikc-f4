@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevColor extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     /**
@@ -36,5 +39,11 @@ class PrevColor extends Model
     public function dogs(): HasMany
     {
         return $this->hasMany(PrevDog::class, 'ColorID', 'OldCode');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevDogTitle extends Pivot
 {
+    use LogsActivity;
     use SoftDeletes;
 
     /**
@@ -48,7 +51,13 @@ class PrevDogTitle extends Pivot
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn($value, $attributes) => PrevTitle::query()->where('TitleCode', $attributes['AwardID'])->first()?->name,
+            get: fn ($value, $attributes) => PrevTitle::query()->where('TitleCode', $attributes['AwardID'])->first()?->name,
         );
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevUserTask extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     protected $connection = 'mysql_prev';
@@ -46,5 +49,11 @@ class PrevUserTask extends Model
     public function breeding(): BelongsTo
     {
         return $this->belongsTo(PrevBreeding::class, 'related_breeding_process_id', 'id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

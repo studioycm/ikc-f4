@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevDogImport extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     protected $connection = 'mysql_prev';
@@ -50,5 +53,11 @@ class PrevDogImport extends Model
     public function color(): BelongsTo
     {
         return $this->belongsTo(PrevColor::class, 'dog_hair_color', 'OldCode');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

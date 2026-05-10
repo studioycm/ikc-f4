@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevJudge extends Model
 {
+    use LogsActivity;
+
     protected $connection = 'mysql_prev';
 
     public $timestamps = false;
@@ -35,7 +39,7 @@ class PrevJudge extends Model
     protected function judgedBreedsAmount(): Attribute
     {
         return Attribute::make(
-            get: fn(): int => $this->showBreeds()->count('RaceID')
+            get: fn (): int => $this->showBreeds()->count('RaceID')
         );
     }
 
@@ -124,5 +128,11 @@ class PrevJudge extends Model
             ->using(PrevShowBreed::class)
             ->as('show_breed')
             ->withPivot('RaceID', 'OrderID', 'ArenaID');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

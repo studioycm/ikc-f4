@@ -55,8 +55,6 @@ class BreedingInquiryResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
-    protected static ?string $navigationLabel = 'Breeding Inquiry';
-
     public static function getNavigationLabel(): string
     {
         return __('New Litters');

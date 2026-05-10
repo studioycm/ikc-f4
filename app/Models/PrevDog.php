@@ -18,9 +18,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevDog extends Model implements HasName
 {
+    use LogsActivity;
     use SoftDeletes;
 
     /**
@@ -249,8 +252,8 @@ class PrevDog extends Model implements HasName
     {
         return Attribute::make(
             get: function (): string {
-                $heb = (($v = trim((string)($this->Heb_Name ?? ''))) !== '') ? $v : null;
-                $eng = (($v = trim((string)($this->Eng_Name ?? ''))) !== '') ? $v : null;
+                $heb = (($v = trim((string) ($this->Heb_Name ?? ''))) !== '') ? $v : null;
+                $eng = (($v = trim((string) ($this->Eng_Name ?? ''))) !== '') ? $v : null;
 
                 if ($heb === null && $eng === null) {
                     return '---';
@@ -270,7 +273,7 @@ class PrevDog extends Model implements HasName
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->full_name
+            get: fn () => $this->full_name
         );
     }
 
@@ -285,7 +288,7 @@ class PrevDog extends Model implements HasName
     protected function breedingHouseName(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->breedinghouse?->name ?? '---'
+            get: fn () => $this->breedinghouse?->name ?? '---'
         );
     }
 
@@ -293,14 +296,14 @@ class PrevDog extends Model implements HasName
     public function genderLabel(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->GenderID->getLabel()
+            get: fn (): string => $this->GenderID->getLabel()
         );
     }
 
     public function sizeLabel(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->SizeID->getLabel()
+            get: fn (): string => $this->SizeID->getLabel()
         );
     }
 
@@ -319,7 +322,7 @@ class PrevDog extends Model implements HasName
                     return null;
                 }
 
-                $totalMonths = (int)$birth->diffInMonths($now);
+                $totalMonths = (int) $birth->diffInMonths($now);
                 $years = intdiv($totalMonths, 12);
                 $months = $totalMonths % 12;
 
@@ -333,7 +336,7 @@ class PrevDog extends Model implements HasName
         return Attribute::make(
             get: function (): int {
                 if (array_key_exists('female_breedings_count', $this->attributes)) {
-                    return (int)$this->attributes['female_breedings_count'];
+                    return (int) $this->attributes['female_breedings_count'];
                 }
 
                 if ($this->relationLoaded('femaleBreedings')) {
@@ -352,7 +355,7 @@ class PrevDog extends Model implements HasName
         return Attribute::make(
             get: function (): int {
                 if (array_key_exists('male_breedings_count', $this->attributes)) {
-                    return (int)$this->attributes['male_breedings_count'];
+                    return (int) $this->attributes['male_breedings_count'];
                 }
 
                 if ($this->relationLoaded('maleBreedings')) {
@@ -448,7 +451,7 @@ class PrevDog extends Model implements HasName
      */
     public function ageInMonths(): ?int
     {
-        if (!$this->BirthDate) {
+        if (! $this->BirthDate) {
             return null;
         }
 
@@ -460,7 +463,7 @@ class PrevDog extends Model implements HasName
             return null;
         }
 
-        return (int)$birth->diffInMonths(now());
+        return (int) $birth->diffInMonths(now());
     }
 
     /**
@@ -468,7 +471,7 @@ class PrevDog extends Model implements HasName
      */
     public function breedingCount(?string $role = null): ?int
     {
-        $resolvedRole = $role ?? match ((int)($this->GenderID?->value ?? $this->GenderID)) {
+        $resolvedRole = $role ?? match ((int) ($this->GenderID?->value ?? $this->GenderID)) {
             2 => 'female',
             1 => 'male',
             default => null,
@@ -531,7 +534,7 @@ class PrevDog extends Model implements HasName
         $this->loadMissing('owners');
 
         return $this->owners
-            ->filter(fn($owner) => $prevUserId === null || (int)$owner->id !== (int)$prevUserId)
+            ->filter(fn ($owner) => $prevUserId === null || (int) $owner->id !== (int) $prevUserId)
             ->values();
     }
 
@@ -542,7 +545,7 @@ class PrevDog extends Model implements HasName
     public function scopeWithBreedName(Builder $query): void
     {
         $query->leftJoin('BreedsDB', 'DogsDB.RaceID', '=', 'BreedsDB.BreedCode') // <-- The join now uses BreedCode
-        ->select('DogsDB.*', 'BreedsDB.BreedName as breed_name');
+            ->select('DogsDB.*', 'BreedsDB.BreedName as breed_name');
     }
 
     /**
@@ -553,7 +556,7 @@ class PrevDog extends Model implements HasName
     {
         return Attribute::make(
             get: function (): string {
-                $idPart = $this->sagir_prefix?->code() . '-' . $this->SagirID . ' | ' . ($this->ImportNumber ?: __('w/o Imp'));
+                $idPart = $this->sagir_prefix?->code().'-'.$this->SagirID.' | '.($this->ImportNumber ?: __('w/o Imp'));
                 $namePart = $this->full_name;
 
                 // This uses the 'breed_name' attribute from the join and does NOT trigger a new query.
@@ -582,7 +585,7 @@ class PrevDog extends Model implements HasName
         });
     }
 
-// Helper to keep logic dry
+    // Helper to keep logic dry
     protected function getNamesFromCollection($users): array
     {
         return $users
@@ -593,4 +596,10 @@ class PrevDog extends Model implements HasName
             ->all();
     }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()
+            ->logOnlyDirty();
+    }
 }

@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevShowBreed extends Model
 {
+    use LogsActivity;
+
     protected $connection = 'mysql_prev';
 
     public $timestamps = false;
@@ -48,28 +52,28 @@ class PrevShowBreed extends Model
     {
         // efficient way to get the name of the judge name only
         return Attribute::make(
-            get: fn($value) => $this->judge?->JudgeNameHE ?? '-',
+            get: fn ($value) => $this->judge?->JudgeNameHE ?? '-',
         );
     }
 
     protected function judgeEnName(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $this->judge?->JudgeNameEN ?? '-',
+            get: fn ($value) => $this->judge?->JudgeNameEN ?? '-',
         );
     }
 
     protected function breedHeName(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $this->breed?->BreedName ?? '-',
+            get: fn ($value) => $this->breed?->BreedName ?? '-',
         );
     }
 
     protected function breedEnName(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $this->breed?->BreedNameEN ?? '-',
+            get: fn ($value) => $this->breed?->BreedNameEN ?? '-',
         );
     }
 
@@ -102,5 +106,11 @@ class PrevShowBreed extends Model
     public function showDogs(): HasMany
     {
         return $this->hasMany(PrevShowDog::class, 'BreedID', 'DataID');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

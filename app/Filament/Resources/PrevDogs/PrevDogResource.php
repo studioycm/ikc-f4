@@ -309,11 +309,11 @@ class PrevDogResource extends Resource
                                             ->closeOnDateSelection(),
                                         Select::make('BeitGidulID')
                                             ->label(__('Beit Gidul'))
-                                            ->relationship('breedinghouse', 'GidulCode')
+                                            ->relationship('breedinghouse', 'HebName')
                                             ->searchable(['breedinghouses.HebName', 'breedinghouses.EngName', 'GidulCode'])
                                             ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->name)
                                             ->preload()
-                                            ->optionsLimit(25),
+                                            ->optionsLimit(50),
                                         TextInput::make('BeitGidulName')
                                             ->label(__('Beit Gidul Name (pre 2022)'))
                                             ->maxLength(200),

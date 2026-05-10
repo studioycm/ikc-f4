@@ -6,9 +6,12 @@ use App\Enums\BreedingInquiryStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class BreedingInquiry extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     protected $guarded = [];
@@ -48,5 +51,11 @@ class BreedingInquiry extends Model
     public function breeder(): BelongsTo
     {
         return $this->belongsTo(PrevUser::class, 'prev_breeder_id', 'id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

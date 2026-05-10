@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevUserDog extends Pivot
 {
+    use LogsActivity;
     use SoftDeletes;
 
     /**
@@ -42,5 +45,11 @@ class PrevUserDog extends Pivot
     public function oldOwner(): BelongsTo
     {
         return $this->belongsTo(PrevUser::class, 'user_id', 'id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

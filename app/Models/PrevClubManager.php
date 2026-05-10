@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevClubManager extends Pivot
 {
+    use LogsActivity;
+
     protected $connection = 'mysql_prev';
 
     protected $table = 'user_club_manager';
@@ -31,5 +35,11 @@ class PrevClubManager extends Pivot
     public function user(): BelongsTo
     {
         return $this->belongsTo(PrevUser::class, 'user_id', 'id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

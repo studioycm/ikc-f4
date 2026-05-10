@@ -15,10 +15,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 #[UseEloquentBuilder(PrevUserBuilder::class)]
 class PrevUser extends Model implements HasName
 {
+    use LogsActivity;
     use Notifiable;
     use SoftDeletes;
 
@@ -269,7 +272,7 @@ class PrevUser extends Model implements HasName
     protected function searchLabel(): Attribute
     {
         return Attribute::make(
-            get: fn() => collect([$this->full_name, $this->normalised_phone, $this->email, "({$this->id})"])
+            get: fn () => collect([$this->full_name, $this->normalised_phone, $this->email, "({$this->id})"])
                 ->filter()
                 ->join(' | ')
         );
@@ -392,20 +395,20 @@ class PrevUser extends Model implements HasName
     public function address(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->addressArray(),
+            get: fn () => $this->addressArray(),
         );
     }
 
     public function fullAddress(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->buildAddress(),
+            get: fn () => $this->buildAddress(),
         );
     }
 
     public function buildAddress(): string
     {
-        $short_address = array_filter($this->addressArray(), fn($value) => !empty($value));
+        $short_address = array_filter($this->addressArray(), fn ($value) => ! empty($value));
 
         return implode(', ', $short_address);
     }
@@ -415,12 +418,18 @@ class PrevUser extends Model implements HasName
 
         return [
             'city' => $this->address_city,
-//            'city_en' => $this->address_city_en,
+            //            'city_en' => $this->address_city_en,
             'street' => $this->address_street,
-//            'street_en' => $this->address_street_en,
+            //            'street_en' => $this->address_street_en,
             'street_number' => $this->address_street_number,
             'house_number' => $this->house_number,
             'zip' => $this->address_zip,
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

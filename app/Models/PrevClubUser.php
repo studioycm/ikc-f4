@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevClubUser extends Pivot
 {
+    use LogsActivity;
     use SoftDeletes;
 
     protected $connection = 'mysql_prev';
@@ -120,6 +123,7 @@ class PrevClubUser extends Pivot
         return Attribute::make(
             get: function ($value, $attributes): string {
                 $type = $attributes['type'] ?? '';
+
                 return match (strtolower($type)) {
                     'main' => __('Main'),
                     'sub' => __('Sub'),
@@ -155,7 +159,7 @@ class PrevClubUser extends Pivot
      */
     public function daysUntilExpiration(): ?int
     {
-        if (!$this->expire_date) {
+        if (! $this->expire_date) {
             return null;
         }
 
@@ -167,7 +171,7 @@ class PrevClubUser extends Pivot
      */
     public function daysUntilExpirationAbs(): ?int
     {
-        if (!$this->expire_date) {
+        if (! $this->expire_date) {
             return null;
         }
 
@@ -195,7 +199,7 @@ class PrevClubUser extends Pivot
     {
         return Attribute::make(
             get: function (): string {
-                if (!$this->expire_date) {
+                if (! $this->expire_date) {
                     return __('No expiration date');
                 }
 
@@ -212,7 +216,7 @@ class PrevClubUser extends Pivot
                     return __('Expires today');
                 } else {
                     // Past date - expired
-                    return __('Expired') . ' ' . $this->expire_date->diffForHumans(['parts' => 1, 'short' => false]);
+                    return __('Expired').' '.$this->expire_date->diffForHumans(['parts' => 1, 'short' => false]);
                 }
             }
         );
@@ -242,5 +246,11 @@ class PrevClubUser extends Pivot
 
         // All good
         return 'success';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

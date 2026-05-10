@@ -7,12 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevTitle extends Model
 {
+    use LogsActivity;
+
     protected $primaryKey = 'TitleCode';
+
     public $incrementing = false;
+
     protected $keyType = 'int';
+
     use SoftDeletes;
 
     /**
@@ -60,5 +67,11 @@ class PrevTitle extends Model
         return Attribute::make(
             get: fn ($value, $attributes) => $this->TitleName,
         );
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

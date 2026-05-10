@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevSkill extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     public const array GROUPS = [
@@ -57,5 +60,11 @@ class PrevSkill extends Model
             ->using(PrevSkillUser::class)
             ->withPivot('id', 'club_id', 'breed_id', 'created_at', 'updated_at', 'deleted_at')
             ->wherePivotNull('deleted_at');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

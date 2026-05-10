@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "306f33a0fdd84e2e026de009e0f6954c",
+    "content-hash": "1223f453564e8a386453b19585d2d5bb",
     "packages": [
         {
             "name": "awobaz/compoships",
@@ -11185,16 +11185,16 @@
         },
         {
             "name": "laravel/agent-detector",
-            "version": "v1.1.4",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/agent-detector.git",
-                "reference": "7719ba7ebbed18911494467139c389549ed53467"
+                "reference": "90694b9256099591cf9e55d08c18ba7a00bf099f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/agent-detector/zipball/7719ba7ebbed18911494467139c389549ed53467",
-                "reference": "7719ba7ebbed18911494467139c389549ed53467",
+                "url": "https://api.github.com/repos/laravel/agent-detector/zipball/90694b9256099591cf9e55d08c18ba7a00bf099f",
+                "reference": "90694b9256099591cf9e55d08c18ba7a00bf099f",
                 "shasum": ""
             },
             "require": {
@@ -11214,7 +11214,7 @@
                     "src/functions.php"
                 ],
                 "psr-4": {
-                    "AgentDetector\\": "src/"
+                    "Laravel\\AgentDetector\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -11223,11 +11223,12 @@
             ],
             "authors": [
                 {
-                    "name": "Pushpak Chahjed",
-                    "email": "pushpak1300@gmail.com"
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
                 }
             ],
             "description": "Detect if code is running in an AI agent or automated development environment",
+            "homepage": "https://github.com/laravel/agent-detector",
             "keywords": [
                 "Agent",
                 "ai",
@@ -11240,9 +11241,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/agent-detector/issues",
-                "source": "https://github.com/laravel/agent-detector/tree/v1.1.4"
+                "source": "https://github.com/laravel/agent-detector"
             },
-            "time": "2026-04-26T17:43:21+00:00"
+            "time": "2026-04-29T18:32:34+00:00"
         },
         {
             "name": "laravel/boost",
@@ -11462,6 +11463,90 @@
                 "source": "https://github.com/laravel/pail"
             },
             "time": "2026-02-09T13:44:54+00:00"
+        },
+        {
+            "name": "laravel/pao",
+            "version": "v1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/pao.git",
+                "reference": "02f62a64c2b60af44a418ee490fee193590d8269"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/pao/zipball/02f62a64c2b60af44a418ee490fee193590d8269",
+                "reference": "02f62a64c2b60af44a418ee490fee193590d8269",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/agent-detector": "^2.0.0",
+                "php": "^8.3"
+            },
+            "conflict": {
+                "laravel/framework": "<12.0.0",
+                "nunomaduro/collision": "<8.9.3",
+                "pestphp/pest": "<4.6.3 || >=6.0.0",
+                "phpunit/phpunit": "<12.5.23 || >=13.0.0 <13.1.7 || >=14.0.0"
+            },
+            "require-dev": {
+                "brianium/paratest": "^7.20.0",
+                "laravel/pint": "^1.29.1",
+                "orchestra/testbench": "^10.11.0 || ^11.1.0",
+                "pestphp/pest": "^4.6.3 || ^5.0.0",
+                "pestphp/pest-plugin-type-coverage": "^4.0.4 || ^5.0.0",
+                "phpstan/phpstan": "^2.1.51",
+                "rector/rector": "^2.4.2",
+                "symfony/process": "^7.4.8 || ^8.1.0",
+                "symfony/var-dumper": "^7.4.8 || ^8.0.8"
+            },
+            "type": "library",
+            "extra": {
+                "pest": {
+                    "plugins": [
+                        "Laravel\\Pao\\Drivers\\Pest\\Plugin"
+                    ]
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Pao\\Laravel\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Autoload.php"
+                ],
+                "psr-4": {
+                    "Laravel\\Pao\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Agent-optimized output for PHP testing tools",
+            "keywords": [
+                "Agent",
+                "PHPStan",
+                "ai",
+                "dev",
+                "paratest",
+                "pest",
+                "php",
+                "phpunit",
+                "testing"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/pao/issues",
+                "source": "https://github.com/laravel/pao"
+            },
+            "time": "2026-04-27T22:37:26+00:00"
         },
         {
             "name": "laravel/pint",
@@ -11727,15 +11812,15 @@
         },
         {
             "name": "laraveldaily/filacheck-pro",
-            "version": "v1.2.3",
+            "version": "v1.2.4",
             "dist": {
                 "type": "zip",
-                "url": "https://satis.filamentexamples.com/dist/laraveldaily/filacheck-pro/laraveldaily-filacheck-pro-7036a290ef7669fa459807e920dc4e6325cc986a-zip-230ab5.zip",
-                "reference": "7036a290ef7669fa459807e920dc4e6325cc986a",
-                "shasum": "df651632f03e22f25a45cd5c973fd47b9b762d90"
+                "url": "https://satis.filamentexamples.com/dist/laraveldaily/filacheck-pro/laraveldaily-filacheck-pro-b9c77a3b1b0ce2f1e75fab18f695bf12f5f9df9b-zip-9cd36c.zip",
+                "reference": "b9c77a3b1b0ce2f1e75fab18f695bf12f5f9df9b",
+                "shasum": "57c5fe224f32050c635cc4e9a041231caa7e9daa"
             },
             "require": {
-                "laravel/agent-detector": "^1.1",
+                "laravel/agent-detector": "^2.0",
                 "laraveldaily/filacheck": "^1.0",
                 "php": "^8.2"
             },
@@ -11781,10 +11866,10 @@
                 "static-analysis"
             ],
             "support": {
-                "source": "https://github.com/LaravelDaily/FilaCheck-Pro/tree/v1.2.3",
+                "source": "https://github.com/LaravelDaily/FilaCheck-Pro/tree/v1.2.4",
                 "issues": "https://github.com/LaravelDaily/FilaCheck-Pro/issues"
             },
-            "time": "2026-05-04T15:03:01+00:00"
+            "time": "2026-05-08T12:33:59+00:00"
         },
         {
             "name": "mockery/mockery",

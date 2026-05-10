@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevShowArena extends Model
 {
+    use LogsActivity;
+
     protected $connection = 'mysql_prev';
 
     /**
@@ -74,5 +78,11 @@ class PrevShowArena extends Model
         return $this->hasMany(PrevShowDog::class, 'ArenaID', 'id')
             ->orderBy('OrderID')
             ->with(['dog']);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

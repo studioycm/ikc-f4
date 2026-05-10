@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevUserActivity extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     protected $connection = 'mysql_prev';
@@ -37,5 +40,11 @@ class PrevUserActivity extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(PrevUser::class, 'CreatedBy', 'id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

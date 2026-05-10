@@ -6,10 +6,13 @@ use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevShowClass extends Model
 {
     use Compoships;
+    use LogsActivity;
 
     protected $connection = 'mysql_prev';
 
@@ -65,5 +68,11 @@ class PrevShowClass extends Model
     public function showDogs(): HasMany
     {
         return $this->hasMany(PrevShowDog::class, ['ClassID', 'ShowID'], ['DataID', 'ShowID']);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

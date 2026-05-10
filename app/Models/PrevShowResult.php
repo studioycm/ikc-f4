@@ -8,10 +8,13 @@ use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevShowResult extends Model
 {
     use Compoships;
+    use LogsActivity;
 
     protected $connection = 'mysql_prev';
 
@@ -21,11 +24,11 @@ class PrevShowResult extends Model
      * @var string
      */
     protected $table = 'shows_results';
+
     protected $primaryKey = 'DataID';
 
     // disable fillable attributes
     protected $guarded = [];
-
 
     public $incrementing = true;
 
@@ -182,29 +185,29 @@ class PrevShowResult extends Model
     protected function dogName(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->resultDog?->full_name
+            get: fn () => $this->resultDog?->full_name
         );
     }
 
     protected function breedName(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->breed?->BreedName ?? null
+            get: fn () => $this->breed?->BreedName ?? null
         );
     }
 
     protected function breedNameEn(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->breed?->BreedNameEN ?? null
+            get: fn () => $this->breed?->BreedNameEN ?? null
         );
     }
 
     protected function showOrderID(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->showDog->OrderID ?? null,
-            set: fn($value) => $this->attributes['ShowOrderID'] = $value,
+            get: fn () => $this->showDog->OrderID ?? null,
+            set: fn ($value) => $this->attributes['ShowOrderID'] = $value,
         );
     }
 
@@ -212,14 +215,14 @@ class PrevShowResult extends Model
     protected function titlesList(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->filterActiveNames(self::TITLE_COLUMNS)
+            get: fn () => $this->filterActiveNames(self::TITLE_COLUMNS)
         );
     }
 
     protected function resultsList(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->filterActiveNames(self::RESULT_COLUMNS)
+            get: fn () => $this->filterActiveNames(self::RESULT_COLUMNS)
         );
     }
 
@@ -227,14 +230,14 @@ class PrevShowResult extends Model
     protected function titlesLabels(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->filterActiveLabels(self::TITLE_COLUMNS)
+            get: fn () => $this->filterActiveLabels(self::TITLE_COLUMNS)
         );
     }
 
     protected function resultsLabels(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->filterActiveLabels(self::RESULT_COLUMNS)
+            get: fn () => $this->filterActiveLabels(self::RESULT_COLUMNS)
         );
     }
 
@@ -242,14 +245,14 @@ class PrevShowResult extends Model
     protected function titlesWithMeta(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->filterActiveMeta(self::TITLE_COLUMNS)
+            get: fn () => $this->filterActiveMeta(self::TITLE_COLUMNS)
         );
     }
 
     protected function resultsWithMeta(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->filterActiveMeta(self::RESULT_COLUMNS)
+            get: fn () => $this->filterActiveMeta(self::RESULT_COLUMNS)
         );
     }
 
@@ -262,6 +265,7 @@ class PrevShowResult extends Model
                 $out[] = $col;
             }
         }
+
         return $out;
     }
 
@@ -273,6 +277,7 @@ class PrevShowResult extends Model
                 $out[] = $cfg['label'] ?? $col;
             }
         }
+
         return $out;
     }
 
@@ -289,6 +294,7 @@ class PrevShowResult extends Model
                 ];
             }
         }
+
         return $out;
     }
 
@@ -357,5 +363,9 @@ class PrevShowResult extends Model
             ->select(['BreedCode', 'BreedName', 'BreedNameEN']);
     }
 
-
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
+    }
 }

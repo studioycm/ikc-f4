@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevBreedingHouse extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     /**
@@ -52,11 +55,11 @@ class PrevBreedingHouse extends Model
     {
         return Attribute::make(
             get: function () {
-                $heb = trim((string)($this->attributes['HebName'] ?? ''));
-                $eng = trim((string)($this->attributes['EngName'] ?? ''));
+                $heb = trim((string) ($this->attributes['HebName'] ?? ''));
+                $eng = trim((string) ($this->attributes['EngName'] ?? ''));
 
                 if ($heb !== '' && $eng !== '') {
-                    return $heb . ' | ' . $eng;
+                    return $heb.' | '.$eng;
                 }
 
                 return $heb !== '' ? $heb : ($eng !== '' ? $eng : '---');
@@ -76,5 +79,11 @@ class PrevBreedingHouse extends Model
         return $this->belongsToMany(PrevUser::class, 'breedhouses2users', 'breedinghouse_id', 'user_id', 'id', 'id')
             ->using(PrevBreedingHouseUser::class)
             ->withTimestamps();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

@@ -13,9 +13,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevClub extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     public const array CLUB_STAFF_SKILL_IDS = [5, 7, 8, 10, 11];
@@ -83,11 +86,11 @@ class PrevClub extends Model
     public function promotersQuery(): Builder
     {
         return PrevUser::query()
-            ->whereHas('promotedBreeds.clubs', fn(Builder $query): Builder => $query->where('clubs.id', $this->getKey()))
+            ->whereHas('promotedBreeds.clubs', fn (Builder $query): Builder => $query->where('clubs.id', $this->getKey()))
             ->with([
-                'promotedBreeds' => fn($query) => $query
-                    ->whereHas('clubs', fn(Builder $clubQuery): Builder => $clubQuery->where('clubs.id', $this->getKey())),
-                'skills' => fn($query) => $query->where('skills.id', self::PROMOTER_SKILL_ID),
+                'promotedBreeds' => fn ($query) => $query
+                    ->whereHas('clubs', fn (Builder $clubQuery): Builder => $clubQuery->where('clubs.id', $this->getKey())),
+                'skills' => fn ($query) => $query->where('skills.id', self::PROMOTER_SKILL_ID),
             ]);
     }
 
@@ -99,7 +102,7 @@ class PrevClub extends Model
 
         return $this->promotersQuery()
             ->get()
-            ->map(fn(PrevUser $promoter): PrevUser => $this->decoratePromoterUser($promoter));
+            ->map(fn (PrevUser $promoter): PrevUser => $this->decoratePromoterUser($promoter));
     }
 
     public function payments(): HasMany
@@ -133,7 +136,7 @@ class PrevClub extends Model
         $managers = $this->relationLoaded('managers')
             ? $this->managers
             : $this->managers()->with([
-                'skills' => fn($query) => $query->whereIn('skills.id', self::CLUB_STAFF_SKILL_IDS),
+                'skills' => fn ($query) => $query->whereIn('skills.id', self::CLUB_STAFF_SKILL_IDS),
             ])->get();
 
         return new Collection($managers
@@ -152,7 +155,7 @@ class PrevClub extends Model
         $members = $this->relationLoaded('members')
             ? $this->members
             : $this->members()->with([
-                'skills' => fn($query) => $query->whereIn('skills.id', [...self::CLUB_STAFF_SKILL_IDS, self::PROMOTER_SKILL_ID]),
+                'skills' => fn ($query) => $query->whereIn('skills.id', [...self::CLUB_STAFF_SKILL_IDS, self::PROMOTER_SKILL_ID]),
             ])->get();
 
         $managerIds = $this->managersWithClubTitles()->pluck('id')->all();
@@ -186,7 +189,7 @@ class PrevClub extends Model
             $titles = $titles->merge($this->managerTitleLabelsForUser($user));
         }
 
-        if ($user->promotedBreeds()->whereHas('clubs', fn(Builder $query): Builder => $query->where('clubs.id', $this->getKey()))->exists()) {
+        if ($user->promotedBreeds()->whereHas('clubs', fn (Builder $query): Builder => $query->where('clubs.id', $this->getKey()))->exists()) {
             $titles = $titles->merge($this->promoterTitleLabelsForUser($user));
         }
 
@@ -209,7 +212,7 @@ class PrevClub extends Model
 
         return $skills
             ->whereIn('id', self::CLUB_STAFF_SKILL_IDS)
-            ->map(fn(PrevSkill $skill): ?string => $this->resolveSkillLabel($skill))
+            ->map(fn (PrevSkill $skill): ?string => $this->resolveSkillLabel($skill))
             ->filter()
             ->unique()
             ->values();
@@ -223,7 +226,7 @@ class PrevClub extends Model
 
         $labels = $skills
             ->where('id', self::PROMOTER_SKILL_ID)
-            ->map(fn(PrevSkill $skill): ?string => $this->resolveSkillLabel($skill))
+            ->map(fn (PrevSkill $skill): ?string => $this->resolveSkillLabel($skill))
             ->filter()
             ->unique()
             ->values();
@@ -239,16 +242,16 @@ class PrevClub extends Model
 
     public function contactDirectoryRows(): SupportCollection
     {
-        $managerRows = $this->managersWithClubTitles()->map(fn(PrevUser $user): array => $this->makeDirectoryRow($user, __('Manager')));
+        $managerRows = $this->managersWithClubTitles()->map(fn (PrevUser $user): array => $this->makeDirectoryRow($user, __('Manager')));
 
-        $promoterRows = $this->promoters()->map(fn(PrevUser $user): array => $this->makeDirectoryRow($user, __('Promoter')));
+        $promoterRows = $this->promoters()->map(fn (PrevUser $user): array => $this->makeDirectoryRow($user, __('Promoter')));
 
         return $managerRows
             ->merge($promoterRows)
-            ->unique(fn(array $row): string => implode('|', [
-                (string)Arr::get($row, 'role_type'),
-                (string)Arr::get($row, 'name'),
-                (string)Arr::get($row, 'email'),
+            ->unique(fn (array $row): string => implode('|', [
+                (string) Arr::get($row, 'role_type'),
+                (string) Arr::get($row, 'name'),
+                (string) Arr::get($row, 'email'),
             ]))
             ->values();
     }
@@ -256,7 +259,7 @@ class PrevClub extends Model
     public function emailDirectoryRows(): SupportCollection
     {
         return $this->contactDirectoryRows()
-            ->filter(fn(array $row): bool => filled($row['email'] ?? null))
+            ->filter(fn (array $row): bool => filled($row['email'] ?? null))
             ->values();
     }
 
@@ -270,7 +273,7 @@ class PrevClub extends Model
                     return null;
                 }
 
-                return $user->name . ' — ' . $titles;
+                return $user->name.' — '.$titles;
             })
             ->filter()
             ->values()
@@ -287,7 +290,7 @@ class PrevClub extends Model
                 ])->filter()->join(' • ');
 
                 return filled($suffix)
-                    ? $user->name . ' — ' . $suffix
+                    ? $user->name.' — '.$suffix
                     : $user->name;
             })
             ->values()
@@ -357,15 +360,15 @@ class PrevClub extends Model
                 $promoters = $breed->relationLoaded('promoters')
                     ? $breed->promoters
                     : $breed->promoters()->with([
-                        'skills' => fn($query) => $query->where('skills.id', self::PROMOTER_SKILL_ID),
+                        'skills' => fn ($query) => $query->where('skills.id', self::PROMOTER_SKILL_ID),
                     ])->get();
 
-                return $promoters->map(fn(PrevUser $promoter): array => [
+                return $promoters->map(fn (PrevUser $promoter): array => [
                     'breed' => $breed,
                     'user' => $promoter,
                 ]);
             })
-            ->groupBy(fn(array $row): int => $row['user']->getKey())
+            ->groupBy(fn (array $row): int => $row['user']->getKey())
             ->map(function (SupportCollection $rows): PrevUser {
                 /** @var PrevUser $user */
                 $user = $rows->first()['user'];
@@ -382,7 +385,7 @@ class PrevClub extends Model
         $clubBreeds = $breeds
             ?? ($user->relationLoaded('promotedBreeds')
                 ? $user->promotedBreeds
-                : $user->promotedBreeds()->whereHas('clubs', fn(Builder $query): Builder => $query->where('clubs.id', $this->getKey()))->get());
+                : $user->promotedBreeds()->whereHas('clubs', fn (Builder $query): Builder => $query->where('clubs.id', $this->getKey()))->get());
 
         $decoratedUser = $this->decorateClubUser($user, $this->promoterTitleLabelsForUser($user));
 
@@ -400,16 +403,16 @@ class PrevClub extends Model
         $limit = 5;
         $breedsText = $breedNames
             ->take($limit)
-            ->map(fn(string $name): string => $this->shortenBreedName($name))
+            ->map(fn (string $name): string => $this->shortenBreedName($name))
             ->join(', ');
 
         $extra = $breedNames->count() - $limit;
         if ($extra > 0) {
             $breedsText .= '... '.trans_choice(
-                    '{1} + :count more|[2,*] + :count more',
-                    $extra,
-                    ['count' => $extra],
-                );
+                '{1} + :count more|[2,*] + :count more',
+                $extra,
+                ['count' => $extra],
+            );
         }
 
         $decoratedUser->setAttribute('club_breeds_text', $breedsText);
@@ -533,5 +536,11 @@ class PrevClub extends Model
         foreach ($clubIds as $id) {
             Cache::forget("club:{$id}:breeds_dogs_count_v1");
         }
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

@@ -13,12 +13,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Models\Concerns\HasActivity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasName, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasPanelShield, HasRoles, Notifiable;
+    use HasFactory, HasPanelShield, HasRoles, Notifiable, HasActivity;
+
+//    use LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -63,7 +68,7 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
      * This function verifies if the user has the necessary permissions to access the panel.
      * It checks if the user is logged in and if their role allows access to the panel.
      *
-     * @param Panel $panel The panel object to check access for.
+     * @param  Panel  $panel  The panel object to check access for.
      * @return bool Returns true if the user has access to the panel, false otherwise.
      */
     public function canAccessPanel(Panel $panel): bool
@@ -119,5 +124,11 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
     public function getFilamentName(): string
     {
         return "{$this->name}";
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

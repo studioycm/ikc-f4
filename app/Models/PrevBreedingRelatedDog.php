@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevBreedingRelatedDog extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     /**
@@ -24,9 +27,10 @@ class PrevBreedingRelatedDog extends Model
      */
     protected $table = 'breeding_related_dog';
 
-
     public $timestamps = true;
+
     protected $guarded = [];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -77,11 +81,8 @@ class PrevBreedingRelatedDog extends Model
         return $this->belongsTo(PrevColor::class, 'color', 'id');
     }
 
-
     /**
      * Get the attributes that should be cast.
-     *
-     * @return array
      */
     protected function casts(): array
     {
@@ -92,5 +93,11 @@ class PrevBreedingRelatedDog extends Model
             'hair' => 'integer',
             'is_submit' => 'boolean',
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

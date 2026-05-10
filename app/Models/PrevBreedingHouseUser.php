@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevBreedingHouseUser extends Pivot
 {
+    use LogsActivity;
+
     protected $connection = 'mysql_prev';
 
     protected $table = 'breedhouses2users';
@@ -28,5 +32,11 @@ class PrevBreedingHouseUser extends Pivot
     public function breedingHouse(): BelongsTo
     {
         return $this->belongsTo(PrevBreedingHouse::class, 'breeding_house_id', 'id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

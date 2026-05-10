@@ -11,9 +11,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PrevUserRequest extends Model
 {
+    use LogsActivity;
     use SoftDeletes;
 
     protected $connection = 'mysql_prev';
@@ -89,8 +92,8 @@ class PrevUserRequest extends Model
     protected function status(): Attribute
     {
         return Attribute::make(
-            get: fn() => strtolower($this->attributes['status']),
-            set: fn($value) => Str::title($value),
+            get: fn () => strtolower($this->attributes['status']),
+            set: fn ($value) => Str::title($value),
         );
     }
 
@@ -112,7 +115,7 @@ class PrevUserRequest extends Model
     {
         return Attribute::make(
             get: function () {
-                return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
+                return $this->attributes['first_name'].' '.$this->attributes['last_name'];
             }
         );
     }
@@ -137,5 +140,11 @@ class PrevUserRequest extends Model
         $this->setRelation('resolvedPrevUser', $resolvedPrevUser);
 
         return $resolvedPrevUser;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logUnguarded()->logOnlyDirty();
     }
 }

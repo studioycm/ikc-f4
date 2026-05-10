@@ -7,16 +7,27 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Activity as ActivityLogModel;
 
 class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
@@ -29,7 +40,20 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
 
     protected string $view = 'filament.pages.activity-log';
 
-    protected static ?string $title = 'Activity Log';
+    public static function getNavigationLabel(): string
+    {
+        return __('Activity Log');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Reports Management');
+    }
+
+    public function getTitle(): string
+    {
+        return __('Activity Log');
+    }
 
     protected static ?string $slug = 'activities';
 
@@ -139,7 +163,7 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
                             ->distinct()
                         )
                         ->orderBy('name')
-                        ->get(['id', 'name', 'email'])
+                        ->get(['id', 'name'])
                         ->pluck('name', 'id')
                         ->toArray()
                     )
@@ -155,29 +179,118 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
             ])
             ->recordActions([
                 Action::make('viewProperties')
-                    ->label('View Properties')
-                    ->modalHeading('Properties')
-                    ->modalContent(function (ActivityLogModel $record): HtmlString {
-                        $state = $record->properties;
+                    ->label(__('Details'))
+                    ->icon('heroicon-o-eye')
+                    ->modalHeading(__('Activity Details'))
+                    ->modalWidth('5xl')
+                    ->schema(function (ActivityLogModel $record): array {
 
-                        if (empty($state)) {
-                            return new HtmlString('<div class="text-gray-500">N/A</div>');
-                        }
+                        // HELPER: recursively convert nested arrays to strings
+                        $formatValue = function ($value) {
+                            if (is_array($value) || is_object($value)) {
+                                return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                            }
+                            return (string) $value;
+                        };
 
-                        $properties = is_string($state) ? json_decode($state, true) : $state;
-                        if ($properties === null && json_last_error() !== JSON_ERROR_NONE) {
-                            $properties = $state;
-                        }
+                        // 1. Get Raw Data (Spatie v5)
+                        $changes = $record->attribute_changes ?? [];
 
-                        $json = json_encode($properties, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                        // 2. Process "Old" and "New" to ensure they are flat text arrays
+                        $old = collect($changes['old'] ?? [])
+                            ->map($formatValue)
+                            ->toArray();
 
-                        return new HtmlString('<div class="text-sm whitespace-pre-wrap font-mono">'.e((string) $json).'</div>');
+                        $new = collect($changes['attributes'] ?? [])
+                            ->map($formatValue)
+                            ->toArray();
+
+                        return [
+                            Grid::make([
+                                'default' => 1,
+                            ])
+                                ->schema([
+                                    // HEADER: Who and When
+                                    Section::make()
+                                        ->schema([
+                                            TextEntry::make('causer.name')
+                                                ->label('User')
+                                                ->icon('heroicon-m-user')
+                                                ->weight(FontWeight::Bold),
+
+                                            TextEntry::make('created_at')
+                                                ->label('Date')
+                                                ->icon('heroicon-m-calendar')
+                                                ->dateTime('d M Y H:i:s'),
+
+                                            TextEntry::make('event')
+                                                ->badge()
+                                                ->color(fn (string $state): string => match ($state) {
+                                                    'created' => 'success',
+                                                    'updated' => 'warning',
+                                                    'deleted' => 'danger',
+                                                    default => 'gray',
+                                                }),
+
+                                            TextEntry::make('')
+                                        ])
+                                        ->columns(3),
+
+                                    Section::make('Data Comparison')
+                                        ->schema([
+                                            RepeatableEntry::make('comparison_table')
+                                                ->hiddenLabel()
+                                                ->state(function () use ($old, $new): array {
+                                                    // Combine keys from both old and new
+                                                    $keys = array_unique(array_merge(array_keys($old), array_keys($new)));
+
+                                                    return collect($keys)->map(fn ($key) => [
+                                                        'attribute' => $key,
+                                                        'old_value' => $old[$key],
+                                                        'new_value' => $new[$key],
+                                                        'changed' => $old[$key] != $new[$key],
+                                                    ])->toArray();
+                                                })
+                                                // Use the v4 table() method for the header labels
+                                                ->table([
+                                                    TableColumn::make('Attribute')
+                                                        ->width('200px'),
+                                                    TableColumn::make('Previous Value'),
+                                                    TableColumn::make('New Value'),
+                                                    TableColumn::make('Changed'),
+                                                ])
+                                                // Match the keys in state to the schema entries
+                                                ->schema([
+                                                    TextEntry::make('attribute')
+                                                        ->weight(FontWeight::Bold),
+
+                                                    TextEntry::make('old_value'),
+
+                                                    TextEntry::make('new_value'),
+
+                                                    IconEntry::make('changed')
+                                                        ->boolean(),
+                                                ])
+                                        ])
+                                        ->collapsible()
+                                        ->visible(fn () => !empty($new) || !empty($old)),
+
+                                    // FOOTER: Metadata (IPs, etc)
+                                    Section::make('Metadata')
+                                        ->schema([
+                                            KeyValueEntry::make('properties')
+                                                ->label('')
+                                                ->state(collect($record->properties)->map($formatValue)->toArray()),
+                                        ])
+                                        ->collapsible()
+                                        ->collapsed(),
+                                ]),
+                        ];
                     })
                     ->modalSubmitAction(false)
-                    ->modalCancelAction(fn (Action $action) => $action->label('Close')->color('primary')),
+                    ->modalCancelAction(fn ($action) => $action->label('Close')->color('primary')),
             ])
             ->defaultSort('created_at', 'desc')
-            ->paginationPageOptions([10, 25, 50, 100])
             ->paginated([100]);
     }
 }
