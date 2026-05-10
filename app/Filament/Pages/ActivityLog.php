@@ -232,7 +232,8 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
                                                     default => 'gray',
                                                 }),
 
-                                            TextEntry::make('')
+                                            TextEntry::make('subject.name')
+                                                ->label(__('filament-activity-log::filament-activity-log.subject_name'))
                                         ])
                                         ->columns(3),
 
