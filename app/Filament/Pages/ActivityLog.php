@@ -77,15 +77,15 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
                     ->placeholder('N/A'),
                 TextColumn::make('subject_name')
                     ->label('Subject')
-                    ->getStateUsing(function (ActivityLogModel $record): ?string {
+                    ->getStateUsing(function (ActivityLogModel $record): null|HtmlString|string {
                         if (! $record->subject_type) {
                             return null;
                         }
 
-                        $subjectType = class_basename($record->subject_type);
+                        $subjectType = new HtmlString('<b>' . Str::title(Str::replace('Prev','', class_basename($record->subject_type))) . '</b>');
 
                         if (! $record->subject) {
-                            return "{$subjectType} ID {$record->subject_id}";
+                            return new HtmlString("{$subjectType} ID {$record->subject_id}");
                         }
 
                         // Resolve the field name from protected/public $activitySubjectName
@@ -97,17 +97,17 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
 
                             $value = $record->subject->getAttribute($fieldName);
                             if (filled($value)) {
-                                return "{$subjectType}: {$value}";
+                                return new HtmlString("{$subjectType}: {$value}");
                             }
                         }
 
                         // Fallback to checking for 'name' property
                         if (isset($record->subject->name)) {
-                            return "{$subjectType}: {$record->subject->name}";
+                            return new HtmlString("{$subjectType}: {$record->subject->name}");
                         }
 
                         // Final fallback
-                        return "{$subjectType} ID {$record->subject_id}";
+                        return new HtmlString("{$subjectType} ID {$record->subject_id}");
                     })
                     ->placeholder('N/A'),
                 TextColumn::make('causer_name')
@@ -231,6 +231,11 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
                                                     'deleted' => 'danger',
                                                     default => 'gray',
                                                 }),
+
+                                            TextEntry::make('subject_type')
+                                                ->label(__('Type'))
+                                                ->badge()
+                                                ->formatStateUsing(fn (string $state): string => Str::title(Str::replace('Prev','', class_basename($state)))),
 
                                             TextEntry::make('subject.name')
                                                 ->label(__('Subject'))
