@@ -72,6 +72,7 @@ class ChildrenRelationManager extends RelationManager
                     ->collapsible()
                     ->column($this->parentColumn()),
             ])
+            ->paginationPageOptions([15, 25, 50, 'all'])
             ->columns([
                 Stack::make([
                     TextColumn::make('SagirID')

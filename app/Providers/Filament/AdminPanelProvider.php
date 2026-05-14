@@ -50,6 +50,7 @@ class AdminPanelProvider extends PanelProvider
             // ->spa()
             ->databaseNotifications()
             // ->databaseNotificationsPolling('60s')
+            ->broadcasting(false)
             ->maxContentWidth(Width::Full)
             ->colors([
                 // 'primary' => Color::hex('#5566aa'),
@@ -104,6 +105,8 @@ class AdminPanelProvider extends PanelProvider
                         'lg' => 3,
                     ]),
             ])
+            ->resourceEditPageRedirect('index')
+            ->resourceCreatePageRedirect('index')
             // ->renderHook(
             //         'panels::footer',
             //         fn (): View => view('filament.components.loading-indicator')
@@ -190,6 +193,31 @@ class AdminPanelProvider extends PanelProvider
             ->globalSearchKeyBindings(['ctrl+k', 'command+k'])
             ->globalSearchDebounce('2000')
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->LazyLoadedDatabaseNotifications();
+            ->LazyLoadedDatabaseNotifications()
+            ->registerErrorNotification(
+                title: __('Unauthorized'),
+                body: __('You are not authorized to access this page.'),
+                statusCode: 401,
+            )
+            ->registerErrorNotification(
+                title: __('Forbidden'),
+                body: __('You do not have permission to perform this action.'),
+                statusCode: 403,
+            )
+            ->registerErrorNotification(
+                title: __('Page not found'),
+                body: __('The page you are looking for does not exist.'),
+                statusCode: 404,
+            )
+            ->registerErrorNotification(
+                title: __('Server Error'),
+                body: __('An unexpected error occurred on the server.'),
+                statusCode: 500,
+            )
+            ->registerErrorNotification(
+                title: __('Service Unavailable'),
+                body: __('The service is currently unavailable. Please try again later.'),
+                statusCode: 503,
+            );
     }
 }

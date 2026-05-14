@@ -40,7 +40,7 @@ class ListPrevDogs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            //            CreateAction::make(),
             //            Actions\Action::make('pedigree')
             //                ->label(__('Manage Pedigree'))
             //                ->icon('heroicon-m-share')
