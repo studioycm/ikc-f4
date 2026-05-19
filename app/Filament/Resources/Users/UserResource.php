@@ -92,6 +92,7 @@ class UserResource extends Resource
                     ->nullable()
                     ->placeholder(__('—'))
                     ->searchable()
+//                    ->unique()
                     ->getSearchResultsUsing(fn(string $search): array => PrevUser::selectOptions($search, 50))
                     ->getOptionLabelUsing(function ($value) {
                         if (!$value) {
@@ -103,8 +104,7 @@ class UserResource extends Resource
                             ->select(['id', 'first_name', 'last_name', 'first_name_en', 'last_name_en', 'mobile_phone', 'phone', 'email'])
                             ->find($value)
                             ?->search_label;
-                    })
-                    ->unique(),
+                    }),
                 DateTimePicker::make('email_verified_at')
                     ->label(__('Verified At'))
                     ->native(false)
