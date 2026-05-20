@@ -58,6 +58,6 @@ class PrevDogTitle extends Pivot
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logUnguarded()->logOnlyDirty();
+            ->logAll()->logOnlyDirty();
     }
 }

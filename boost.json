@@ -6,14 +6,16 @@
         "gemini",
         "junie"
     ],
+    "cloud": false,
     "guidelines": true,
     "mcp": true,
-    "nightwatch_mcp": false,
+    "nightwatch": false,
     "packages": [
         "filament/filament",
         "spatie/laravel-activitylog",
         "filament/blueprint",
-        "laraveldaily/filacheck"
+        "laraveldaily/filacheck",
+        "laraveldaily/filacheck-pro"
     ],
     "sail": false,
     "skills": [

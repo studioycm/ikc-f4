@@ -15,26 +15,35 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use JsonException;
+use JsonSerializable;
 use Spatie\Activitylog\Models\Activity as ActivityLogModel;
+use Stringable;
+use Traversable;
+use UnitEnum;
 
 class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
     use InteractsWithTable;
+
+    private const EMPTY_VALUE_PLACEHOLDER = '—';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -67,49 +76,39 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
                     ->dateTime('M j, H:i')
                     ->sortable(),
                 TextColumn::make('event')
+                    ->label(__('Event'))
                     ->badge()
                     ->color(fn (?string $state): string => match ($state) {
                         'created' => 'success',
                         'updated' => 'warning',
                         'deleted' => 'danger',
+                        'viewed' => 'info',    // Added for page visits
+                        'searched' => 'gray',   // Added for filtered requests
                         default => 'gray',
                     })
                     ->placeholder('N/A'),
+
                 TextColumn::make('subject_name')
-                    ->label('Subject')
-                    ->getStateUsing(function (ActivityLogModel $record): null|HtmlString|string {
-                        if (! $record->subject_type) {
-                            return null;
+                    ->label('Subject / Page')
+                    ->getStateUsing(function (ActivityLogModel $record): string|HtmlString {
+                        // 1. If it's a real Model (User, Order), show the class name
+                        if ($record->subject_type) {
+                            $class = class_basename($record->subject_type);
+                            $name = $record->subject?->name ?? "#{$record->subject_id}";
+
+                            return new HtmlString("<b>{$class}</b>: {$name}");
                         }
 
-                        $subjectType = new HtmlString('<b>' . Str::title(Str::replace('Prev','', class_basename($record->subject_type))) . '</b>');
-
-                        if (! $record->subject) {
-                            return new HtmlString("{$subjectType} ID {$record->subject_id}");
+                        // 2. If it's a Page Visit (subject is null), read our custom property
+                        $page = $record->properties['page'] ?? null;
+                        if ($page) {
+                            return new HtmlString("🖥️ <b>Page:</b> {$page}");
                         }
 
-                        // Resolve the field name from protected/public $activitySubjectName
-                        // and show its attribute
-                        if (property_exists($record->subject, 'activitySubjectName')) {
-                            $fieldName = (function () {
-                                return $this->activitySubjectName;
-                            })->call($record->subject);
-
-                            $value = $record->subject->getAttribute($fieldName);
-                            if (filled($value)) {
-                                return new HtmlString("{$subjectType}: {$value}");
-                            }
-                        }
-
-                        // Fallback to checking for 'name' property
-                        if (isset($record->subject->name)) {
-                            return new HtmlString("{$subjectType}: {$record->subject->name}");
-                        }
-
-                        // Final fallback
-                        return new HtmlString("{$subjectType} ID {$record->subject_id}");
+                        return 'System';
                     })
-                    ->placeholder('N/A'),
+                    ->placeholder('System'),
+
                 TextColumn::make('causer_name')
                     ->label('Causer')
                     ->getStateUsing(function (ActivityLogModel $record): ?string {
@@ -148,11 +147,15 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
                         ->distinct()
                         ->pluck('subject_type')
                         ->filter()
-                        ->mapWithKeys(fn (string $type): array => [$type => class_basename($type)])
+                        ->mapWithKeys(fn (string $type): array => match ($type) {
+                            'filament_page' => [$type => 'Admin Panel View Log'],
+                            default => [$type => class_basename($type)]
+                        })
                         ->toArray()
                     )
                     ->searchable()
                     ->preload(),
+
                 SelectFilter::make('causer_id')
                     ->label('Causer User')
                     ->options(fn (): array => User::query()
@@ -180,116 +183,126 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
             ->recordActions([
                 Action::make('viewProperties')
                     ->label(__('Details'))
-                    ->icon('heroicon-o-eye')
+                    ->icon(Heroicon::OutlinedEye)
                     ->modalHeading(__('Activity Details'))
                     ->modalWidth('5xl')
                     ->schema(function (ActivityLogModel $record): array {
-
-                        // HELPER: recursively convert nested arrays to strings
-                        $formatValue = function ($value) {
-                            if (is_array($value) || is_object($value)) {
-                                return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-                            }
-                            return (string) $value;
-                        };
-
-                        // 1. Get Raw Data (Spatie v5)
-                        $changes = $record->attribute_changes ?? [];
-
-                        // 2. Process "Old" and "New" to ensure they are flat text arrays
-                        $old = collect($changes['old'] ?? [])
-                            ->map($formatValue)
-                            ->toArray();
-
-                        $new = collect($changes['attributes'] ?? [])
-                            ->map($formatValue)
-                            ->toArray();
+                        $activityDetails = self::prepareActivityDetails($record);
 
                         return [
-                            Grid::make([
-                                'default' => 1,
-                            ])
+                            Grid::make(['default' => 1])
                                 ->schema([
-                                    // HEADER: Who and When
+                                    // HEADER: Who, When, Subject
                                     Section::make()
                                         ->schema([
                                             TextEntry::make('causer.name')
                                                 ->label('User')
-                                                ->icon('heroicon-m-user')
+                                                ->icon(Heroicon::User)
                                                 ->weight(FontWeight::Bold),
 
                                             TextEntry::make('created_at')
                                                 ->label('Date')
-                                                ->icon('heroicon-m-calendar')
+                                                ->icon(Heroicon::Calendar)
                                                 ->dateTime('d M Y H:i:s'),
 
                                             TextEntry::make('event')
                                                 ->badge()
-                                                ->color(fn (string $state): string => match ($state) {
+                                                ->color(fn (?string $state): string => match ($state) {
                                                     'created' => 'success',
                                                     'updated' => 'warning',
                                                     'deleted' => 'danger',
+                                                    'viewed' => 'info',
+                                                    'searched' => 'gray',
                                                     default => 'gray',
                                                 }),
 
                                             TextEntry::make('subject_type')
                                                 ->label(__('Type'))
                                                 ->badge()
-                                                ->formatStateUsing(fn (string $state): string => Str::title(Str::replace('Prev','', class_basename($state)))),
+                                                ->formatStateUsing(function (?string $state): string {
+                                                    if (! $state) {
+                                                        return 'Admin Page';
+                                                    }
+
+                                                    return Str::title(Str::replace('Prev', '', class_basename($state)));
+                                                }),
 
                                             TextEntry::make('subject.name')
                                                 ->label(__('Subject'))
+                                                ->getStateUsing(function () use ($record) {
+                                                    return $record->subject?->name
+                                                        ?? $record->properties['page']
+                                                        ?? $record->properties['virtual_subject_name']
+                                                        ?? 'System';
+                                                }),
                                         ])
-                                        ->columns(3),
+                                        ->columns(5),
 
-                                    Section::make('Data Comparison')
-                                        ->schema([
-                                            RepeatableEntry::make('comparison_table')
-                                                ->hiddenLabel()
-                                                ->state(function () use ($old, $new): array {
-                                                    // Combine keys from both old and new
-                                                    $keys = array_unique(array_merge(array_keys($old), array_keys($new)));
-
-                                                    return collect($keys)->map(fn ($key) => [
-                                                        'attribute' => $key,
-                                                        'old_value' => $old[$key],
-                                                        'new_value' => $new[$key],
-                                                        'changed' => $old[$key] != $new[$key],
-                                                    ])->toArray();
-                                                })
-                                                // Use the v4 table() method for the header labels
-                                                ->table([
-                                                    TableColumn::make('Attribute')
-                                                        ->width('200px'),
-                                                    TableColumn::make('Previous Value'),
-                                                    TableColumn::make('New Value'),
-                                                    TableColumn::make('Changed'),
-                                                ])
-                                                // Match the keys in state to the schema entries
+                                    // BODY TABS: Separates Data differences from advanced Request properties
+                                    Tabs::make('Details')
+                                        ->tabs([
+                                            // TAB 1: Database Changes
+                                            Tab::make('Model Changes')
+                                                ->icon(Heroicon::OutlinedDocumentDuplicate)
+                                                ->visible(fn (): bool => $activityDetails['comparisonRows'] !== [])
                                                 ->schema([
-                                                    TextEntry::make('attribute')
-                                                        ->weight(FontWeight::Bold),
+                                                    RepeatableEntry::make('comparison_table')
+                                                        ->hiddenLabel()
+                                                        ->state($activityDetails['comparisonRows'])
+                                                        ->table([
+                                                            TableColumn::make('Attribute')->width('200px'),
+                                                            TableColumn::make('Previous Value'),
+                                                            TableColumn::make('New Value'),
+                                                            TableColumn::make('Changed'),
+                                                        ])
+                                                        ->schema([
+                                                            TextEntry::make('attribute')->weight(FontWeight::Bold),
 
-                                                    TextEntry::make('old_value'),
+                                                            TextEntry::make('old_value')
+                                                                ->html()
+                                                                ->formatStateUsing(fn (mixed $state): HtmlString => self::renderActivityValue($state)),
 
-                                                    TextEntry::make('new_value'),
+                                                            TextEntry::make('new_value')
+                                                                ->html()
+                                                                ->formatStateUsing(fn (mixed $state): HtmlString => self::renderActivityValue($state)),
 
-                                                    IconEntry::make('changed')
-                                                        ->boolean(),
-                                                ])
-                                        ])
-                                        ->collapsible()
-                                        ->visible(fn () => !empty($new) || !empty($old)),
+                                                            IconEntry::make('changed')->boolean(),
+                                                        ]),
+                                                ]),
 
-                                    // FOOTER: Metadata (IPs, etc)
-                                    Section::make('Metadata')
-                                        ->schema([
-                                            KeyValueEntry::make('properties')
-                                                ->label('')
-                                                ->state(collect($record->properties)->map($formatValue)->toArray()),
-                                        ])
-                                        ->collapsible()
-                                        ->collapsed(),
+                                            // TAB 2: URL Query parameters
+                                            Tab::make('URL Query & Filters')
+                                                ->icon(Heroicon::OutlinedMagnifyingGlass)
+                                                ->visible(fn (): bool => $activityDetails['queryData'] !== [])
+                                                ->schema([
+                                                    TextEntry::make('query_json')
+                                                        ->hiddenLabel()
+                                                        ->html()
+                                                        ->getStateUsing(fn (): string => self::formatActivityValue($activityDetails['queryData']))
+                                                        ->formatStateUsing(fn (mixed $state): HtmlString => self::renderActivityValue($state)),
+                                                ]),
+
+                                            // TAB 3: Post Form Submissions
+                                            Tab::make('Request Payload')
+                                                ->icon(Heroicon::OutlinedArrowUpTray)
+                                                ->visible(fn (): bool => $activityDetails['payloadData'] !== [])
+                                                ->schema([
+                                                    TextEntry::make('payload_json')
+                                                        ->hiddenLabel()
+                                                        ->html()
+                                                        ->getStateUsing(fn (): string => self::formatActivityValue($activityDetails['payloadData']))
+                                                        ->formatStateUsing(fn (mixed $state): HtmlString => self::renderActivityValue($state)),
+                                                ]),
+
+                                            // TAB 4: General Request Metadata
+                                            Tab::make('Network Metadata')
+                                                ->icon(Heroicon::OutlinedComputerDesktop)
+                                                ->schema([
+                                                    KeyValueEntry::make('properties')
+                                                        ->hiddenLabel()
+                                                        ->state($activityDetails['baseProperties']),
+                                                ]),
+                                        ]),
                                 ]),
                         ];
                     })
@@ -298,5 +311,167 @@ class ActivityLog extends Page implements HasActions, HasSchemas, HasTable
             ])
             ->defaultSort('created_at', 'desc')
             ->paginated([100]);
+    }
+
+    /**
+     * @return array{
+     *     comparisonRows: list<array{attribute: string, old_value: string, new_value: string, changed: bool}>,
+     *     baseProperties: array<string, string>,
+     *     queryData: array<string, mixed>,
+     *     payloadData: array<string, mixed>
+     * }
+     */
+    protected static function prepareActivityDetails(ActivityLogModel $record): array
+    {
+        $changes = self::arrayFromLogValue($record->attribute_changes);
+        $properties = self::arrayFromLogValue($record->properties);
+
+        $oldValues = self::formatActivityValues($changes['old'] ?? []);
+        $newValues = self::formatActivityValues($changes['attributes'] ?? []);
+
+        return [
+            'comparisonRows' => self::makeAttributeComparisonRows($oldValues, $newValues),
+            'baseProperties' => self::formatActivityValues(Arr::except($properties, [
+                'query',
+                'payload',
+                'virtual_subject_name',
+                'page',
+            ])),
+            'queryData' => self::arrayFromLogValue($properties['query'] ?? []),
+            'payloadData' => self::arrayFromLogValue($properties['payload'] ?? []),
+        ];
+    }
+
+    /**
+     * @param  array<string|int, string>  $oldValues
+     * @param  array<string|int, string>  $newValues
+     * @return list<array{attribute: string, old_value: string, new_value: string, changed: bool}>
+     */
+    protected static function makeAttributeComparisonRows(array $oldValues, array $newValues): array
+    {
+        $keys = array_unique(array_merge(array_keys($oldValues), array_keys($newValues)));
+
+        return collect($keys)
+            ->map(fn (string|int $key): array => [
+                'attribute' => (string) $key,
+                'old_value' => $oldValues[$key] ?? self::EMPTY_VALUE_PLACEHOLDER,
+                'new_value' => $newValues[$key] ?? self::EMPTY_VALUE_PLACEHOLDER,
+                'changed' => ($oldValues[$key] ?? self::EMPTY_VALUE_PLACEHOLDER) !== ($newValues[$key] ?? self::EMPTY_VALUE_PLACEHOLDER),
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array<string|int, string>
+     */
+    protected static function formatActivityValues(mixed $values): array
+    {
+        return collect(self::arrayFromLogValue($values))
+            ->map(fn (mixed $value): string => self::formatActivityValue($value))
+            ->all();
+    }
+
+    protected static function formatActivityValue(mixed $value): string
+    {
+        if ($value === null || $value === '') {
+            return self::EMPTY_VALUE_PLACEHOLDER;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if ($value instanceof BackedEnum) {
+            return (string) $value->value;
+        }
+
+        if ($value instanceof UnitEnum) {
+            return $value->name;
+        }
+
+        if (is_scalar($value) || $value instanceof Stringable) {
+            return (string) $value;
+        }
+
+        if ($value instanceof Arrayable) {
+            return self::formatActivityValue($value->toArray());
+        }
+
+        if ($value instanceof JsonSerializable) {
+            return self::formatActivityValue($value->jsonSerialize());
+        }
+
+        if ($value instanceof Traversable) {
+            return self::formatActivityValue(iterator_to_array($value));
+        }
+
+        if (is_object($value)) {
+            $value = get_object_vars($value);
+        }
+
+        if (is_array($value)) {
+            if ($value === []) {
+                return self::EMPTY_VALUE_PLACEHOLDER;
+            }
+
+            try {
+                return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+                return self::EMPTY_VALUE_PLACEHOLDER;
+            }
+        }
+
+        return self::EMPTY_VALUE_PLACEHOLDER;
+    }
+
+    protected static function renderActivityValue(mixed $state): HtmlString
+    {
+        $value = is_string($state) ? $state : self::formatActivityValue($state);
+
+        if ($value === '' || $value === self::EMPTY_VALUE_PLACEHOLDER) {
+            return new HtmlString('<span class="text-gray-400 font-medium">'.self::EMPTY_VALUE_PLACEHOLDER.'</span>');
+        }
+
+        $escapedValue = e($value);
+
+        if (self::isJsonValue($value)) {
+            return new HtmlString("<pre class='max-w-full overflow-x-auto rounded border border-gray-200 bg-gray-50 p-2 text-left text-xs whitespace-pre-wrap text-gray-800 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200'><code>{$escapedValue}</code></pre>");
+        }
+
+        return new HtmlString("<span class='text-sm font-medium text-gray-900 dark:text-gray-100'>{$escapedValue}</span>");
+    }
+
+    protected static function isJsonValue(string $value): bool
+    {
+        $value = trim($value);
+
+        return $value !== ''
+            && Str::startsWith($value, ['{', '['])
+            && json_validate($value);
+    }
+
+    /**
+     * @return array<string|int, mixed>
+     */
+    protected static function arrayFromLogValue(mixed $value): array
+    {
+        if ($value instanceof Arrayable) {
+            return $value->toArray();
+        }
+
+        if ($value instanceof JsonSerializable) {
+            $value = $value->jsonSerialize();
+        }
+
+        if ($value instanceof Traversable) {
+            return iterator_to_array($value);
+        }
+
+        if (is_object($value)) {
+            return get_object_vars($value);
+        }
+
+        return is_array($value) ? $value : [];
     }
 }

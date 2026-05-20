@@ -21,9 +21,9 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, HasName, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasPanelShield, HasRoles, Notifiable, HasActivity;
+    use HasActivity, HasFactory, HasPanelShield, HasRoles, Notifiable;
 
-//    use LogsActivity;
+    //    use LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -129,6 +129,6 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logUnguarded()->logOnlyDirty();
+            ->logAll()->logOnlyDirty();
     }
 }

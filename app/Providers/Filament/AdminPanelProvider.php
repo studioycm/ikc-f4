@@ -2,11 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Actions\Action;
-use Filament\Support\Enums\Width;
-use Filament\Widgets\AccountWidget;
 use App\Filament\User\Pages\Dashboard as UserDashboard;
+use App\Http\Middleware\LogFilamentActivity;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Actions\Action;
 use Filament\FontProviders\GoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -18,7 +17,8 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
+use Filament\Support\Enums\Width;
+use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -81,10 +81,11 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                LogFilamentActivity::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
-                RoleMiddleware::class . ':super_admin|admin',
+                RoleMiddleware::class.':super_admin|admin',
             ])
             ->plugins([
                 FilamentShieldPlugin::make()
@@ -114,10 +115,10 @@ class AdminPanelProvider extends PanelProvider
             // )
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label(fn(): string => __('dog/model/general.labels.navigation_group'))
+                    ->label(fn (): string => __('dog/model/general.labels.navigation_group'))
                     ->icon('fas-dog'),
                 NavigationGroup::make()
-                    ->label(fn(): string => __('Users Management'))
+                    ->label(fn (): string => __('Users Management'))
                     ->icon('fas-user'),
                 NavigationGroup::make()
                     ->label(fn (): string => __('Shows Management'))
@@ -129,10 +130,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label(fn (): string => __('Clubs Management'))
                     ->icon('heroicon-o-flag'),
                 NavigationGroup::make()
-                    ->label(fn(): string => __('dog/kennel/general.labels.navigation_group'))
+                    ->label(fn (): string => __('dog/kennel/general.labels.navigation_group'))
                     ->icon('heroicon-o-home'),
                 NavigationGroup::make()
-                    ->label(fn(): string => __('Actions and Tasks'))
+                    ->label(fn (): string => __('Actions and Tasks'))
                     ->icon('heroicon-o-credit-card'),
                 NavigationGroup::make()
                     ->label(fn (): string => __('Finances Management'))
@@ -147,7 +148,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label(fn (): string => __('Reports Management'))
                     ->icon('heroicon-o-presentation-chart-line'),
                 NavigationGroup::make()
-                    ->label(fn(): string => __('Legacy Management'))
+                    ->label(fn (): string => __('Legacy Management'))
                     ->icon('fas-cog'),
                 NavigationGroup::make()
                     ->label(fn (): string => __('Authorisation Management'))
@@ -155,8 +156,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 Action::make('user_panel')
-                    ->label(fn(): string => __('User Panel'))
-                    ->url(fn() => UserDashboard::getUrl(panel: 'user'))
+                    ->label(fn (): string => __('User Panel'))
+                    ->url(fn () => UserDashboard::getUrl(panel: 'user'))
                     ->icon('fas-house-user')
                     ->sort(1),
             ])

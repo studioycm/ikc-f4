@@ -366,6 +366,6 @@ class PrevShowResult extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logUnguarded()->logOnlyDirty();
+            ->logAll()->logOnlyDirty();
     }
 }

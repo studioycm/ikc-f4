@@ -599,7 +599,6 @@ class PrevDog extends Model implements HasName
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logUnguarded()
-            ->logOnlyDirty();
+            ->logAll()->logOnlyDirty();
     }
 }
