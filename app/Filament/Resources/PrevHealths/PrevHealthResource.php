@@ -22,6 +22,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -98,10 +99,18 @@ class PrevHealthResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('dog'))
+            ->defaultSort('DataID', 'desc')
             ->columns([
-                TextColumn::make('DataID'),
+                TextColumn::make('DataID')
+                ->label(__('Data ID'))
+                ->sortable()
+                ->searchable(isIndividual: true, isGlobal: false),
 
-                TextColumn::make('type'),
+                TextColumn::make('type')
+                ->label(__('Type'))
+                ->sortable()
+                ->searchable(isIndividual: true, isGlobal: false),
 
                 TextColumn::make('ModificationDateTime')
                     ->date(),
@@ -109,10 +118,12 @@ class PrevHealthResource extends Resource
                 TextColumn::make('CreationDateTime')
                     ->date(),
 
-                TextColumn::make('SagirID'),
+                TextColumn::make('dog.full_name')
+                ->label(__('Dog Name'))
+                    ->description(fn ($record) => $record->SagirID)
+                ->sortable()
+                ->searchable(['Heb_Name', 'Eng_Name', 'SagirID'], isIndividual: true, isGlobal: false),
 
-                TextColumn::make('TestDate')
-                    ->date(),
 
 //                TextColumn::make('TestFile'),
                 TextColumn::make('TestFile')
@@ -131,11 +142,20 @@ class PrevHealthResource extends Resource
                     })
                     ->openUrlInNewTab(),
 
-                TextColumn::make('Notes'),
+                TextColumn::make('TestDate')
+                    ->label(__('Date'))
+                    ->date()
+                    ->sortable(),
 
-                TextColumn::make('ImageResultID'),
+                TextColumn::make('Notes')
+                ->label(__('Health Record')),
 
-                TextColumn::make('show_in_paper'),
+                TextColumn::make('ImageResultID')
+                ->label(__('Image Result ID') . " (< 2022)"),
+
+                IconColumn::make('show_in_paper')
+                ->label(__('Display'))
+                ->boolean(),
             ])
             ->filters([
                 TrashedFilter::make(),
