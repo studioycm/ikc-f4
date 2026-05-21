@@ -6,15 +6,6 @@
                 "artisan",
                 "boost:mcp"
             ]
-        },
-        "herd": {
-            "command": "php",
-            "args": [
-                "C:/Users/user-pc/.config/herd/bin/herd-mcp.phar"
-            ],
-            "env": {
-                "SITE_PATH": "D:\\0-Dev\\Herd\\ikc-f4"
-            }
         }
     }
 }

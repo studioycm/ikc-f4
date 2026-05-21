@@ -1,8 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git -C \"D:/0-Dev/Herd/ikc-f4/.claude/worktrees/tender-liskov\" status)",
-      "Bash(git -C \"D:/0-Dev/Herd/ikc-f4/.claude/worktrees/tender-liskov\" log --oneline -5)",
       "Bash(git:*)",
       "mcp__phpstorm__search_in_files_by_text"
     ]

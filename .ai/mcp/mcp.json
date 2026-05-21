@@ -1,21 +1,5 @@
 {
   "mcpServers": {
-    "herd": {
-      "command": "C:\\Users\\user-pc\\.config\\herd\\bin\\php84\\php.exe",
-      "args": [
-        "C:/Users/user-pc/.config/herd/bin/herd-mcp.phar"
-      ],
-      "env": {
-        "SITE_PATH": "D:\\0-Dev\\Herd\\ikc-f4"
-      }
-    },
-    "laravel-boost": {
-      "command": "C:\\Users\\user-pc\\.config\\herd\\bin\\php84\\php.exe",
-      "args": [
-        "D:\\0-Dev\\Herd\\ikc-f4\\artisan",
-        "boost:mcp"
-      ]
-    },
     "filament-examples": {
       "url": "https://filamentexamples.com/mcp",
       "headers": {
