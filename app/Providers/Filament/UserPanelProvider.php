@@ -37,13 +37,21 @@ class UserPanelProvider extends PanelProvider
             ->login()
             ->profile()
             ->passwordReset()
+            ->emailVerification()
             ->authGuard('web')
             ->databaseNotifications()
             ->maxContentWidth(Width::Full)
             ->breadcrumbs(true)
-            ->favicon(url('favicon.ico'))
+            ->brandName(__('IKC System'))
+            ->favicon(asset('favicon.png'))
+            ->brandLogo(asset('images/logo-light.svg'))
+            ->darkModeBrandLogo(asset('images/logo-dark.svg'))
+            ->brandLogoHeight('3rem')
             ->font('Assistant', provider: GoogleFontProvider::class)
-            ->topNavigation()
+            ->sidebarWidth('18rem')
+            ->sidebarCollapsibleOnDesktop()
+            ->collapsedSidebarWidth('5rem')
+//            ->topNavigation()
             ->colors([
                 'primary' => Color::Amber,
                 'pink' => Color::Pink,
@@ -84,14 +92,15 @@ class UserPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->renderHook(
-                PanelsRenderHook::TOPBAR_END, function () {
+                PanelsRenderHook::SIDEBAR_FOOTER, function () {
+                    $prev_user = auth()->user()->prevUser;
                 return Blade::render('filament.user.components.prev-user-badge',
                     [
                         'color' => 'primary',
                         'icon' => 'fas-user',
-                        'prev_user_name' => auth()->user()->prevUser->name,
-                        'prev_user_id' => auth()->user()->prevUser->id,
-                        'prev_user_phone' => auth()->user()->prevUser->normalised_phone,
+                        'prev_user_name' => $prev_user->name,
+                        'prev_user_id' => $prev_user->id,
+                        'prev_user_phone' => $prev_user->normalised_phone,
                     ]);
             }
             );

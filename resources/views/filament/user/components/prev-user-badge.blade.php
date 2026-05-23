@@ -1,5 +1,5 @@
 <x-filament::badge
     :color="$color"
     :icon="$icon">
-    {{ $prev_user_name }} | {{ $prev_user_phone }} ({{ $prev_user_id }})
+    {{ $prev_user_name }}<br>{{ $prev_user_phone }}<br>({{ $prev_user_id }})
 </x-filament::badge>

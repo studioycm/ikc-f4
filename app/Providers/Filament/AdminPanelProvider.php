@@ -36,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName(__('IKC System'))
-            ->favicon(url('favicon.ico'))
+            ->favicon(asset('favicon.png'))
             ->brandLogo(asset('images/logo-light.svg'))
             ->darkModeBrandLogo(asset('images/logo-dark.svg'))
             ->brandLogoHeight('3rem')
