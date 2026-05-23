@@ -20,7 +20,7 @@ class MaleBreedingsRelationManager extends RelationManager
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('Breedings');
+        return __('Litters');
     }
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool

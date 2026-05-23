@@ -32,14 +32,16 @@ class DogsOverviewStats extends BaseWidget
             });
 
         return [
-            Stat::make(__('Total dogs'), $dogsQuery->count())
-                ->icon(Heroicon::OutlinedHeart)
+            Stat::make(__('dog/model/general.labels.plural'), $dogsQuery->count())
+                ->icon('fas-dog')
                 ->url(DogsDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Female dogs'), (clone $dogsQuery)->where('GenderID', LegacyDogGender::Female->value)->count())
+            Stat::make(__('Female'), (clone $dogsQuery)->where('GenderID', LegacyDogGender::Female->value)->count())
                 ->color('pink')
+                ->icon('fas-venus')
                 ->url(DogsDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Male dogs'), (clone $dogsQuery)->where('GenderID', LegacyDogGender::Male->value)->count())
+            Stat::make(__('Male'), (clone $dogsQuery)->where('GenderID', LegacyDogGender::Male->value)->count())
                 ->color('info')
+                ->icon('fas-mars')
                 ->url(DogsDashboard::getUrl(panel: 'user')),
         ];
     }

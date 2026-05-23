@@ -13,11 +13,28 @@ class BillingOverviewStats extends BaseWidget
 {
     use InteractsWithCurrentPrevUser;
 
-    protected int|string|array $columnSpan = 2;
+//    protected int|string|array $columnSpan = 2;
 
-    protected function getColumns(): int
+    public function getColumnSpan(): int|string|array
     {
-        return 2;
+        return [
+            'xs' => 1,
+            'sm' => 1,
+            'md' => 1,
+            'lg' => 1,
+            'xl' => 2,
+        ];
+    }
+
+    protected function getColumns(): int|array
+    {
+        return [
+            'xs' => 1,
+            'sm' => 1,
+            'md' => 1,
+            'lg' => 1,
+            'xl' => 2,
+        ];
     }
 
     protected ?string $pollingInterval = null;
@@ -39,18 +56,20 @@ class BillingOverviewStats extends BaseWidget
             Stat::make(__('Payments'), (clone $paymentsQuery)
                 ->count())
                 ->color('success')
+                ->icon(Heroicon::CreditCard)
                 ->url(PaymentsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Payments this year'), (clone $paymentsQuery)
                 ->whereYear('payment_date_time', now()->year)
                 ->count())
+                ->icon(Heroicon::OutlinedCreditCard)
                 ->color('success')
+                ->url(PaymentsDashboard::getUrl(panel: 'user')),
+            Stat::make(__('Paid'), number_format((float)((clone $paymentsQuery)
+                ->sum('amount')), 0))
+                ->icon(Heroicon::Banknotes)
                 ->url(PaymentsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Paid this year'), number_format((float)((clone $paymentsQuery)
                 ->whereYear('payment_date_time', now()->year)
-                ->sum('amount')), 0))
-                ->icon(Heroicon::OutlinedBanknotes)
-                ->url(PaymentsDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Paid Total'), number_format((float)((clone $paymentsQuery)
                 ->sum('amount')), 0))
                 ->icon(Heroicon::OutlinedBanknotes)
                 ->url(PaymentsDashboard::getUrl(panel: 'user')),

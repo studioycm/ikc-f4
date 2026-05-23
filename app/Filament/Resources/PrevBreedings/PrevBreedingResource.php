@@ -62,7 +62,7 @@ class PrevBreedingResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return __('Breedings');
+        return __('Litters');
     }
 
     public static function getNavigationGroup(): string
@@ -72,7 +72,7 @@ class PrevBreedingResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('Breedings');
+        return __('Litters');
     }
 
     public static function form(Schema $schema): Schema

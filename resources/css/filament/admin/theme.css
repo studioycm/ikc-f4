@@ -8,6 +8,7 @@
 @source "../../../../resources/views/livewire/**/*.blade.php";
 @source "../../../../resources/views/legacy/**/*.blade.php";
 @source "../../../../resources/views/mail/**/*.blade.php";
+@source "../../../../resources/views/errors/**/*.blade.php";
 @source "../../../../vendor/bezhansalleh/filament-language-switch/resources/views/language-switch.blade.php";
 
 .fi-sidebar-nav-groups {
@@ -151,6 +152,10 @@
     height: 100%;
 }
 
-.fi-badge-larger .fi-badge {
-    @apply font-semibold text-xl px-4 py-2 rounded-lg;
+.fi-prev-user-badge .fi-badge {
+    @apply grid grid-flow-col items-center justify-items-stretch content-end justify-between font-semibold text-sm px-4 py-2 rounded-lg;
+}
+
+.fi-prev-user-badge .fi-badge .fi-badge-icon {
+    @apply w-8 h-8;
 }

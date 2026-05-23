@@ -176,7 +176,7 @@ class BreedingActivityTable extends BaseWidget
                             ->collapsed(false),
                     ])),
             ])
-            ->heading(__('Breedings'))
+            ->heading(__('Litters'))
             ->description(__('Review your recorded breedings, payments, and puppy registrations.'))
             ->defaultSort('BreddingDate', 'desc')
             ->paginated([5, 10, 25, 'all'])

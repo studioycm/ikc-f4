@@ -14,11 +14,28 @@ class BreedingOverviewStats extends BaseWidget
 {
     use InteractsWithCurrentPrevUser;
 
-    protected int|string|array $columnSpan = 2;
+//    protected int|string|array $columnSpan = 2;
 
-    protected function getColumns(): int
+    public function getColumnSpan(): int|array
     {
-        return 2;
+        return [
+            'xs' => 1,
+            'sm' => 1,
+            'md' => 1,
+            'lg' => 1,
+            'xl' => 2,
+        ];
+    }
+
+    protected function getColumns(): int|array
+    {
+        return [
+            'xs' => 1,
+            'sm' => 1,
+            'md' => 1,
+            'lg' => 1,
+            'xl' => 2,
+        ];
     }
 
     protected ?string $pollingInterval = null;
@@ -48,22 +65,24 @@ class BreedingOverviewStats extends BaseWidget
             );
 
         return [
-            Stat::make(__('Breeding Count'), (clone $breedingQuery)->count())
+            Stat::make(__('Breedings'), (clone $breedingQuery)->count())
                 ->icon(Heroicon::OutlinedHeart)
                 ->url(BreedingActivityDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Recent breedings'), (clone $breedingQuery)
+            Stat::make(__('Recent Breedings'), (clone $breedingQuery)
                 ->whereDate('BreddingDate', '>=', now()->subMonths(12)->toDateString())
                 ->count())
                 ->color('warning')
+                ->icon(Heroicon::OutlinedHeart)
                 ->url(BreedingActivityDashboard::getUrl(panel: 'user')),
             Stat::make(__('Litters'), (clone $breedingQuery)
                 ->whereNotNull('birthing_date')
                 ->count())
                 ->color('success')
+                ->icon(Heroicon::OutlinedHeart)
                 ->url(BreedingActivityDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Puppies recorded'), (string)((clone $breedingQuery)->sum('live_male_puppie') + (clone $breedingQuery)->sum('live_female_puppie')))
+            Stat::make(__('Puppies'), (string)((clone $breedingQuery)->sum('live_male_puppie') + (clone $breedingQuery)->sum('live_female_puppie')))
                 ->color('info')
-                ->icon(Heroicon::OutlinedSparkles)
+                ->icon(Heroicon::OutlinedHeart)
                 ->url(BreedingActivityDashboard::getUrl(panel: 'user')),
         ];
     }

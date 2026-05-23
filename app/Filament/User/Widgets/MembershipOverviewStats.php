@@ -35,24 +35,27 @@ class MembershipOverviewStats extends BaseWidget
             );
 
         return [
-            Stat::make(__('Active memberships'), (clone $membershipsQuery)
+            Stat::make(__('Active membership'), (clone $membershipsQuery)
                 ->whereNull('deleted_at')
                 ->where('expire_date', '>=', now())
                 ->where('payment_status', '1')
                 ->count())
                 ->color('success')
+                ->icon('fas-user-check')
                 ->url(MembershipsDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Expiring soon'), (clone $membershipsQuery)
+            Stat::make(__('Expire soon'), (clone $membershipsQuery)
                 ->whereNull('deleted_at')
                 ->whereBetween('expire_date', [now(), now()->copy()->addDays(60)])
                 ->count())
                 ->color('warning')
+                ->icon('fas-user-clock')
                 ->url(MembershipsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Expired'), (clone $membershipsQuery)
                 ->whereNull('deleted_at')
                 ->where('expire_date', '<', now())
                 ->count())
                 ->color('danger')
+                ->icon('fas-user-slash')
                 ->url(MembershipsDashboard::getUrl(panel: 'user')),
         ];
     }

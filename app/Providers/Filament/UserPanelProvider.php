@@ -48,7 +48,7 @@ class UserPanelProvider extends PanelProvider
             ->darkModeBrandLogo(asset('images/logo-dark.svg'))
             ->brandLogoHeight('3rem')
             ->font('Assistant', provider: GoogleFontProvider::class)
-            ->sidebarWidth('18rem')
+            ->sidebarWidth('12rem')
             ->sidebarCollapsibleOnDesktop()
             ->collapsedSidebarWidth('5rem')
 //            ->topNavigation()

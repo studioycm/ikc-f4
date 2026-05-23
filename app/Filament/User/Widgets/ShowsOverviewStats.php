@@ -14,11 +14,28 @@ class ShowsOverviewStats extends BaseWidget
 {
     use InteractsWithCurrentPrevUser;
 
-    protected int|string|array $columnSpan = 2;
+//    protected int|string|array $columnSpan = 2;
 
-    protected function getColumns(): int
+    public function getColumnSpan(): int|array
     {
-        return 4;
+        return [
+            'xs' => 1,
+            'sm' => 1,
+            'md' => 1,
+            'lg' => 1,
+            'xl' => 2,
+        ];
+    }
+
+    protected function getColumns(): int|array
+    {
+        return [
+            'xs' => 1,
+            'sm' => 1,
+            'md' => 1,
+            'lg' => 1,
+            'xl' => 2,
+        ];
     }
 
     protected ?string $pollingInterval = null;
@@ -37,17 +54,20 @@ class ShowsOverviewStats extends BaseWidget
         return [
             Stat::make(__('Shows'), (clone $showEntriesQuery)->distinct('ShowID')->count('ShowID'))
                 ->color('info')
+                ->icon(Heroicon::Trophy)
                 ->url(ShowsDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Show entries'), (clone $showEntriesQuery)->count())
+            Stat::make(__('Show Entries'), (clone $showEntriesQuery)->count())
                 ->icon(Heroicon::OutlinedTicket)
                 ->url(ShowsDashboard::getUrl(panel: 'user')),
-            Stat::make(__('Upcoming entries'), (clone $showEntriesQuery)
+            Stat::make(__('Upcoming Shows'), (clone $showEntriesQuery)
                 ->whereHas('show', fn(Builder $query): Builder => $query->whereDate('StartDate', '>=', now()->toDateString()))
                 ->count())
                 ->color('warning')
+                ->icon(Heroicon::Trophy)
                 ->url(ShowsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Results'), (clone $showEntriesQuery)->has('prevShowResult')->count())
                 ->color('success')
+                ->icon(Heroicon::Trophy)
                 ->url(ShowsDashboard::getUrl(panel: 'user')),
         ];
     }

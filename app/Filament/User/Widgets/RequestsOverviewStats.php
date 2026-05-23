@@ -31,17 +31,19 @@ class RequestsOverviewStats extends BaseWidget
             ->constrainRequestQueryToPrevUser(PrevUserRequest::query(), $prevUser);
 
         return [
-            Stat::make(__('Open requests'), (clone $requestsQuery)
+            Stat::make(__('Open Requests'), (clone $requestsQuery)
                 ->where(function ($query): void {
                     $query->where('status', '!=', 'Payment done')
                         ->orWhere('IsDone', '!=', 1);
                 })
                 ->count())
                 ->color('warning')
+                ->icon('fas-magnifying-glass-arrow-right')
                 ->url(RequestsDashboard::getUrl(panel: 'user')),
             Stat::make(__('Requests'), (clone $requestsQuery)
                 ->count())
                 ->color('warning')
+                ->icon('fas-file-signature')
                 ->url(RequestsDashboard::getUrl(panel: 'user')),
         ];
     }
