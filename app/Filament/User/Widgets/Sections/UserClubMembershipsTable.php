@@ -2,25 +2,25 @@
 
 namespace App\Filament\User\Widgets\Sections;
 
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Actions\Action;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevClubUser;
 use Carbon\CarbonImmutable;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
-use Filament\Tables;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\FiltersResetActionPosition;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Filament\Support\Icons\Heroicon;
 
 class UserClubMembershipsTable extends BaseWidget
 {
@@ -32,7 +32,7 @@ class UserClubMembershipsTable extends BaseWidget
     {
         $prevUserId = $this->getCurrentPrevUserId();
 
-        if (!$prevUserId) {
+        if (! $prevUserId) {
             return $table->query(PrevClubUser::query()->whereRaw('1 = 0'));
         }
 
@@ -44,7 +44,7 @@ class UserClubMembershipsTable extends BaseWidget
                         $breedIds = $this->getCurrentUserBreedIds();
 
                         $query->whereHas('breeds', function (Builder $breedQuery) use ($breedIds): void {
-                            if (!empty($breedIds)) {
+                            if (! empty($breedIds)) {
                                 $breedQuery->whereIn('BreedsDB.id', $breedIds);
                             }
                         });
@@ -68,20 +68,20 @@ class UserClubMembershipsTable extends BaseWidget
                     ->toggleable(),
                 TextColumn::make('type')
                     ->label(__('Type'))
-                    ->formatStateUsing(fn($state): string => match ($state) {
+                    ->formatStateUsing(fn ($state): string => match ($state) {
                         'Main' => __('Main'),
                         'Sub' => __('Sub'),
                         default => __('Main'),
                     })
                     ->badge()
-                    ->color(fn($state): string => match ($state) {
+                    ->color(fn ($state): string => match ($state) {
                         'Main' => 'info',
                         'Sub' => 'warning',
                         default => 'gray',
                     }),
                 TextColumn::make('computed_status')
                     ->label(__('Status'))
-                    ->formatStateUsing(fn($state): string => match ($state) {
+                    ->formatStateUsing(fn ($state): string => match ($state) {
                         1 => __('Active'),
                         0 => __('Inactive'),
                         2 => __('Pending Payment'),
@@ -89,7 +89,7 @@ class UserClubMembershipsTable extends BaseWidget
                         default => __('Unknown'),
                     })
                     ->badge()
-                    ->color(fn($state): string => match ($state) {
+                    ->color(fn ($state): string => match ($state) {
                         1 => 'success',
                         0 => 'danger',
                         2 => 'warning',
@@ -103,19 +103,19 @@ class UserClubMembershipsTable extends BaseWidget
                 TextColumn::make('expire_date')
                     ->label(__('Valid until'))
                     ->date('Y-m-d')
-                    ->description(fn(PrevClubUser $record): string => $record->expiration_human)
-                    ->color(fn(PrevClubUser $record): string => $record->getExpirationColor())
+                    ->description(fn (PrevClubUser $record): string => $record->expiration_human)
+                    ->color(fn (PrevClubUser $record): string => $record->getExpirationColor())
                     ->sortable(),
                 TextColumn::make('payment_status_code')
                     ->label(__('Payment'))
-                    ->formatStateUsing(fn(?int $state): string => match ($state) {
+                    ->formatStateUsing(fn (?int $state): string => match ($state) {
                         1 => __('Paid'),
                         0 => __('Pending'),
                         null => __('N/A'),
                         default => __('Unknown'),
                     })
                     ->badge()
-                    ->color(fn(?int $state): string => match ($state) {
+                    ->color(fn (?int $state): string => match ($state) {
                         1 => 'success',
                         0 => 'warning',
                         null => 'gray',
@@ -123,14 +123,16 @@ class UserClubMembershipsTable extends BaseWidget
                     }),
                 TextColumn::make('deleted_at')
                     ->label(__('Deleted'))
-                    ->formatStateUsing(fn(?CarbonImmutable $state): string => $state ? $state->format('Y-m-d') : '')
-                    ->color(fn(?CarbonImmutable $state): string => $state ? 'danger' : 'gray')
+                    ->formatStateUsing(fn (?CarbonImmutable $state): string => $state ? $state->format('Y-m-d') : '')
+                    ->color(fn (?CarbonImmutable $state): string => $state ? 'danger' : 'gray')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filtersFormColumns(2)
             ->filtersLayout(FiltersLayout::AboveContent)
+            ->filtersResetActionPosition(FiltersResetActionPosition::Header)
             ->filters([
                 Filter::make('status_filter')
+                    ->indicateUsing(fn (array $data): ?string => $data['status'] ?? null)
                     ->schema([
                         ToggleButtons::make('status')
                             ->label(__('Status'))
@@ -192,7 +194,7 @@ class UserClubMembershipsTable extends BaseWidget
                     ->tooltip(__('Renew'))
                     ->icon(Heroicon::OutlinedArrowPath)
                     ->color('success')
-                    ->visible(fn(PrevClubUser $record): bool => (!$record->isActive || $record->isExpiringSoon(60)))
+                    ->visible(fn (PrevClubUser $record): bool => (! $record->isActive || $record->isExpiringSoon(60)))
                     ->schema([
                         Select::make('membership_type')
                             ->label(__('Membership Type'))
@@ -200,7 +202,7 @@ class UserClubMembershipsTable extends BaseWidget
                                 'Main' => __('Main'),
                                 'Sub' => __('Sub'),
                             ])
-                            ->default(fn(PrevClubUser $record): string => $record->type)
+                            ->default(fn (PrevClubUser $record): string => $record->type)
                             ->required(),
                         Select::make('duration')
                             ->label(__('Duration'))
@@ -232,7 +234,7 @@ class UserClubMembershipsTable extends BaseWidget
                             ->rows(3)
                             ->placeholder(__('Any additional information...')),
                     ])
-                    ->modalHeading(fn(PrevClubUser $record): string => __('Renew Membership - :club', ['club' => $record->club->Name]))
+                    ->modalHeading(fn (PrevClubUser $record): string => __('Renew Membership - :club', ['club' => $record->club->Name]))
                     ->modalDescription(__('Complete the form to renew your club membership'))
                     ->modalSubmitActionLabel(__('Submit Renewal Request'))
                     ->action(function (): void {
@@ -247,8 +249,8 @@ class UserClubMembershipsTable extends BaseWidget
                     ->tooltip(__('Details'))
                     ->icon(Heroicon::OutlinedEye)
                     ->color('info')
-                    ->modalHeading(fn(PrevClubUser $record): string => __('Membership Details - :club', ['club' => $record->club->Name]))
-                    ->modalContent(fn(PrevClubUser $record) => view('filament.user.modals.membership-details', [
+                    ->modalHeading(fn (PrevClubUser $record): string => __('Membership Details - :club', ['club' => $record->club->Name]))
+                    ->modalContent(fn (PrevClubUser $record) => view('filament.user.modals.membership-details', [
                         'membership' => $record,
                     ]))
                     ->modalSubmitAction(false)

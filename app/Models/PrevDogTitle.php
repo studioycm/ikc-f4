@@ -31,9 +31,6 @@ class PrevDogTitle extends Pivot
     // Disable Fillable Attributes
     protected $guarded = [];
 
-    // append the title name to the model
-    protected $appends = ['name'];
-
     // casting the attributes to the correct types
     protected $casts = [
         'SagirID' => 'integer',
@@ -47,11 +44,23 @@ class PrevDogTitle extends Pivot
         return $this->belongsTo(PrevTitle::class, 'AwardID', 'TitleCode');
     }
 
+    public function dog(): BelongsTo
+    {
+        return $this->belongsTo(PrevDog::class, 'SagirID', 'SagirID');
+    }
+
+    public function show(): BelongsTo
+    {
+        return $this->belongsTo(PrevShow::class, 'ShowID', 'id');
+    }
+
     // get title name using AwardID
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn ($value, $attributes) => PrevTitle::query()->where('TitleCode', $attributes['AwardID'])->first()?->name,
+            get: fn (): ?string => $this->relationLoaded('title')
+                ? $this->title?->name
+                : null,
         );
     }
 

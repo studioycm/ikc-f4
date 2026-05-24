@@ -2,34 +2,35 @@
 
 namespace App\Filament\User\Widgets\Sections;
 
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\ViewAction;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Grid;
-use Filament\Actions\Action;
-use Filament\Support\Enums\Width;
 use App\Enums\Legacy\LegacyDogGender;
 use App\Filament\User\Resources\BreedingInquiries\BreedingInquiryResource;
 use App\Filament\User\Widgets\Concerns\InteractsWithCurrentPrevUser;
 use App\Models\PrevDog;
+use App\Models\PrevUserDog;
 use Carbon\Carbon;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Support\Icons\Heroicon;
 
 class UserDogsTable extends BaseWidget
 {
@@ -39,17 +40,64 @@ class UserDogsTable extends BaseWidget
 
     protected ?int $totalDogsCount = null;
 
+    /**
+     * @var array<int>|null
+     */
+    protected ?array $currentOwnerDogSagirIds = null;
+
     protected function getTotalDogsCount(): int
     {
         if ($this->totalDogsCount === null) {
             $this->totalDogsCount = PrevDog::query()
-                ->whereHas('owners', function (Builder $query): void {
-                    $query->where('users.id', $this->getCurrentPrevUserId());
-                })
+                ->whereIn('SagirID', $this->getCurrentOwnerDogSagirIds())
                 ->count();
         }
 
         return $this->totalDogsCount;
+    }
+
+    /**
+     * @return array<int>
+     */
+    protected function getCurrentOwnerDogSagirIds(): array
+    {
+        if ($this->currentOwnerDogSagirIds !== null) {
+            return $this->currentOwnerDogSagirIds;
+        }
+
+        $prevUserId = $this->getCurrentPrevUserId();
+
+        if ($prevUserId === null) {
+            return $this->currentOwnerDogSagirIds = [];
+        }
+
+        return $this->currentOwnerDogSagirIds = PrevUserDog::query()
+            ->where('user_id', $prevUserId)
+            ->where('status', 'current')
+            ->whereNull('deleted_at')
+            ->pluck('sagir_id')
+            ->map(static fn (mixed $sagirId): int => (int) $sagirId)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function getDogTableRelations(): array
+    {
+        return [
+            'breed:BreedCode,BreedName,BreedNameEN',
+            'color:OldCode,ColorNameHE,ColorNameEN',
+            'hair:OldCode,HairNameHE,HairNameEN',
+            'father:id,SagirID,Heb_Name,Eng_Name',
+            'mother:id,SagirID,Heb_Name,Eng_Name',
+            'breedinghouse:GidulCode,HebName,EngName',
+            'owners:id,first_name,last_name,first_name_en,last_name_en,mobile_phone,email',
+            'oldOwners:id,first_name,last_name,first_name_en,last_name_en,mobile_phone,email',
+            'titles:TitleCode,TitleName',
+        ];
     }
 
     public function table(Table $table): Table
@@ -57,40 +105,28 @@ class UserDogsTable extends BaseWidget
         return $table
             ->query(
                 PrevDog::query()
-                    ->whereHas('owners', function (Builder $query): void {
-                        $query->where('users.id', $this->getCurrentPrevUserId());
-                    })
-                    ->with([
-                        'breed:BreedCode,BreedName,BreedNameEN',
-                        'color:OldCode,ColorNameHE,ColorNameEN',
-                        'hair:OldCode,HairNameHE,HairNameEN',
-                        'father:id,SagirID,Heb_Name,Eng_Name',
-                        'mother:id,SagirID,Heb_Name,Eng_Name',
-                        'breedinghouse:GidulCode,HebName,EngName',
-                        'owners:id,first_name,last_name,first_name_en,last_name_en,mobile_phone,email',
-                        'oldOwners:id,first_name,last_name,first_name_en,last_name_en,mobile_phone,email',
-                        'titles:TitleCode,TitleName',
-                    ])
+                    ->whereIn('SagirID', $this->getCurrentOwnerDogSagirIds())
+                    ->with($this->getDogTableRelations())
                     ->orderBy('SagirID', 'desc')
             )
             ->columns([
                 TextColumn::make('SagirID')
                     ->label(__('Sagir'))
-                    ->description(fn(PrevDog $record): string => $record->id ? __('ID') . ': ' . $record->id : '')
+                    ->description(fn (PrevDog $record): string => $record->id ? __('ID').': '.$record->id : '')
                     ->size('lg')
                     ->weight(FontWeight::Bold)
-                    ->color(fn(PrevDog $record): string => $record->sagir_prefix?->getColor() ?? 'gray')
+                    ->color(fn (PrevDog $record): string => $record->sagir_prefix?->getColor() ?? 'gray')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('full_name')
                     ->label(__('Dog name'))
-                    ->description(fn(PrevDog $record): string => $record->breed?->BreedName ?? __('N/A'))
+                    ->description(fn (PrevDog $record): string => $record->breed?->BreedName ?? __('N/A'))
                     ->searchable(['Heb_Name', 'Eng_Name'])
                     ->sortable(['Heb_Name']),
                 TextColumn::make('BirthDate')
                     ->label(__('Birth Date'))
                     ->date('Y-m-d')
-                    ->description(fn(PrevDog $record): string => $record->age_years ?? '')
+                    ->description(fn (PrevDog $record): string => $record->age_years ?? '')
                     ->sortable(),
                 TextColumn::make('GenderID')
                     ->label(__('Gender'))
@@ -103,11 +139,11 @@ class UserDogsTable extends BaseWidget
                     ->expandableLimitedList(),
                 TextColumn::make('father.full_name')
                     ->label(__('Father'))
-                    ->description(fn(PrevDog $record): string => $record->father?->SagirID ?? __('N/A'))
+                    ->description(fn (PrevDog $record): string => $record->father?->SagirID ?? __('N/A'))
                     ->toggleable(),
                 TextColumn::make('mother.full_name')
                     ->label(__('Mother'))
-                    ->description(fn(PrevDog $record): string => $record->mother?->SagirID ?? __('N/A'))
+                    ->description(fn (PrevDog $record): string => $record->mother?->SagirID ?? __('N/A'))
                     ->toggleable(),
                 TextColumn::make('breedinghouse.name')
                     ->label(__('Kennel'))
@@ -139,13 +175,27 @@ class UserDogsTable extends BaseWidget
                             ->grouped()
                             ->nullable(),
                     ])
-                    ->query(fn(Builder $query, array $data): Builder => $query->when(
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
                         filled($data['GenderID'] ?? null),
-                        fn(Builder $dogQuery): Builder => $dogQuery->where('GenderID', $data['GenderID'])
-                    )),
+                        fn (Builder $dogQuery): Builder => $dogQuery->where('GenderID', $data['GenderID'])
+                    ))
+                    ->indicateUsing(function (array $data): array {
+                        $gender = filled($data['GenderID'] ?? null)
+                            ? LegacyDogGender::tryFrom((int) $data['GenderID'])
+                            : null;
+
+                        if ($gender === null) {
+                            return [];
+                        }
+
+                        return [
+                            Indicator::make(__('Gender').': '.$gender->getLabel())
+                                ->removeField('GenderID'),
+                        ];
+                    }),
                 SelectFilter::make('breed')
                     ->label(__('Breed'))
-                    ->relationship('breed', 'BreedName', modifyQueryUsing: fn(Builder $query): Builder => $query->whereIn('id', $this->getCurrentUserBreedIds()))
+                    ->relationship('breed', 'BreedName', modifyQueryUsing: fn (Builder $query): Builder => $query->whereIn('id', $this->getCurrentUserBreedIds()))
                     ->placeholder(__('All'))
                     ->preload()
                     ->multiple()
@@ -168,16 +218,31 @@ class UserDogsTable extends BaseWidget
                         return $query
                             ->when(
                                 $data['birth_date_start'] ?? null,
-                                    fn(Builder $dogQuery, string $date): Builder => $dogQuery->whereDate('BirthDate', '>=', $date)
+                                fn (Builder $dogQuery, string $date): Builder => $dogQuery->whereDate('BirthDate', '>=', $date)
                             )
                             ->when(
-                                ($data['birth_date_start'] ?? null) && !($data['birth_date_end'] ?? null),
-                                fn(Builder $dogQuery): Builder => $dogQuery->whereDate('BirthDate', '<=', now()->toDateString())
+                                ($data['birth_date_start'] ?? null) && ! ($data['birth_date_end'] ?? null),
+                                fn (Builder $dogQuery): Builder => $dogQuery->whereDate('BirthDate', '<=', now()->toDateString())
                             )
                             ->when(
                                 $data['birth_date_end'] ?? null,
-                                    fn(Builder $dogQuery, string $date): Builder => $dogQuery->whereDate('BirthDate', '<=', $date)
+                                fn (Builder $dogQuery, string $date): Builder => $dogQuery->whereDate('BirthDate', '<=', $date)
                             );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['birth_date_start'] ?? null) {
+                            $indicators[] = Indicator::make(__('Birth Date').' '.__('from').' '.Carbon::parse($data['birth_date_start'])->toDateString())
+                                ->removeField('birth_date_start');
+                        }
+
+                        if ($data['birth_date_end'] ?? null) {
+                            $indicators[] = Indicator::make(__('Birth Date').' '.__('until').' '.Carbon::parse($data['birth_date_end'])->toDateString())
+                                ->removeField('birth_date_end');
+                        }
+
+                        return $indicators;
                     }),
                 Filter::make('age_groups')
                     ->schema([
@@ -197,7 +262,7 @@ class UserDogsTable extends BaseWidget
                             ->nullable(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (empty($data['age_ranges'])) {
+                        if (empty($data['age_ranges']) || in_array('all', $data['age_ranges'], true)) {
                             return $query;
                         }
 
@@ -226,12 +291,35 @@ class UserDogsTable extends BaseWidget
                                 });
                             }
                         });
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $labels = [
+                            'below_9m' => __('Below 9m'),
+                            '9m_18m' => __('9-18 month'),
+                            '18m_36m' => __('18-36 month'),
+                            '3y_7y' => __('3-7 years'),
+                            'above_7y' => __('Above 7y'),
+                        ];
+
+                        return collect($data['age_ranges'] ?? [])
+                            ->reject(fn (string $range): bool => $range === 'all' || ! array_key_exists($range, $labels))
+                            ->map(fn (string $range): Indicator => Indicator::make(__('Age').': '.$labels[$range])
+                                ->removeField('age_ranges'))
+                            ->values()
+                            ->all();
                     }),
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->modalHeading(fn(PrevDog $record): string => $record->full_name)
-                    ->schema(fn(Schema $schema): Schema => $schema
+                Action::make('view')
+                    ->name('view')
+                    ->label(__('filament-actions::view.single.label'))
+                    ->icon(Heroicon::OutlinedEye)
+                    ->color('gray')
+                    ->modalWidth(Width::SixExtraLarge)
+                    ->modalHeading(fn (PrevDog $record): string => $record->full_name)
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(fn (Action $action): Action => $action->label(__('filament-actions::view.single.modal.actions.close.label')))
+                    ->schema(fn (Schema $schema): Schema => $schema
                         ->components([
                             Tabs::make(__('Dog Details'))->tabs([
                                 Tab::make(__('Basic Info'))
@@ -239,7 +327,7 @@ class UserDogsTable extends BaseWidget
                                         Grid::make(2)->schema([
                                             TextEntry::make('SagirID')
                                                 ->label(__('Sagir'))
-                                                ->prefix(fn(PrevDog $record): string => $record->sagir_prefix?->code() ?? ''),
+                                                ->prefix(fn (PrevDog $record): string => $record->sagir_prefix?->code() ?? ''),
                                             TextEntry::make('full_name')
                                                 ->label(__('Full Name')),
                                             TextEntry::make('BirthDate')
@@ -258,14 +346,14 @@ class UserDogsTable extends BaseWidget
                                                 ->label(__('Chip')),
                                             TextEntry::make('breedinghouse.name')
                                                 ->label(__('Breeding Rights'))
-                                                ->hidden(fn(PrevDog $record): bool => empty($record->breedinghouse)),
+                                                ->hidden(fn (PrevDog $record): bool => empty($record->breedinghouse)),
                                         ]),
                                     ]),
                                 Tab::make(__('Pedigree'))
                                     ->schema([
                                         TextEntry::make('no_pedigree')
                                             ->label(__('Pedigree Missing'))
-                                            ->visible(fn(PrevDog $record): bool => empty($record->father) && empty($record->mother)),
+                                            ->visible(fn (PrevDog $record): bool => empty($record->father) && empty($record->mother)),
                                         Section::make(__('Parents'))->schema([
                                             TextEntry::make('father.full_name')
                                                 ->label(__('Father')),
@@ -277,7 +365,7 @@ class UserDogsTable extends BaseWidget
                                                 ->label(__('Mother ID')),
                                         ])
                                             ->columns(2)
-                                            ->hidden(fn(PrevDog $record): bool => empty($record->father) && empty($record->mother)),
+                                            ->hidden(fn (PrevDog $record): bool => empty($record->father) && empty($record->mother)),
                                     ]),
                                 Tab::make(__('Ownerships'))
                                     ->schema([
@@ -312,12 +400,19 @@ class UserDogsTable extends BaseWidget
                                                 TextEntry::make('name')
                                                     ->label(__('Title'))
                                                     ->weight(FontWeight::Bold),
+                                                TextEntry::make('awarding.show.TitleName')
+                                                    ->label(__('Show Name'))
+                                                    ->visible(fn ($state): bool => filled($state)),
                                                 TextEntry::make('awarding.EventPlace')
                                                     ->label(__('Place')),
+                                                TextEntry::make('awarding.EventName')
+                                                    ->label(__('Event Name')),
                                                 TextEntry::make('awarding.EventDate')
                                                     ->label(__('Date'))
                                                     ->date('Y-m-d'),
+                                                TextEntry::make('awarding.JudgeName'),
                                             ])
+                                            ->columns(2)
                                             ->grid(3),
                                     ]),
                             ])->columnSpanFull(),
@@ -327,12 +422,12 @@ class UserDogsTable extends BaseWidget
                     ->label(__('Pedigree'))
                     ->icon('fas-sitemap')
                     ->color('primary')
-                    ->hidden(fn(PrevDog $record): bool => empty($record->father) && empty($record->mother))
+                    ->hidden(fn (PrevDog $record): bool => empty($record->father) && empty($record->mother))
                     ->modalHeading(__('Pedigree Tree'))
                     ->modalWidth(Width::Full)
                     ->modalSubmitAction(false)
-                    ->modalCancelAction(fn(Action $action): Action => $action->label(__('Close')))
-                    ->modalContent(fn(PrevDog $record): View => view('legacy.pedigree.pedigree-tree-modal', [
+                    ->modalCancelAction(fn (Action $action): Action => $action->label(__('Close')))
+                    ->modalContent(fn (PrevDog $record): View => view('legacy.pedigree.pedigree-tree-modal', [
                         'dogId' => $record->id,
                         'settings' => config('pedigree_tree.presets.user_widget_modal', []),
                         'showBuilder' => false,
@@ -342,12 +437,13 @@ class UserDogsTable extends BaseWidget
                     ->tooltip(__('Open Litter Report'))
                     ->icon(Heroicon::OutlinedHeart)
                     ->color('success')
-                    ->visible(fn(PrevDog $record): bool => $record->GenderID === LegacyDogGender::Female)
-                    ->url(fn(PrevDog $record): string => BreedingInquiryResource::getUrl('create', ['female_sagir_id' => $record->SagirID])),
+                    ->visible(fn (PrevDog $record): bool => $record->GenderID === LegacyDogGender::Female)
+                    ->url(fn (PrevDog $record): string => BreedingInquiryResource::getUrl('create', ['female_sagir_id' => $record->SagirID])),
             ])
+            ->recordActionsPosition(Tables\Enums\RecordActionsPosition::BeforeColumns)
             ->paginated([5, 10, 15, 20, 'all'])
             ->defaultPaginationPageOption(10)
-            ->heading(fn(): string => __('My Dogs') . " ({$this->getTotalDogsCount()})")
+            ->heading(fn (): string => __('My Dogs')." ({$this->getTotalDogsCount()})")
             ->description(function (): string {
                 $total = $this->getTotalDogsCount();
                 $filtered = $this->getTable()->getRecords()->count();

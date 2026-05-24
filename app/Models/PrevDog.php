@@ -190,7 +190,7 @@ class PrevDog extends Model implements HasName
             ->withTimestamps()
             ->using(PrevDogTitle::class)
             ->as('awarding')
-            ->withPivot('AwardID', 'EventPlace', 'EventName', 'EventDate', 'ShowID', 'created_at', 'updated_at', 'deleted_at')
+            ->withPivot('AwardID', 'EventPlace', 'EventName', 'EventDate', 'ShowID', 'JudgeName', 'created_at', 'updated_at', 'deleted_at')
             ->wherePivot('deleted_at', null)
             ->orderBy('EventDate', 'desc');
     }
