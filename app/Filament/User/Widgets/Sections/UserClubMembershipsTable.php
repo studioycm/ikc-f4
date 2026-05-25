@@ -127,6 +127,7 @@ class UserClubMembershipsTable extends BaseWidget
                     ->color(fn (?CarbonImmutable $state): string => $state ? 'danger' : 'gray')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->deferFilters(false)
             ->filtersFormColumns(2)
             ->filtersLayout(FiltersLayout::AboveContent)
             ->filtersResetActionPosition(FiltersResetActionPosition::Header)

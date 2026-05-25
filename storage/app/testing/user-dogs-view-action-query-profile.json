@@ -1,0 +1,582 @@
+{
+    "generated_at": "2026-05-23T23:24:06+00:00",
+    "purpose": "Livewire/Filament table view action modal query timing for /user/dogs.",
+    "prev_user_id": 258298,
+    "samples": {
+        "timeout_candidate_sagir_1022274": {
+            "query_count": 18,
+            "total_query_time_ms": 2820.95,
+            "groups": {
+                "other": {
+                    "query_count": 7,
+                    "total_time_ms": 1101.69,
+                    "examples": [
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1560 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1560 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1526 and `ShowsDB`.`deleted_at` is null limit 1"
+                    ]
+                },
+                "dog.parents_or_record_by_sagir": {
+                    "query_count": 3,
+                    "total_time_ms": 469.46,
+                    "examples": [
+                        "select * from `DogsDB` where `SagirID` in (1003687, 1022274, 1027315) and `DogsDB`.`id` = '252577' and `DogsDB`.`deleted_at` is null order by `SagirID` desc limit 1",
+                        "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (140064) and `DogsDB`.`deleted_at` is null",
+                        "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (134492) and `DogsDB`.`deleted_at` is null"
+                    ]
+                },
+                "owners.previous": {
+                    "query_count": 1,
+                    "total_time_ms": 159.49,
+                    "examples": [
+                        "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` != 'current' and `dogs2users`.`sagir_id` in (1022274) and `users`.`deleted_at` is null"
+                    ]
+                },
+                "breedinghouse": {
+                    "query_count": 1,
+                    "total_time_ms": 157.21,
+                    "examples": [
+                        "select `GidulCode`, `HebName`, `EngName` from `breedinghouses` where `breedinghouses`.`GidulCode` in (7270) and `breedinghouses`.`deleted_at` is null"
+                    ]
+                },
+                "titles.eager_titles": {
+                    "query_count": 1,
+                    "total_time_ms": 156.66,
+                    "examples": [
+                        "select `dogs_titles_db`.`TitleCode`, `dogs_titles_db`.`TitleName`, `Dogs_ScoresDB`.`SagirID` as `pivot_SagirID`, `Dogs_ScoresDB`.`AwardID` as `pivot_AwardID`, `Dogs_ScoresDB`.`created_at` as `pivot_created_at`, `Dogs_ScoresDB`.`updated_at` as `pivot_updated_at`, `Dogs_ScoresDB`.`EventPlace` as `pivot_EventPlace`, `Dogs_ScoresDB`.`EventName` as `pivot_EventName`, `Dogs_ScoresDB`.`EventDate` as `pivot_EventDate`, `Dogs_ScoresDB`.`ShowID` as `pivot_ShowID`, `Dogs_ScoresDB`.`JudgeName` as `pivot_JudgeName`, `Dogs_ScoresDB`.`deleted_at` as `pivot_deleted_at` from `dogs_titles_db` inner join `Dogs_ScoresDB` on `dogs_titles_db`.`TitleCode` = `Dogs_ScoresDB`.`AwardID` where `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`SagirID` in (1022274) and `dogs_titles_db`.`deleted_at` is null order by `EventDate` desc"
+                    ]
+                },
+                "breed": {
+                    "query_count": 1,
+                    "total_time_ms": 155.83,
+                    "examples": [
+                        "select `BreedCode`, `BreedName`, `BreedNameEN` from `BreedsDB` where `BreedsDB`.`BreedCode` in (93) and `BreedsDB`.`deleted_at` is null"
+                    ]
+                },
+                "owners.current": {
+                    "query_count": 1,
+                    "total_time_ms": 155.6,
+                    "examples": [
+                        "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` = 'current' and `dogs2users`.`sagir_id` in (1022274) and `users`.`deleted_at` is null"
+                    ]
+                },
+                "hair": {
+                    "query_count": 1,
+                    "total_time_ms": 155.33,
+                    "examples": [
+                        "select `OldCode`, `HairNameHE`, `HairNameEN` from `HairsDB` where `HairsDB`.`OldCode` in (4) and `HairsDB`.`deleted_at` is null"
+                    ]
+                },
+                "color": {
+                    "query_count": 1,
+                    "total_time_ms": 154.86,
+                    "examples": [
+                        "select `OldCode`, `ColorNameHE`, `ColorNameEN` from `ColorsDB` where `ColorsDB`.`OldCode` in (167) and `ColorsDB`.`deleted_at` is null"
+                    ]
+                },
+                "ownership_pivot": {
+                    "query_count": 1,
+                    "total_time_ms": 154.82,
+                    "examples": [
+                        "select `sagir_id` from `dogs2users` where `user_id` = 258298 and `status` = 'current' and `deleted_at` is null and `dogs2users`.`deleted_at` is null"
+                    ]
+                }
+            },
+            "slowest_queries": [
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 159.49,
+                    "sql": "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` != 'current' and `dogs2users`.`sagir_id` in (1022274) and `users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 159.18,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1526 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158.58,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1560 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158.54,
+                    "sql": "select * from `DogsDB` where `SagirID` in (1003687, 1022274, 1027315) and `DogsDB`.`id` = '252577' and `DogsDB`.`deleted_at` is null order by `SagirID` desc limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1560 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.47,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1512 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.21,
+                    "sql": "select `GidulCode`, `HebName`, `EngName` from `breedinghouses` where `breedinghouses`.`GidulCode` in (7270) and `breedinghouses`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.72,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1526 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.66,
+                    "sql": "select `dogs_titles_db`.`TitleCode`, `dogs_titles_db`.`TitleName`, `Dogs_ScoresDB`.`SagirID` as `pivot_SagirID`, `Dogs_ScoresDB`.`AwardID` as `pivot_AwardID`, `Dogs_ScoresDB`.`created_at` as `pivot_created_at`, `Dogs_ScoresDB`.`updated_at` as `pivot_updated_at`, `Dogs_ScoresDB`.`EventPlace` as `pivot_EventPlace`, `Dogs_ScoresDB`.`EventName` as `pivot_EventName`, `Dogs_ScoresDB`.`EventDate` as `pivot_EventDate`, `Dogs_ScoresDB`.`ShowID` as `pivot_ShowID`, `Dogs_ScoresDB`.`JudgeName` as `pivot_JudgeName`, `Dogs_ScoresDB`.`deleted_at` as `pivot_deleted_at` from `dogs_titles_db` inner join `Dogs_ScoresDB` on `dogs_titles_db`.`TitleCode` = `Dogs_ScoresDB`.`AwardID` where `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`SagirID` in (1022274) and `dogs_titles_db`.`deleted_at` is null order by `EventDate` desc"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.2,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.87,
+                    "sql": "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (140064) and `DogsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.83,
+                    "sql": "select `BreedCode`, `BreedName`, `BreedNameEN` from `BreedsDB` where `BreedsDB`.`BreedCode` in (93) and `BreedsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.6,
+                    "sql": "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` = 'current' and `dogs2users`.`sagir_id` in (1022274) and `users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.54,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.33,
+                    "sql": "select `OldCode`, `HairNameHE`, `HairNameEN` from `HairsDB` where `HairsDB`.`OldCode` in (4) and `HairsDB`.`deleted_at` is null"
+                }
+            ],
+            "elapsed_ms": 2953.71,
+            "dog": {
+                "id": 252577,
+                "SagirID": 1022274,
+                "full_name": "Cheri Lady"
+            }
+        },
+        "timeout_candidate_sagir_1003687": {
+            "query_count": 17,
+            "total_query_time_ms": 2668.7,
+            "groups": {
+                "other": {
+                    "query_count": 6,
+                    "total_time_ms": 947.88,
+                    "examples": [
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1560 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1526 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1526 and `ShowsDB`.`deleted_at` is null limit 1"
+                    ]
+                },
+                "dog.parents_or_record_by_sagir": {
+                    "query_count": 3,
+                    "total_time_ms": 469.94,
+                    "examples": [
+                        "select * from `DogsDB` where `SagirID` in (1003687, 1022274, 1027315) and `DogsDB`.`id` = '233936' and `DogsDB`.`deleted_at` is null order by `SagirID` desc limit 1",
+                        "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (16945) and `DogsDB`.`deleted_at` is null",
+                        "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (140430) and `DogsDB`.`deleted_at` is null"
+                    ]
+                },
+                "owners.previous": {
+                    "query_count": 1,
+                    "total_time_ms": 157.14,
+                    "examples": [
+                        "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` != 'current' and `dogs2users`.`sagir_id` in (1003687) and `users`.`deleted_at` is null"
+                    ]
+                },
+                "owners.current": {
+                    "query_count": 1,
+                    "total_time_ms": 157.04,
+                    "examples": [
+                        "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` = 'current' and `dogs2users`.`sagir_id` in (1003687) and `users`.`deleted_at` is null"
+                    ]
+                },
+                "titles.eager_titles": {
+                    "query_count": 1,
+                    "total_time_ms": 157,
+                    "examples": [
+                        "select `dogs_titles_db`.`TitleCode`, `dogs_titles_db`.`TitleName`, `Dogs_ScoresDB`.`SagirID` as `pivot_SagirID`, `Dogs_ScoresDB`.`AwardID` as `pivot_AwardID`, `Dogs_ScoresDB`.`created_at` as `pivot_created_at`, `Dogs_ScoresDB`.`updated_at` as `pivot_updated_at`, `Dogs_ScoresDB`.`EventPlace` as `pivot_EventPlace`, `Dogs_ScoresDB`.`EventName` as `pivot_EventName`, `Dogs_ScoresDB`.`EventDate` as `pivot_EventDate`, `Dogs_ScoresDB`.`ShowID` as `pivot_ShowID`, `Dogs_ScoresDB`.`JudgeName` as `pivot_JudgeName`, `Dogs_ScoresDB`.`deleted_at` as `pivot_deleted_at` from `dogs_titles_db` inner join `Dogs_ScoresDB` on `dogs_titles_db`.`TitleCode` = `Dogs_ScoresDB`.`AwardID` where `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`SagirID` in (1003687) and `dogs_titles_db`.`deleted_at` is null order by `EventDate` desc"
+                    ]
+                },
+                "hair": {
+                    "query_count": 1,
+                    "total_time_ms": 156.77,
+                    "examples": [
+                        "select `OldCode`, `HairNameHE`, `HairNameEN` from `HairsDB` where `HairsDB`.`OldCode` in (4) and `HairsDB`.`deleted_at` is null"
+                    ]
+                },
+                "ownership_pivot": {
+                    "query_count": 1,
+                    "total_time_ms": 156.69,
+                    "examples": [
+                        "select `sagir_id` from `dogs2users` where `user_id` = 258298 and `status` = 'current' and `deleted_at` is null and `dogs2users`.`deleted_at` is null"
+                    ]
+                },
+                "breed": {
+                    "query_count": 1,
+                    "total_time_ms": 155.84,
+                    "examples": [
+                        "select `BreedCode`, `BreedName`, `BreedNameEN` from `BreedsDB` where `BreedsDB`.`BreedCode` in (93) and `BreedsDB`.`deleted_at` is null"
+                    ]
+                },
+                "color": {
+                    "query_count": 1,
+                    "total_time_ms": 155.82,
+                    "examples": [
+                        "select `OldCode`, `ColorNameHE`, `ColorNameEN` from `ColorsDB` where `ColorsDB`.`OldCode` in (9000) and `ColorsDB`.`deleted_at` is null"
+                    ]
+                },
+                "breedinghouse": {
+                    "query_count": 1,
+                    "total_time_ms": 154.58,
+                    "examples": [
+                        "select `GidulCode`, `HebName`, `EngName` from `breedinghouses` where `breedinghouses`.`GidulCode` in (7411) and `breedinghouses`.`deleted_at` is null"
+                    ]
+                }
+            },
+            "slowest_queries": [
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 159.52,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1560 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158.48,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1383 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158.14,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.78,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.4,
+                    "sql": "select * from `DogsDB` where `SagirID` in (1003687, 1022274, 1027315) and `DogsDB`.`id` = '233936' and `DogsDB`.`deleted_at` is null order by `SagirID` desc limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.21,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1526 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.14,
+                    "sql": "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` != 'current' and `dogs2users`.`sagir_id` in (1003687) and `users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.04,
+                    "sql": "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` = 'current' and `dogs2users`.`sagir_id` in (1003687) and `users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157,
+                    "sql": "select `dogs_titles_db`.`TitleCode`, `dogs_titles_db`.`TitleName`, `Dogs_ScoresDB`.`SagirID` as `pivot_SagirID`, `Dogs_ScoresDB`.`AwardID` as `pivot_AwardID`, `Dogs_ScoresDB`.`created_at` as `pivot_created_at`, `Dogs_ScoresDB`.`updated_at` as `pivot_updated_at`, `Dogs_ScoresDB`.`EventPlace` as `pivot_EventPlace`, `Dogs_ScoresDB`.`EventName` as `pivot_EventName`, `Dogs_ScoresDB`.`EventDate` as `pivot_EventDate`, `Dogs_ScoresDB`.`ShowID` as `pivot_ShowID`, `Dogs_ScoresDB`.`JudgeName` as `pivot_JudgeName`, `Dogs_ScoresDB`.`deleted_at` as `pivot_deleted_at` from `dogs_titles_db` inner join `Dogs_ScoresDB` on `dogs_titles_db`.`TitleCode` = `Dogs_ScoresDB`.`AwardID` where `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`SagirID` in (1003687) and `dogs_titles_db`.`deleted_at` is null order by `EventDate` desc"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.91,
+                    "sql": "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (16945) and `DogsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.77,
+                    "sql": "select `OldCode`, `HairNameHE`, `HairNameEN` from `HairsDB` where `HairsDB`.`OldCode` in (4) and `HairsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.75,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1526 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.69,
+                    "sql": "select `sagir_id` from `dogs2users` where `user_id` = 258298 and `status` = 'current' and `deleted_at` is null and `dogs2users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.84,
+                    "sql": "select `BreedCode`, `BreedName`, `BreedNameEN` from `BreedsDB` where `BreedsDB`.`BreedCode` in (93) and `BreedsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.82,
+                    "sql": "select `OldCode`, `ColorNameHE`, `ColorNameEN` from `ColorsDB` where `ColorsDB`.`OldCode` in (9000) and `ColorsDB`.`deleted_at` is null"
+                }
+            ],
+            "elapsed_ms": 2868.38,
+            "dog": {
+                "id": 233936,
+                "SagirID": 1003687,
+                "full_name": "Toy"
+            }
+        },
+        "slow_but_loads_sagir_1027315": {
+            "query_count": 15,
+            "total_query_time_ms": 2348.99,
+            "groups": {
+                "other": {
+                    "query_count": 5,
+                    "total_time_ms": 791.93,
+                    "examples": [
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1724 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1724 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1",
+                        "select * from `ShowsDB` where `ShowsDB`.`id` = 1654 and `ShowsDB`.`deleted_at` is null limit 1"
+                    ]
+                },
+                "dog.parents_or_record_by_sagir": {
+                    "query_count": 3,
+                    "total_time_ms": 468.61,
+                    "examples": [
+                        "select * from `DogsDB` where `SagirID` in (1003687, 1022274, 1027315) and `DogsDB`.`id` = '257618' and `DogsDB`.`deleted_at` is null order by `SagirID` desc limit 1",
+                        "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (1000173) and `DogsDB`.`deleted_at` is null",
+                        "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (1031513) and `DogsDB`.`deleted_at` is null"
+                    ]
+                },
+                "owners.current": {
+                    "query_count": 1,
+                    "total_time_ms": 156.36,
+                    "examples": [
+                        "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` = 'current' and `dogs2users`.`sagir_id` in (1027315) and `users`.`deleted_at` is null"
+                    ]
+                },
+                "owners.previous": {
+                    "query_count": 1,
+                    "total_time_ms": 155.93,
+                    "examples": [
+                        "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` != 'current' and `dogs2users`.`sagir_id` in (1027315) and `users`.`deleted_at` is null"
+                    ]
+                },
+                "breed": {
+                    "query_count": 1,
+                    "total_time_ms": 155.41,
+                    "examples": [
+                        "select `BreedCode`, `BreedName`, `BreedNameEN` from `BreedsDB` where `BreedsDB`.`BreedCode` in (93) and `BreedsDB`.`deleted_at` is null"
+                    ]
+                },
+                "ownership_pivot": {
+                    "query_count": 1,
+                    "total_time_ms": 155.35,
+                    "examples": [
+                        "select `sagir_id` from `dogs2users` where `user_id` = 258298 and `status` = 'current' and `deleted_at` is null and `dogs2users`.`deleted_at` is null"
+                    ]
+                },
+                "color": {
+                    "query_count": 1,
+                    "total_time_ms": 155.34,
+                    "examples": [
+                        "select `OldCode`, `ColorNameHE`, `ColorNameEN` from `ColorsDB` where `ColorsDB`.`OldCode` in (167) and `ColorsDB`.`deleted_at` is null"
+                    ]
+                },
+                "hair": {
+                    "query_count": 1,
+                    "total_time_ms": 155.11,
+                    "examples": [
+                        "select `OldCode`, `HairNameHE`, `HairNameEN` from `HairsDB` where `HairsDB`.`OldCode` in (4) and `HairsDB`.`deleted_at` is null"
+                    ]
+                },
+                "titles.eager_titles": {
+                    "query_count": 1,
+                    "total_time_ms": 154.95,
+                    "examples": [
+                        "select `dogs_titles_db`.`TitleCode`, `dogs_titles_db`.`TitleName`, `Dogs_ScoresDB`.`SagirID` as `pivot_SagirID`, `Dogs_ScoresDB`.`AwardID` as `pivot_AwardID`, `Dogs_ScoresDB`.`created_at` as `pivot_created_at`, `Dogs_ScoresDB`.`updated_at` as `pivot_updated_at`, `Dogs_ScoresDB`.`EventPlace` as `pivot_EventPlace`, `Dogs_ScoresDB`.`EventName` as `pivot_EventName`, `Dogs_ScoresDB`.`EventDate` as `pivot_EventDate`, `Dogs_ScoresDB`.`ShowID` as `pivot_ShowID`, `Dogs_ScoresDB`.`JudgeName` as `pivot_JudgeName`, `Dogs_ScoresDB`.`deleted_at` as `pivot_deleted_at` from `dogs_titles_db` inner join `Dogs_ScoresDB` on `dogs_titles_db`.`TitleCode` = `Dogs_ScoresDB`.`AwardID` where `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`SagirID` in (1027315) and `dogs_titles_db`.`deleted_at` is null order by `EventDate` desc"
+                    ]
+                }
+            },
+            "slowest_queries": [
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 159.99,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1654 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158.85,
+                    "sql": "select * from `DogsDB` where `SagirID` in (1003687, 1022274, 1027315) and `DogsDB`.`id` = '257618' and `DogsDB`.`deleted_at` is null order by `SagirID` desc limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158.6,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1724 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 158.55,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1724 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 157.89,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.9,
+                    "sql": "select * from `ShowsDB` where `ShowsDB`.`id` = 1653 and `ShowsDB`.`deleted_at` is null limit 1"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 156.36,
+                    "sql": "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` = 'current' and `dogs2users`.`sagir_id` in (1027315) and `users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.93,
+                    "sql": "select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`first_name_en`, `users`.`last_name_en`, `users`.`mobile_phone`, `users`.`email`, `dogs2users`.`sagir_id` as `pivot_sagir_id`, `dogs2users`.`user_id` as `pivot_user_id`, `dogs2users`.`created_at` as `pivot_created_at`, `dogs2users`.`updated_at` as `pivot_updated_at`, `dogs2users`.`status` as `pivot_status`, `dogs2users`.`deleted_at` as `pivot_deleted_at` from `users` inner join `dogs2users` on `users`.`id` = `dogs2users`.`user_id` where `dogs2users`.`deleted_at` is null and `dogs2users`.`status` != 'current' and `dogs2users`.`sagir_id` in (1027315) and `users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.41,
+                    "sql": "select `BreedCode`, `BreedName`, `BreedNameEN` from `BreedsDB` where `BreedsDB`.`BreedCode` in (93) and `BreedsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.35,
+                    "sql": "select `sagir_id` from `dogs2users` where `user_id` = 258298 and `status` = 'current' and `deleted_at` is null and `dogs2users`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.34,
+                    "sql": "select `OldCode`, `ColorNameHE`, `ColorNameEN` from `ColorsDB` where `ColorsDB`.`OldCode` in (167) and `ColorsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.3,
+                    "sql": "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (1031513) and `DogsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 155.11,
+                    "sql": "select `OldCode`, `HairNameHE`, `HairNameEN` from `HairsDB` where `HairsDB`.`OldCode` in (4) and `HairsDB`.`deleted_at` is null"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 154.95,
+                    "sql": "select `dogs_titles_db`.`TitleCode`, `dogs_titles_db`.`TitleName`, `Dogs_ScoresDB`.`SagirID` as `pivot_SagirID`, `Dogs_ScoresDB`.`AwardID` as `pivot_AwardID`, `Dogs_ScoresDB`.`created_at` as `pivot_created_at`, `Dogs_ScoresDB`.`updated_at` as `pivot_updated_at`, `Dogs_ScoresDB`.`EventPlace` as `pivot_EventPlace`, `Dogs_ScoresDB`.`EventName` as `pivot_EventName`, `Dogs_ScoresDB`.`EventDate` as `pivot_EventDate`, `Dogs_ScoresDB`.`ShowID` as `pivot_ShowID`, `Dogs_ScoresDB`.`JudgeName` as `pivot_JudgeName`, `Dogs_ScoresDB`.`deleted_at` as `pivot_deleted_at` from `dogs_titles_db` inner join `Dogs_ScoresDB` on `dogs_titles_db`.`TitleCode` = `Dogs_ScoresDB`.`AwardID` where `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`deleted_at` is null and `Dogs_ScoresDB`.`SagirID` in (1027315) and `dogs_titles_db`.`deleted_at` is null order by `EventDate` desc"
+                },
+                {
+                    "connection": "mysql_prev",
+                    "time_ms": 154.46,
+                    "sql": "select `id`, `SagirID`, `Heb_Name`, `Eng_Name` from `DogsDB` where `DogsDB`.`SagirID` in (1000173) and `DogsDB`.`deleted_at` is null"
+                }
+            ],
+            "elapsed_ms": 2477.91,
+            "dog": {
+                "id": 257618,
+                "SagirID": 1027315,
+                "full_name": "Saffron Sherhy Twist"
+            }
+        }
+    },
+    "index_state": [
+        {
+            "table": "breedinghouses",
+            "index": "PRIMARY",
+            "columns": "id"
+        },
+        {
+            "table": "BreedsDB",
+            "index": "breeds_code_deleted_idx",
+            "columns": "BreedCode,deleted_at"
+        },
+        {
+            "table": "BreedsDB",
+            "index": "PRIMARY",
+            "columns": "id"
+        },
+        {
+            "table": "ColorsDB",
+            "index": "colors_old_code_deleted_idx",
+            "columns": "OldCode,deleted_at"
+        },
+        {
+            "table": "ColorsDB",
+            "index": "PRIMARY",
+            "columns": "id"
+        },
+        {
+            "table": "dogs2users",
+            "index": "dogs2users_sagir_deleted_status_user_idx",
+            "columns": "sagir_id,deleted_at,status,user_id"
+        },
+        {
+            "table": "dogs2users",
+            "index": "dogs2users_user_status_deleted_sagir_idx",
+            "columns": "user_id,status,deleted_at,sagir_id"
+        },
+        {
+            "table": "dogs2users",
+            "index": "PRIMARY",
+            "columns": "id"
+        },
+        {
+            "table": "DogsDB",
+            "index": "DataID",
+            "columns": "DataID"
+        },
+        {
+            "table": "DogsDB",
+            "index": "PRIMARY",
+            "columns": "id"
+        },
+        {
+            "table": "DogsDB",
+            "index": "SagirID",
+            "columns": "SagirID"
+        },
+        {
+            "table": "Dogs_ScoresDB",
+            "index": "dog_scores_sagir_deleted_event_award_idx",
+            "columns": "SagirID,deleted_at,EventDate,AwardID"
+        },
+        {
+            "table": "Dogs_ScoresDB",
+            "index": "PRIMARY",
+            "columns": "id"
+        },
+        {
+            "table": "dogs_titles_db",
+            "index": "dog_titles_code_deleted_idx",
+            "columns": "TitleCode,deleted_at"
+        },
+        {
+            "table": "dogs_titles_db",
+            "index": "PRIMARY",
+            "columns": "id"
+        },
+        {
+            "table": "HairsDB",
+            "index": "hairs_old_code_deleted_idx",
+            "columns": "OldCode,deleted_at"
+        },
+        {
+            "table": "HairsDB",
+            "index": "PRIMARY",
+            "columns": "id"
+        }
+    ]
+}
