@@ -13,4 +13,14 @@ class CreatePrevDog extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+
+    public function getContentTabLabel(): ?string
+    {
+        return __('dog/model/general.labels.singular');
+    }
 }

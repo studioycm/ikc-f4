@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\PrevUsers;
 
 use App\Filament\Resources\PrevDogs\PrevDogResource;
+use App\Filament\Resources\PrevUsers\Pages\ViewPrevUser;
 use BackedEnum;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -780,11 +783,14 @@ class PrevUserResource extends Resource
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(7)
             ->recordActions([
+                ViewAction::make()
+                    ->iconButton()
+                    ->tooltip(__('View')),
                 EditAction::make()
                     ->iconButton()
                     ->tooltip(__('Edit')),
                 Action::make('send_email')
-                    ->label(false)
+                    ->hiddenLabel(true)
                     ->icon(Heroicon::OutlinedEnvelope)
                     ->iconButton()
                     ->tooltip(__('Send an email message'))
@@ -919,6 +925,21 @@ class PrevUserResource extends Resource
             ->recordUrl(false);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextEntry::make('id')
+                    ->label(__('ID')),
+                TextEntry::make('full_name')
+                    ->label(__('Full Name')),
+                TextEntry::make('email')
+                    ->label(__('Email')),
+                TextEntry::make('normalised_phone')
+                    ->label(__('Phone')),
+            ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -946,6 +967,7 @@ class PrevUserResource extends Resource
         return [
             'index' => ListPrevUsers::route('/'),
             'create' => CreatePrevUser::route('/create'),
+            'view' => ViewPrevUser::route('/{record}'),
             'edit' => EditPrevUser::route('/{record}/edit'),
         ];
     }

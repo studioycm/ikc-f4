@@ -19,13 +19,13 @@ class DogsRelationManager extends RelationManager
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('Dogs');
+        return __('dog/model/general.labels.plural');
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->defaultSort('ownership.created_at', 'desc')
+            ->defaultSort('BirthDate', 'desc')
             ->columns([
                 TextColumn::make('SagirID')
                     ->label(__('Sagir'))
@@ -46,7 +46,7 @@ class DogsRelationManager extends RelationManager
                     ->label(__('Ownership Status'))
                     ->badge(),
                 TextColumn::make('ownership.created_at')
-                    ->label(__('Linked At'))
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable(),
             ])
