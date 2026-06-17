@@ -1,5 +1,7 @@
 {
     "IKC System": "מערכת הי\"ל",
+    "Administrative workspace for registry and operations management": "איזור ניהול מערכת לפעולות אדמיניסטרטיביות ורישום כלבים",
+    "Member workspace for dogs, memberships, requests, payments, and shows": "איזור משתמש לניהול כלבים, חברויות, בקשות, תשלומים ותערוכות",
     "Studbook": "ספר גידול",
     "ISR Studbook": "ספר גידול ישראלי",
     "IMP Studbook": "ספר גידול ייבוא",
@@ -756,6 +758,8 @@
     "Dashboard": "ראשי",
     "Personal Area": "איזור אישי",
     "User Panel": "איזור משתמש",
+    "Admin Panel": "איזור ניהול",
+    "Go to": "עבור אל",
     "Display": "הצג",
     "Displaying": "מציג",
     "Direction": "כיוון",

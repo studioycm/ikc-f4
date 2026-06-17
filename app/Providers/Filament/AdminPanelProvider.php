@@ -18,7 +18,9 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -111,11 +113,20 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->resourceEditPageRedirect('index')
             ->resourceCreatePageRedirect('index')
-            // ->renderHook(
-            //         'panels::footer',
-            //         fn (): View => view('filament.components.loading-indicator')
-
-            // )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+                fn (): View => view('filament.auth.login-panel-artwork', [
+                    'displayImage' => false,
+                    'panelName' => null,
+                    'imageUrl' => asset('images/logo-light.svg'),
+                    'darkImageUrl' => asset('images/logo-dark.svg'),
+                    'imageAlt' => __('IKC System admin panel logo'),
+                    'heading' => __('IKC System') . " | " . __('Admin Panel'),
+//                    'description' => __('Administrative workspace for registry and operations management'),
+                    'switchUrl' => route('filament.user.auth.login'),
+                    'switchLabel' => __('Go to') . " " . __('User Panel'),
+                ]),
+            )
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label(fn (): string => __('dog/model/general.labels.navigation_group'))
