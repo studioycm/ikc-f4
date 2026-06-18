@@ -7,7 +7,7 @@
             }
         },
         "laravel-boost": {
-            "command": "/Users/studioycm/Library/Application Support/Herd/bin/php",
+            "command": "/Users/studioycm/Library/Application Support/Herd/bin/php84",
             "args": [
                 "/Users/studioycm/Herd/ikc-f4/artisan",
                 "boost:mcp"

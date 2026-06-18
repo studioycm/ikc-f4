@@ -1,10 +1,9 @@
 [mcp_servers.filament-examples]
 url = "https://filamentexamples.com/mcp"
 http_headers = { Authorization = "Bearer 25|vzNQN8UzTmBlfaleqq3w3hqqbfsZoJ5D2S143uOx29da9fac" }
+[mcp_servers.laravel-boost.tools.search-docs]
+approval_mode = "approve"
 
 [mcp_servers.laravel-boost]
 command = "php"
 args = ["artisan", "boost:mcp"]
-
-[mcp_servers.laravel-boost.tools.search-docs]
-approval_mode = "approve"
